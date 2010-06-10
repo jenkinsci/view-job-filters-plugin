@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Regular Expression}">
+      <f:textbox name="regex" field="regex" />
+  </f:entry>
+  <f:entry title="${%Negate Expression}">
+      <f:checkbox name="negated" field="negated" />
+  </f:entry>
+  <f:entry title="${%Exclude Matches}">
+      <f:checkbox name="exclude" field="exclude" />
+  </f:entry>
+</j:jelly>
