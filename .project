@@ -1,6 +1,6 @@
 <projectDescription>
   <name>view-job-filters</name>
-  <comment>Additional Job Filters for Views</comment>
+  <comment>Additional View Job Filters to provide more ways to include/exclude jobs from a view.</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

@@ -16,12 +16,12 @@ public class RegExJobFilterTest extends TestCase {
 		List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
 		
-		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", true, false);
+		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", true, false, RegExJobFilter.ValueType.NAME.toString());
 		filtered = includeNonNightly.filter(filtered, all);
 		List<TopLevelItem> expected = toList("Work_Job", "A-utility-job", "My_Job", "My_Util");
 		assertListEquals(expected, filtered);
 
-		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", false, true);
+		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", false, true, RegExJobFilter.ValueType.NAME.toString());
 		filtered = excludeUtil.filter(filtered, all);
 		expected = toList("Work_Job", "My_Job");
 		assertListEquals(expected, filtered);
@@ -59,7 +59,7 @@ public class RegExJobFilterTest extends TestCase {
 			String regex, boolean negate, boolean exclude, 
 			boolean expectInclude, boolean expectExclude) {
 		TopLevelItem item = new ExternalJob(jobName);
-		RegExJobFilter filter = new RegExJobFilter(regex, negate, exclude);
+		RegExJobFilter filter = new RegExJobFilter(regex, negate, exclude, RegExJobFilter.ValueType.NAME.toString());
 		assertEquals(expectExclude, filter.exclude(item));
 		assertEquals(expectInclude, filter.include(item));
 	}
