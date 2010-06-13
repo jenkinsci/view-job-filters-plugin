@@ -5,6 +5,7 @@ import java.util.List;
 
 import hudson.model.ExternalJob;
 import hudson.model.TopLevelItem;
+import hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType;
 import junit.framework.TestCase;
 
 public class RegExJobFilterTest extends TestCase {
@@ -16,12 +17,16 @@ public class RegExJobFilterTest extends TestCase {
 		List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
 		
-		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", true, false, RegExJobFilter.ValueType.NAME.toString());
+		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", 
+				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString(), // true, false, 
+				RegExJobFilter.ValueType.NAME.toString());
 		filtered = includeNonNightly.filter(filtered, all);
 		List<TopLevelItem> expected = toList("Work_Job", "A-utility-job", "My_Job", "My_Util");
 		assertListEquals(expected, filtered);
 
-		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", false, true, RegExJobFilter.ValueType.NAME.toString());
+		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", 
+				AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched.toString(), // false, true, 
+				RegExJobFilter.ValueType.NAME.toString());
 		filtered = excludeUtil.filter(filtered, all);
 		expected = toList("Work_Job", "My_Job");
 		assertListEquals(expected, filtered);
@@ -44,24 +49,25 @@ public class RegExJobFilterTest extends TestCase {
 	}
 	
 	public void testIncludeExclude() {
-		doTestIncludeExclude("junit", ".*u.*", false, false, true, false);
-		doTestIncludeExclude("junit", ".*u.*", true, false, false, false);
-		doTestIncludeExclude("junit", ".*u.*", false, true, false, true);
-		doTestIncludeExclude("junit", ".*u.*", true, true, false, false);
+		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeMatched, true, false);
+		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeUnmatched, false, false);
+		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.excludeMatched, false, true);
+		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.excludeUnmatched, false, false);
 		
-		doTestIncludeExclude("test", ".*u.*", false, false, false, false);
-		doTestIncludeExclude("test", ".*u.*", true, false, true, false);
-		doTestIncludeExclude("test", ".*u.*", false, true, false, false);
-		doTestIncludeExclude("test", ".*u.*", true, true, false, true);
+		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.includeMatched, false, false);
+		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.includeUnmatched, true, false);
+		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.excludeMatched, false, false);
+		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.excludeUnmatched, false, true);
 	}
 	
 	public void doTestIncludeExclude(String jobName, 
-			String regex, boolean negate, boolean exclude, 
+			String regex, AbstractIncludeExcludeJobFilter.IncludeExcludeType includeExcludeType, // boolean negate, boolean exclude, 
 			boolean expectInclude, boolean expectExclude) {
 		TopLevelItem item = new ExternalJob(jobName);
-		RegExJobFilter filter = new RegExJobFilter(regex, negate, exclude, RegExJobFilter.ValueType.NAME.toString());
-		assertEquals(expectExclude, filter.exclude(item));
-		assertEquals(expectInclude, filter.include(item));
+		RegExJobFilter filter = new RegExJobFilter(regex, includeExcludeType.toString(), RegExJobFilter.ValueType.NAME.toString());
+		boolean matched = filter.matches(item);
+		assertEquals(expectExclude, filter.exclude(matched));
+		assertEquals(expectInclude, filter.include(matched));
 	}
 	
 }

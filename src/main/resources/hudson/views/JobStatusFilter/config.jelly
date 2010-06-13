@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Job Statuses}:">
+    <f:checkbox name="stable" field="stable"/> ${%Stable}
+    <f:checkbox name="failed" field="failed"/> ${%Failed}
+    <f:checkbox name="unstable" field="unstable"/> ${%Unstable}
+    <f:checkbox name="aborted" field="aborted"/> ${%Aborted}
+    <f:checkbox name="disabled" field="disabled"/> ${%Disabled}
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+</j:jelly>

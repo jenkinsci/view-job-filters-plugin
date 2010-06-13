@@ -25,7 +25,7 @@ import org.kohsuke.stapler.QueryParameter;
  * making use of negate and exclude flags.
  * @author Jacob Robertson
  */
-public class RegExJobFilter extends ViewJobFilter {
+public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
 	static enum ValueType {
 		NAME, DESCRIPTION, SCM
@@ -34,44 +34,27 @@ public class RegExJobFilter extends ViewJobFilter {
 	transient private ValueType valueType;
 	private String valueTypeString;
 	private String regex;
-	private boolean negated;
-	private boolean exclude;
 	transient private Pattern pattern;
 	
     @DataBoundConstructor
-    public RegExJobFilter(String regex, boolean negated, boolean exclude, String valueTypeString) {
+    public RegExJobFilter(String regex, String includeExcludeTypeString, String valueTypeString) {
+    	super(includeExcludeTypeString);
     	this.regex = regex;
-    	this.negated = negated;
-    	this.exclude = exclude;
     	this.pattern = Pattern.compile(regex);
     	this.valueTypeString = valueTypeString;
     	this.valueType = ValueType.valueOf(valueTypeString);
     }
     
-    private Object readResolve() {
+    Object readResolve() {
         if (regex != null) {
         	pattern = Pattern.compile(regex);
         }
         if (valueTypeString != null) {
         	valueType = ValueType.valueOf(valueTypeString);
         }
-        return this;
+        return super.readResolve();
     }
 
-    @Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all) {
-    	List<TopLevelItem> filtered = new ArrayList<TopLevelItem>(added);
-        for (TopLevelItem item: all) {
-    		if (exclude(item)) {
-    			filtered.remove(item);
-    		}
-    		if (include(item) && !filtered.contains(item)) {
-    			filtered.add(item);
-    		}
-        }
-        return filtered;
-    }
-    
     public List<String> getMatchValues(TopLevelItem item) {
     	List<String> values = new ArrayList<String>();
     	if (valueType == ValueType.DESCRIPTION) {
@@ -90,35 +73,21 @@ public class RegExJobFilter extends ViewJobFilter {
     	return values;
     }
     
-    public boolean include(TopLevelItem item) {
-        return checkItem(item, false);
-    }
-
-    public boolean exclude(TopLevelItem item) {
-        return checkItem(item, true);
-    }
-    private boolean checkItem(TopLevelItem item, boolean checkExclude) {
-    	if (exclude != checkExclude) {
-    		return false;
-    	}
+    public boolean matches(TopLevelItem item) {
         List<String> matchValues = getMatchValues(item);
+        boolean matched = false;
         for (String matchValue: matchValues) {
-	        if (matchValue != null &&
-	        			pattern.matcher(matchValue).matches() != negated) {
-	            return true;
-	        }
+        	if (matchValue != null &&
+	        			pattern.matcher(matchValue).matches()) {
+        		matched = true;
+        		break;
+        	}
         }
-        return false;
+        return matched;
     }
 
 	public String getRegex() {
 		return regex;
-	}
-	public boolean isNegated() {
-		return negated;
-	}
-	public boolean isExclude() {
-		return exclude;
 	}
 	public String getValueTypeString() {
 		return valueTypeString;

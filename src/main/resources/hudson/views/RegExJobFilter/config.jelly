@@ -4,17 +4,12 @@
   <f:entry title="${%Regular Expression}">
       <f:textbox name="regex" field="regex" />
   </f:entry>
-  <f:entry title="${%Negate Expression}">
-      <f:checkbox name="negated" field="negated" />
-  </f:entry>
-  <f:entry title="${%Exclude Matches}">
-      <f:checkbox name="exclude" field="exclude" />
-  </f:entry>
-  <f:entry title="${%Match}">
+  <f:entry title="${%Match Value}">
     <select name="valueTypeString" class="setting-input">
       <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
       <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
       <f:option value="SCM" selected="${instance.valueTypeString == 'SCM'}">${%Job SCM configuration}</f:option>
     </select>
   </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
 </j:jelly>

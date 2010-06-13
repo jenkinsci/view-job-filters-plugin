@@ -1,15 +1,12 @@
 <div>
-  You can use as many Regular Expression Filters as you like - they will each apply in the order shown. 
+  You can use as many Regular Expression Filters as you like - they will each apply in the order you put them in.
+  <br/><br/>
+  <u>Match Value</u>: You can choose to match on the Name, Description, or SCM configuration of the job.  Matching by SCM
+  is extremely useful if you have hundreds of jobs that need to be "auto organized", and are already
+  organized under source control.
   <br/>
-  The Negate option allows you to much more easily choose to match all jobs which DON'T match the expression.
-  <br/>
-  The Exclude option allows you to exclude jobs that otherwise would have been added to the view.  This is only useful
-  in combination with other Job Filters.
-  <br/>
-  If you choose both the Negate and Exclude options, this will exclude any jobs that do not match the expression.  
-  This can only be useful when used in combination with other Job filters.
-  <br/>
-  <br/>
+  <u>Match Type</u>: Choose whether this filter will add additional jobs, or remove jobs.
+  <br/><br/>
   A simple example would be to add two Regular Expression Filters, 
   one that includes all jobs that don't match ".*_Nightly", 
   and another filter that excludes all jobs that match ".*[Uu]til.*".
