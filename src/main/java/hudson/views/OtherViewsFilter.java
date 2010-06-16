@@ -12,8 +12,6 @@ import java.util.Collection;
 import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * TODO known bug - you can select views recursively - will permanently break that view
@@ -21,12 +19,17 @@ import org.kohsuke.stapler.StaplerRequest;
  */
 public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 
-	private String otherView;
+	private View otherView;
 	
+	/**
+	 * Constructor called by stapler to inject fields.
+	 */
 	@DataBoundConstructor
-	public OtherViewsFilter(String includeExcludeTypeString, String otherView) {
+	public OtherViewsFilter(String includeExcludeTypeString, String otherViewName) {
 		super(includeExcludeTypeString);
-		this.otherView = otherView;
+		if (otherViewName != null){
+			this.otherView = Hudson.getInstance().getView(otherViewName);
+		}
 	}
 	
 	@Override
@@ -36,7 +39,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		for (View view: views) {
 			String viewName = view.getViewName();
 			// narrow down to my "other view"
-			if (viewName.equals(otherView)) {
+			if (viewName.equals(getOtherViewName())) {
 				Collection<TopLevelItem> items = view.getItems();
 				for (TopLevelItem viewItem: items) {
 					// see if the item for "that" view matches the one we're checking
@@ -48,9 +51,11 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		return false;
 	}
-	
-	public String getOtherView() {
+	public View getOtherView() {
 		return otherView;
+	}
+	public String getOtherViewName() {
+		return otherView.getViewName();
 	}
 	
 	@Extension
@@ -68,7 +73,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
         /**
          * This method determines the values of the album drop-down list box.
          */
-        public ListBoxModel doFillOtherViewItems(StaplerRequest req, @QueryParameter String name) throws ServletException {
+        public ListBoxModel doFillOtherViewNameItems() throws ServletException {
             ListBoxModel m = new ListBoxModel();
 			Collection<View> views = Hudson.getInstance().getViews();
 			for (View view: views) {
