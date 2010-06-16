@@ -1,0 +1,12 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%SCM Type}">
+    <select name="scmType" class="setting-input">
+    	<j:forEach var="type" items="${descriptor.getScmTypes()}">
+	      <f:option value="${type}" selected="${instance.scmType == type}">${type}</f:option>
+      	</j:forEach>
+    </select>
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+</j:jelly>
