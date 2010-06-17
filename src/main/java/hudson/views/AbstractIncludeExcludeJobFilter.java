@@ -1,6 +1,7 @@
 package hudson.views;
 
 import hudson.model.TopLevelItem;
+import hudson.model.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
 	}
 
     @Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all) {
+    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
     	List<TopLevelItem> filtered = new ArrayList<TopLevelItem>(added);
         for (TopLevelItem item: all) {
         	boolean matched = matches(item);

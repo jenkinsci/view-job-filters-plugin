@@ -3,6 +3,7 @@ package hudson.views;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
+import hudson.model.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +22,7 @@ public class AllJobsFilter extends ViewJobFilter {
 	}
 	
 	@Override
-	public List<TopLevelItem> filter(List<TopLevelItem> added,
-			List<TopLevelItem> all) {
+	public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
 		return new ArrayList<TopLevelItem>(all);
 	}
 	@Extension

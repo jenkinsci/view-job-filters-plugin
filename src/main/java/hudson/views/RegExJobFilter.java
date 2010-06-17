@@ -1,28 +1,24 @@
 package hudson.views;
 
 import hudson.Extension;
-import hudson.Util;
 import hudson.model.AbstractItem;
 import hudson.model.Descriptor;
 import hudson.model.SCMedItem;
 import hudson.model.TopLevelItem;
 import hudson.scm.SCM;
-import hudson.util.FormValidation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 
 /**
  * Simple JobFilter that filters jobs based on a regular expression, and
  * making use of negate and exclude flags.
+ * 
+ * TODO limitation - cannot perform validations in hetero list?
+ * 
  * @author Jacob Robertson
  */
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
@@ -106,7 +102,9 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         
         /**
          * Checks if the regular expression is valid.
-         */
+         * 
+         * Does not work in hetero-list?
+         *
         public FormValidation doCheckRegex( @QueryParameter String value ) throws IOException, ServletException, InterruptedException  {
             String v = Util.fixEmpty(value);
             if (v != null) {
@@ -118,6 +116,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
             }
             return FormValidation.ok();
         }
+        */
     }
 
 }

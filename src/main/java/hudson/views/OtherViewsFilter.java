@@ -8,18 +8,27 @@ import hudson.model.View;
 import hudson.util.ListBoxModel;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.ServletException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * TODO known bug - you can select views recursively - will permanently break that view
+ * TODO bug - deleting a view doesn't work - for now, this view just doesn't do any filtering
+ * TODO bug - renaming a view only works some of the time because if this filter isn't used between
+ * 				the time the view was renamed and a save takes place, this filter won't know about
+ * 				the rename.
+ * TODO bug - you can select a view "recursively" - need a way to avoid this completely rather than just
+ * 				do damage control when they do select it.
+ * TODO limitation - cannot perform validations in hetero list?
+ * 					
  * @author jacob.robertson
  */
 public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 
-	private View otherView;
+	private String otherViewName;
+	private transient View otherView;
 	
 	/**
 	 * Constructor called by stapler to inject fields.
@@ -27,10 +36,24 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	@DataBoundConstructor
 	public OtherViewsFilter(String includeExcludeTypeString, String otherViewName) {
 		super(includeExcludeTypeString);
+		this.otherViewName = otherViewName;
 		if (otherViewName != null){
 			this.otherView = Hudson.getInstance().getView(otherViewName);
 		}
 	}
+	
+	@Override
+    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
+    	if (getOtherView() == null) {
+    		// happens when a view is deleted and this filter doesn't know about it (known issue)
+    		return added;
+    	} else if (getOtherView() == filteringView) {
+    		// happens when you select the view recursively
+        	return added;
+    	} else {
+    		return super.filter(added, all, filteringView);
+    	}
+    }
 	
 	@Override
 	boolean matches(TopLevelItem item) {
@@ -51,15 +74,33 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		return false;
 	}
+	Object writeReplace() {
+		// Right before persisting, try to account for any view name changes 
+		if (otherView != null) {
+			otherViewName = otherView.getViewName();
+		}
+		return this;
+	}
 	public View getOtherView() {
+		if (otherView == null && otherViewName != null) {
+			otherView = Hudson.getInstance().getView(otherViewName);
+		}
 		return otherView;
 	}
 	public String getOtherViewName() {
-		return otherView.getViewName();
+		View got = getOtherView();
+		if (got != null) {
+			return got.getViewName();
+		} else {
+			return null;
+		}
 	}
 	
 	@Extension
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
+		
+		// TODO messages
+		private static final String NO_VIEW_SELECTED = "<select a view other than this one>";
 		
 		@Override
 		public String getDisplayName() {
@@ -76,12 +117,31 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
         public ListBoxModel doFillOtherViewNameItems() throws ServletException {
             ListBoxModel m = new ListBoxModel();
 			Collection<View> views = Hudson.getInstance().getViews();
+			m.add(NO_VIEW_SELECTED);
 			for (View view: views) {
 				String viewName = view.getViewName();
 				m.add(viewName);
 			}
             return m;
         }
+        
+        /*
+         * Checks if the chosen view is valid.
+         *
+         * Does not work in hetero-list?
+         *
+        public FormValidation doCheckOtherViewName(@QueryParameter String otherViewName) throws IOException, ServletException, InterruptedException  {
+        	if (NO_VIEW_SELECTED.equals(otherViewName)) {
+        		return FormValidation.error("You must select a view");
+        	}
+            View view = Hudson.getInstance().getView(otherViewName);
+            if (view == null) {
+                return FormValidation.error("The view you selected (\"" + otherViewName + "\") has been deleted or renamed");
+            }
+            return FormValidation.ok();
+        }
+        */
+        
 	}
 
 }

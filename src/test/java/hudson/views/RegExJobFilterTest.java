@@ -20,14 +20,14 @@ public class RegExJobFilterTest extends TestCase {
 		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", 
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString(), // true, false, 
 				RegExJobFilter.ValueType.NAME.toString());
-		filtered = includeNonNightly.filter(filtered, all);
+		filtered = includeNonNightly.filter(filtered, all, null);
 		List<TopLevelItem> expected = toList("Work_Job", "A-utility-job", "My_Job", "My_Util");
 		assertListEquals(expected, filtered);
 
 		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", 
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched.toString(), // false, true, 
 				RegExJobFilter.ValueType.NAME.toString());
-		filtered = excludeUtil.filter(filtered, all);
+		filtered = excludeUtil.filter(filtered, all, null);
 		expected = toList("Work_Job", "My_Job");
 		assertListEquals(expected, filtered);
 	}
