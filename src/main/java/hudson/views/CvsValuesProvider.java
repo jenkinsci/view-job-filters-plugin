@@ -16,6 +16,7 @@ public class CvsValuesProvider implements ScmValuesProvider {
 		List<String> values = new ArrayList<String>();
 		values.add(cvs.getCvsRoot());
 		values.add(cvs.getAllModules());
+		values.add(cvs.getBranch());
 		return values;
 	}
 
