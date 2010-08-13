@@ -9,7 +9,7 @@
 
 	<artifactId>view-job-filters</artifactId>
 	<packaging>hpi</packaging>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.2</version>
 	<name>View Job Filters</name>
 	<description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well as "chaining" of filters and negating filters.</description>
 	<url>http://wiki.hudson-ci.org/display/HUDSON/View+Job+Filters</url>
@@ -42,4 +42,10 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/view-job-filters-1.2</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/view-job-filters-1.2</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/view-job-filters-1.2</url>
+  </scm>
 </project>
