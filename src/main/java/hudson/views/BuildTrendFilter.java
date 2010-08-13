@@ -18,7 +18,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 	
 	public static enum AmountType {
 		
-		Days(ONE_DAY_MS), Hours(ONE_HOUR_MS);
+		Days(ONE_DAY_MS), Hours(ONE_HOUR_MS), Builds(-1);
 		
 		private long divideByAmount;
 		AmountType(long divideByAmount) {
@@ -132,16 +132,25 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 			// iterate over runs and check conditions
 			Run run = job.getLastBuild();
 			boolean oneMatched = false;
+			int count = 0;
+			
 			
 			while (run != null) {
-				// get the amount of time since it last built
-				long now = System.currentTimeMillis();
-				long then = run.getTimeInMillis();
-				float diff = now - then;
-				diff = amountType.convertMillisToAmount(diff);
-				if (diff > amount) {
-					// no point in evaluating further - we've passed the duration
-					break;
+				count++;
+				// check the different types of durations to see if we've checked back far enough
+				if (amountType == AmountType.Builds) {
+					if (count > amount) {
+						break;
+					}
+				} else {
+					// get the amount of time since it last built
+					long now = System.currentTimeMillis();
+					long then = run.getTimeInMillis();
+					float diff = now - then;
+					diff = amountType.convertMillisToAmount(diff);
+					if (diff > amount) {
+						break;
+					}
 				}
 				// now evaluate the build status
 				boolean statusMatches = statusType.matches(run);
