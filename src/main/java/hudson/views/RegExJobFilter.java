@@ -24,7 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
 	static enum ValueType {
-		NAME, DESCRIPTION, SCM
+		NAME, DESCRIPTION, SCM, EMAIL
 	}
 	
 	transient private ValueType valueType;
@@ -60,11 +60,14 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     	} else if (valueType == ValueType.SCM) {
 	    	if (item instanceof SCMedItem) {
 	    		SCM scm = ((SCMedItem) item).getScm();
-	    		List<String> scmvalues = ScmFilterHelper.getValues(scm);
-	    		values.addAll(scmvalues);
+	    		List<String> scmValues = ScmFilterHelper.getValues(scm);
+	    		values.addAll(scmValues);
 	    	}
-    	} else { // if (valueType == ValueType.NAME) {
+    	} else if (valueType == ValueType.NAME) {
     		values.add(item.getName());
+    	} else if (valueType == ValueType.EMAIL) {
+    		List<String> emailValues = EmailValuesHelper.getValues(item);
+    		values.addAll(emailValues);
     	}
     	return values;
     }
