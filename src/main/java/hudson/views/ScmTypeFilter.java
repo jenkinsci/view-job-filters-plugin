@@ -23,18 +23,38 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		this.scmType = scmType;
 	}
 	
-	public String getScmType() {
-		return scmType;
+	@SuppressWarnings("unchecked")
+	public SCMDescriptor getScmType() {
+		List<SCMDescriptor> types = ((DescriptorImpl) getDescriptor()).getScmTypes();
+		for (SCMDescriptor type: types) {
+			if (matches(type)) {
+				return type;
+			}
+		}
+		return null;
+	}
+	@SuppressWarnings("unchecked")
+	private boolean matches(SCMDescriptor type) {
+		// this is the correct behavior
+		if (type.clazz.getName().equals(scmType)) {
+			return true;
+		}
+		// this is for backwards compatibility,
+		// but can fail due to localization
+		if (type.getDisplayName().equals(scmType)) {
+			return true;
+		}
+		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	boolean matches(TopLevelItem item) {
 		if (item instanceof SCMedItem) {
 			SCMedItem sitem = (SCMedItem) item;
 			SCM scm = sitem.getScm();
-			Descriptor<SCM> descriptor = scm.getDescriptor();
-			String name = descriptor.getDisplayName();
-			if (scmType.equals(name)) {
+			SCMDescriptor descriptor = scm.getDescriptor();
+			if (matches(descriptor)) {
 				return true;
 			}
 		}
@@ -53,12 +73,12 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public String getScmTestString() {
 			return getScmTypes().toString();
 		}
-		public List<String> getScmTypes() {
-			List<String> types = new ArrayList<String>();
+		@SuppressWarnings("unchecked")
+		public List<SCMDescriptor> getScmTypes() {
+			List<SCMDescriptor> types = new ArrayList<SCMDescriptor>();
 			DescriptorExtensionList<SCM, SCMDescriptor<?>> scms = SCM.all();
-			for (SCMDescriptor<?> scm: scms) {
-				String name = scm.getDisplayName();
-				types.add(name);
+			for (SCMDescriptor scm: scms) {
+				types.add(scm);
 			}
 			return types;
 		}

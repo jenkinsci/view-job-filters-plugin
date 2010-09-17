@@ -4,7 +4,7 @@
   <f:entry title="${%SCM Type}">
     <select name="scmType" class="setting-input">
     	<j:forEach var="type" items="${descriptor.getScmTypes()}">
-	      <f:option value="${type}" selected="${instance.scmType == type}">${type}</f:option>
+	      <f:option value="${type.clazz.name}" selected="${instance.scmType == type}">${type.displayName}</f:option>
       	</j:forEach>
     </select>
   </f:entry>
