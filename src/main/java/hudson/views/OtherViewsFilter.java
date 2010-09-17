@@ -5,8 +5,10 @@ import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
+import hudson.model.ViewGroup;
 import hudson.util.ListBoxModel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		super(includeExcludeTypeString);
 		this.otherViewName = otherViewName;
 		if (otherViewName != null){
-			this.otherView = Hudson.getInstance().getView(otherViewName);
+			this.otherView = getView(otherViewName);
 		}
 	}
 	
@@ -57,19 +59,14 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	
 	@Override
 	boolean matches(TopLevelItem item) {
-		// look at all views
-		Collection<View> views = Hudson.getInstance().getViews();
-		for (View view: views) {
-			String viewName = view.getViewName();
-			// narrow down to my "other view"
-			if (viewName.equals(getOtherViewName())) {
-				Collection<TopLevelItem> items = view.getItems();
-				for (TopLevelItem viewItem: items) {
-					// see if the item for "that" view matches the one we're checking
-					if (viewItem == item) {
-						return true;
-					}
-				}
+		View otherView = getOtherView();
+		Collection<TopLevelItem> items = otherView.getItems();
+		for (TopLevelItem viewItem: items) {
+			// see if the item for "that" view matches the one we're checking
+			// TODO evaluate recursing into ViewGroups here as well
+			//		not sure we want that, and it's not a backwards compatible change
+			if (viewItem == item) {
+				return true;
 			}
 		}
 		return false;
@@ -77,20 +74,20 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	Object writeReplace() {
 		// Right before persisting, try to account for any view name changes 
 		if (otherView != null) {
-			otherViewName = otherView.getViewName();
+			otherViewName = toName(otherView);
 		}
 		return this;
 	}
 	public View getOtherView() {
 		if (otherView == null && otherViewName != null) {
-			otherView = Hudson.getInstance().getView(otherViewName);
+			otherView = getView(otherViewName);
 		}
 		return otherView;
 	}
 	public String getOtherViewName() {
 		View got = getOtherView();
 		if (got != null) {
-			return got.getViewName();
+			return toName(got);
 		} else {
 			return null;
 		}
@@ -111,15 +108,17 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
             return "/plugin/view-job-filters/other-views-help.html";
         }
 		
+
         /**
-         * This method determines the values of the album drop-down list box.
+         * This method determines the values of the other views drop-down list box.
          */
         public ListBoxModel doFillOtherViewNameItems() throws ServletException {
             ListBoxModel m = new ListBoxModel();
-			Collection<View> views = Hudson.getInstance().getViews();
+			List<View> views = getAllViews();
+			
 			m.add(NO_VIEW_SELECTED);
 			for (View view: views) {
-				String viewName = view.getViewName();
+				String viewName = toName(view);
 				m.add(viewName);
 			}
             return m;
@@ -142,6 +141,54 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
         }
         */
         
+	}
+	private static void addViews(View view, List<View> views) {
+		if (view instanceof ViewGroup) {
+			ViewGroup group = (ViewGroup) view;
+			Collection<View> subViews = group.getViews();
+			for (View sub: subViews) {
+				addViews(sub, views);
+			}
+		} else {
+			views.add(view);
+		}
+	}
+	
+	public static List<View> getAllViews() {
+		Collection<View> baseViews = Hudson.getInstance().getViews();
+		
+		// build comprehensive list
+		List<View> views = new ArrayList<View>();
+		for (View view: baseViews) {
+			addViews(view, views);
+		}
+		return views;
+	}
+	
+	/**
+	 * Takes into account nested names.
+	 */
+	public static View getView(String name) {
+		Collection<View> views = getAllViews();
+		for (View view: views) {
+			String otherName = toName(view);
+			if (otherName.equals(name)) {
+				return view;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Alternate strategy for getting name, to handle nested views.
+	 */
+	private static String toName(View view) {
+		String name = view.getViewName();
+		ViewGroup owner = view.getOwner();
+		if (owner instanceof View && owner != view) {
+			String parentName = toName((View) owner);
+			name = parentName + " / " + name;
+		}
+		return name;
 	}
 
 }
