@@ -49,7 +49,7 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 	}
 
 	/**
-	 * Does this item show up in any other view?
+	 * Match when this item DOES NOT show up in any other view.
 	 */
 	boolean matches(TopLevelItem item, List<View> allViews, int allJobsCount) {
 		for (View otherView: allViews) {
