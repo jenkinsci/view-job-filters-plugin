@@ -14,7 +14,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 /**
  * Returns all jobs that don't show up in other jobs, not counting any "all jobs" views.
  * @author jacob
- *
  */
 public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 
