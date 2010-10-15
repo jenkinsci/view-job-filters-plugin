@@ -24,7 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
 	static enum ValueType {
-		NAME, DESCRIPTION, SCM, EMAIL
+		NAME, DESCRIPTION, SCM, EMAIL, MAVEN
 	}
 	
 	transient private ValueType valueType;
@@ -51,6 +51,9 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         return super.readResolve();
     }
 
+    /**
+     * TODO this pattern works fine, but it may be better to provide this as an extension.
+     */
     public List<String> getMatchValues(TopLevelItem item) {
     	List<String> values = new ArrayList<String>();
     	if (valueType == ValueType.DESCRIPTION) {
@@ -68,6 +71,9 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     	} else if (valueType == ValueType.EMAIL) {
     		List<String> emailValues = EmailValuesHelper.getValues(item);
     		values.addAll(emailValues);
+    	} else if (valueType == ValueType.MAVEN) {
+    		List<String> mavenValues = MavenValuesHelper.getValues(item);
+    		values.addAll(mavenValues);
     	}
     	return values;
     }
@@ -76,7 +82,10 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         List<String> matchValues = getMatchValues(item);
         boolean matched = false;
         for (String matchValue: matchValues) {
+        	// check null here so matchers don't have to
         	if (matchValue != null &&
+        				// this doesn't use "find" because that would be too inclusive, 
+        				// and at this point it might break existing people's regexes
 	        			pattern.matcher(matchValue).matches()) {
         		matched = true;
         		break;

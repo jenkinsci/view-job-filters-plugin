@@ -10,6 +10,7 @@
       <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
       <f:option value="SCM" selected="${instance.valueTypeString == 'SCM'}">${%Job SCM configuration}</f:option>
       <f:option value="EMAIL" selected="${instance.valueTypeString == 'EMAIL'}">${%Email recipients}</f:option>
+      <f:option value="MAVEN" selected="${instance.valueTypeString == 'MAVEN'}">${%Maven configuration}</f:option>
     </select>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
