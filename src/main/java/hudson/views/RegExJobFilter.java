@@ -52,7 +52,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     }
 
     /**
-     * TODO this pattern works fine, but it may be better to provide this as an extension.
+     * TODO this pattern works fine, but it may be better to provide this as a list of helpers.
      */
     public List<String> getMatchValues(TopLevelItem item) {
     	List<String> values = new ArrayList<String>();

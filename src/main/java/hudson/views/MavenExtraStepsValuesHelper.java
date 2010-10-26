@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Looks for maven extra steps plugin.
+ * 
  * @author jacob.robertson
  */
 public class MavenExtraStepsValuesHelper {
@@ -18,17 +19,19 @@ public class MavenExtraStepsValuesHelper {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof MavenModuleSet) {
 			MavenModuleSet set = (MavenModuleSet) item;
-			
+
 			List<BuildWrapper> wrappers = set.getBuildWrappersList().toList();
-			for (BuildWrapper wrapper: wrappers) {
+			for (BuildWrapper wrapper : wrappers) {
 				if (wrapper instanceof M2ExtraStepsWrapper) {
 					M2ExtraStepsWrapper mwrap = (M2ExtraStepsWrapper) wrapper;
-					MavenValuesHelper.addValues(values, mwrap.getPreBuildSteps());
-					MavenValuesHelper.addValues(values, mwrap.getPostBuildSteps());
+					MavenValuesHelper.addValues(values, mwrap
+							.getPreBuildSteps());
+					MavenValuesHelper.addValues(values, mwrap
+							.getPostBuildSteps());
 				}
 			}
 		}
 		return values;
 	}
-	
+
 }

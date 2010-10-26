@@ -16,7 +16,7 @@ public class MavenValuesHelper {
 	 */
 	private static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
 	private static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
@@ -35,9 +35,10 @@ public class MavenValuesHelper {
 		}
 		return values;
 	}
+
 	public static void addValues(List<String> values, List<Builder> builders) {
 		if (builders != null) {
-			for (Builder builder: builders) {
+			for (Builder builder : builders) {
 				if (builder instanceof Maven) {
 					Maven maven = (Maven) builder;
 					values.add(getTargets(maven));
@@ -52,11 +53,13 @@ public class MavenValuesHelper {
 			}
 		}
 	}
+
 	private static String getTargets(Maven maven) {
 		String t = maven.getTargets();
 		t = normalize(t);
 		return t;
 	}
+
 	static String normalize(String s) {
 		if (s != null) {
 			// required to match regex
@@ -64,7 +67,7 @@ public class MavenValuesHelper {
 		}
 		return s;
 	}
-	
+
 	private static MavenProjectValuesHelper buildMavenProjectValuesHelper() {
 		try {
 			return new MavenProjectValuesHelper();
@@ -73,6 +76,7 @@ public class MavenValuesHelper {
 			return null;
 		}
 	}
+
 	private static MavenExtraStepsValuesHelper buildMavenExtraStepsValuesHelper() {
 		try {
 			return new MavenExtraStepsValuesHelper();
