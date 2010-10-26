@@ -39,7 +39,8 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
     			filtered.add(item);
     		}
         }
-        return filtered;
+        List<TopLevelItem> sorted = sortByAll(filtered, all);
+        return sorted;
     }
 
 	@Override

@@ -60,7 +60,14 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
     			filtered.add(item);
     		}
         }
-        return filtered;
+        List<TopLevelItem> sorted = sortByAll(filtered, all);
+        return sorted;
+    }
+    
+    public static List<TopLevelItem> sortByAll(List<TopLevelItem> filtered, List<TopLevelItem> all) {
+    	List<TopLevelItem> sorted = new ArrayList<TopLevelItem>(all);
+    	sorted.retainAll(filtered);
+    	return sorted;
     }
 
     public boolean include(boolean matched) {
