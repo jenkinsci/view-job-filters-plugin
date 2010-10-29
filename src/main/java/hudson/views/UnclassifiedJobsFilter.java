@@ -5,6 +5,7 @@ import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,17 +28,15 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 		allViews.remove(filteringView);
 		
 		int allJobsCount = all.size();
+		List<TopLevelItem> classified = getAllClassifiedItems(allViews, allJobsCount);
 		
         for (TopLevelItem item: all) {
-        	boolean matched = matches(item, allViews, allJobsCount);
+        	boolean matched = !classified.contains(item);
     		filterItem(filtered, item, matched);
         }
     }
-
-	/**
-	 * Match when this item DOES NOT show up in any other view.
-	 */
-	boolean matches(TopLevelItem item, List<View> allViews, int allJobsCount) {
+    private List<TopLevelItem> getAllClassifiedItems(List<View> allViews, int allJobsCount) {
+    	List<TopLevelItem> classified = new ArrayList<TopLevelItem>();
 		for (View otherView: allViews) {
 			Collection<TopLevelItem> items = otherView.getItems();
 			// do not bother looking at views that already contain all items
@@ -45,19 +44,12 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 			//		I care about this, because I have an AllJobsFilter, but anyone could have set up an ".*" regex, etc
 			// the disadvantage is that if some view just happens to cover all views (perhaps it happens over time)
 			//		then suddenly this filter stops accounting for that view
-			if (allJobsCount == items.size()) {
-				continue;
-			}
-			for (TopLevelItem otherViewItem: items) {
-				if (otherViewItem == item) {
-					// we found this item, so we will not match
-					return false;
-				}
+			if (items.size() < allJobsCount) {
+				classified.addAll(items);
 			}
 		}
-		// if we get here it means this item was not found in any other view
-		return true;
-	}
+    	return classified;
+    }
 	
 	@Extension
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
