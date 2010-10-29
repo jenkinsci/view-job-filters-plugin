@@ -49,7 +49,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	boolean matches(TopLevelItem item) {
+	protected boolean matches(TopLevelItem item) {
 		if (item instanceof SCMedItem) {
 			SCMedItem sitem = (SCMedItem) item;
 			SCM scm = sitem.getScm();

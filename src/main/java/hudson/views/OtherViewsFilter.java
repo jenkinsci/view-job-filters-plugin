@@ -44,33 +44,23 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		}
 	}
 	
-	@Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
+    @Override
+    protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
     	if (getOtherView() == null) {
     		// happens when a view is deleted and this filter doesn't know about it (known issue)
-    		return added;
+    		return;
     	} else if (getOtherView() == filteringView) {
     		// happens when you select the view recursively
-        	return added;
+        	return;
     	} else {
-    		return super.filter(added, all, filteringView);
+	    	Collection<TopLevelItem> otherViewItems = getOtherView().getItems();
+	        for (TopLevelItem item: all) {
+	        	boolean matched = otherViewItems.contains(item);
+	        	filterItem(filtered, item, matched);
+	        }
     	}
     }
 	
-	@Override
-	boolean matches(TopLevelItem item) {
-		View otherView = getOtherView();
-		Collection<TopLevelItem> items = otherView.getItems();
-		for (TopLevelItem viewItem: items) {
-			// see if the item for "that" view matches the one we're checking
-			// TODO evaluate recursing into ViewGroups here as well
-			//		not sure we want that, and it's not a backwards compatible change
-			if (viewItem == item) {
-				return true;
-			}
-		}
-		return false;
-	}
 	Object writeReplace() {
 		// Right before persisting, try to account for any view name changes 
 		if (otherView != null) {
@@ -168,7 +158,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	/**
 	 * Takes into account nested names.
 	 */
-	public static View getView(String name) {
+	private View getView(String name) {
 		Collection<View> views = getAllViews();
 		for (View view: views) {
 			String otherName = toName(view);

@@ -48,26 +48,34 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
 		return includeExcludeTypeString;
 	}
 
+	/**
+	 * Subclasses should not have to override this method.
+	 */
     @Override
     public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
     	List<TopLevelItem> filtered = new ArrayList<TopLevelItem>(added);
-        for (TopLevelItem item: all) {
-        	boolean matched = matches(item);
-    		if (exclude(matched)) {
-    			filtered.remove(item);
-    		}
-    		if (include(matched) && !filtered.contains(item)) {
-    			filtered.add(item);
-    		}
-        }
-        List<TopLevelItem> sorted = sortByAll(filtered, all);
-        return sorted;
-    }
-    
-    public static List<TopLevelItem> sortByAll(List<TopLevelItem> filtered, List<TopLevelItem> all) {
+    	doFilter(filtered, all, filteringView);
+    	
     	List<TopLevelItem> sorted = new ArrayList<TopLevelItem>(all);
     	sorted.retainAll(filtered);
-    	return sorted;
+        return sorted;
+    }
+    /**
+     * Subclasses needing more control over how the lists are filtered should override this method.
+     */
+    protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
+        for (TopLevelItem item: all) {
+        	boolean matched = matches(item);
+        	filterItem(filtered, item, matched);
+        }
+    }
+    protected final void filterItem(List<TopLevelItem> filtered, TopLevelItem item, boolean matched) {
+		if (exclude(matched)) {
+			filtered.remove(item);
+		}
+		if (include(matched) && !filtered.contains(item)) {
+			filtered.add(item);
+		}
     }
 
     public boolean include(boolean matched) {
@@ -89,6 +97,8 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
     		return false;
     	}
     }
-    abstract boolean matches(TopLevelItem item);
+    protected boolean matches(TopLevelItem item) {
+    	return false;
+    }
 
 }

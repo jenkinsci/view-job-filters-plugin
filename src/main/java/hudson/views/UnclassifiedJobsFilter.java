@@ -5,7 +5,6 @@ import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,30 +22,17 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 	}
 	
     @Override
-    public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
+    protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
     	List<View> allViews = OtherViewsFilter.getAllViews();
 		allViews.remove(filteringView);
 		
 		int allJobsCount = all.size();
 		
-    	List<TopLevelItem> filtered = new ArrayList<TopLevelItem>(added);
         for (TopLevelItem item: all) {
         	boolean matched = matches(item, allViews, allJobsCount);
-    		if (exclude(matched)) {
-    			filtered.remove(item);
-    		}
-    		if (include(matched) && !filtered.contains(item)) {
-    			filtered.add(item);
-    		}
+    		filterItem(filtered, item, matched);
         }
-        List<TopLevelItem> sorted = sortByAll(filtered, all);
-        return sorted;
     }
-
-	@Override
-	boolean matches(TopLevelItem item) {
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * Match when this item DOES NOT show up in any other view.

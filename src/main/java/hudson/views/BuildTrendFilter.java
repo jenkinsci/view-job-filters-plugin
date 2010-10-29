@@ -125,7 +125,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
     }
 	
 	@SuppressWarnings("unchecked")
-	boolean matches(TopLevelItem item) {
+	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;
 			

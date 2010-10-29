@@ -66,7 +66,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	boolean matches(TopLevelItem item) {
+	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;
 			ParametersDefinitionProperty property = 
