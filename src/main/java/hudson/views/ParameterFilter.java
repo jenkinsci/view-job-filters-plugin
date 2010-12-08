@@ -8,11 +8,14 @@ import hudson.model.FileParameterValue;
 import hudson.model.Job;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
+import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
+import hudson.model.Run;
 import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,12 +31,18 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 
 	private String descriptionRegex;
 	transient private Pattern descriptionPattern;
+	
+	/**
+	 * Default is true to help backwards compatibility when deserializing.
+	 */
+	private Boolean useDefaultValue = Boolean.TRUE;
 
 	@DataBoundConstructor
 	public ParameterFilter(String includeExcludeTypeString,
 			String nameRegex,
 			String valueRegex, 
-			String descriptionRegex) {
+			String descriptionRegex,
+			boolean useDefaultValue) {
 		super(includeExcludeTypeString);
 		this.nameRegex = nameRegex;
 		this.valueRegex = valueRegex;
@@ -41,6 +50,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		this.namePattern = toPattern(nameRegex);
 		this.valuePattern = toPattern(valueRegex);
 		this.descriptionPattern = toPattern(descriptionRegex);
+		this.useDefaultValue = useDefaultValue;
 	}
 
     Object readResolve() {
@@ -52,6 +62,10 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
         }
         if (descriptionRegex != null) {
         	descriptionPattern = toPattern(descriptionRegex);
+        }
+        // backwards compatible - only matters for older xml files
+        if (useDefaultValue == null) {
+        	useDefaultValue = Boolean.TRUE;
         }
         return super.readResolve();
     }
@@ -69,29 +83,63 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;
-			ParametersDefinitionProperty property = 
-				(ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
 			
-			if (property != null) {
-				List<ParameterDefinition> defs = property.getParameterDefinitions();
-				for (ParameterDefinition def: defs) {
-					if (matches(def)) {
-						return true;
-					}
+			if (useDefaultValue) {
+				return matchesDefaultValue(job);
+			} else {
+				return matchesBuildValue(job);
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected boolean matchesDefaultValue(Job job) {
+		ParametersDefinitionProperty property = 
+			(ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
+		if (property != null) {
+			List<ParameterDefinition> defs = property.getParameterDefinitions();
+			for (ParameterDefinition def: defs) {
+				boolean multiline = isValueMultiline(def);
+				String svalue = getStringValue(def);
+				boolean matches = matchesParameter(def.getName(), svalue, multiline, def.getDescription());
+				if (matches) {
+					return true;
 				}
 			}
 		}
 		return false;
 	}
-	public boolean matches(ParameterDefinition definition) {
-		if (!matches(namePattern, definition.getName())) {
+
+	@SuppressWarnings("unchecked")
+	protected boolean matchesBuildValue(Job job) {
+		Run run = job.getLastCompletedBuild();
+		if (run == null) {
 			return false;
 		}
-		String sval = getStringValue(definition);
-		if (!matches(valuePattern, sval)) {
+		ParametersAction action = run.getAction(ParametersAction.class);
+		if (action == null) {
 			return false;
 		}
-		if (!matches(descriptionPattern, definition.getDescription())) {
+		// look for one parameter value that matches our criteria
+		for (ParameterValue value: action.getParameters()) {
+			String sval = getStringValue(value);
+			if (matchesParameter(value.getName(), sval, false, null)) {
+				return true;
+			}
+		}
+		// no parameters matched the criteria
+		return false;
+	}
+	public boolean matchesParameter(String name, String value, boolean isValueMultiline, String description) {
+		if (!matches(namePattern, name, false)) {
+			return false;
+		}
+		if (!matches(valuePattern, value, isValueMultiline)) {
+			return false;
+		}
+		// description will be null if we're looking at the build (as opposed to the job)
+		if (description != null && !matches(descriptionPattern, description, true)) {
 			return false;
 		}
 		return true;
@@ -101,35 +149,47 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	 * Do our best to get the value out.
 	 * There might be a better way to do this.
 	 */
-	private String getStringValue(ParameterDefinition definition) {
+	protected String getStringValue(ParameterDefinition definition) {
 		if (definition instanceof ChoiceParameterDefinition) {
 			return ((ChoiceParameterDefinition) definition).getChoicesText();
 		} else {
 			ParameterValue value = definition.getDefaultParameterValue();
-			if (value instanceof StringParameterValue) {
-				return ((StringParameterValue) value).value;
-			} else if (value instanceof BooleanParameterValue) {
-				boolean bval = ((BooleanParameterValue) value).value;
-				return String.valueOf(bval);
-			} else if (value instanceof FileParameterValue) {
-				// not the full path - just the name
-				// this is the only public value available to us
-				String file = ((FileParameterValue) value).getOriginalFileName();
-				return file;
-			}
+			return getStringValue(value);
 		}
-		return null;
+	}
+	private boolean isValueMultiline(ParameterDefinition def) {
+		return (def instanceof ChoiceParameterDefinition);
+	}
+	protected String getStringValue(ParameterValue value) {
+		if (value instanceof StringParameterValue) {
+			return ((StringParameterValue) value).value;
+		} else if (value instanceof BooleanParameterValue) {
+			boolean bval = ((BooleanParameterValue) value).value;
+			return String.valueOf(bval);
+		} else if (value instanceof FileParameterValue) {
+			// not the full path - just the name
+			// this is the only public value available to us
+			String file = ((FileParameterValue) value).getOriginalFileName();
+			return file;
+		} else {
+			return null;
+		}
 	}
 	
-	private boolean matches(Pattern p, String m) {
+	private boolean matches(Pattern p, String m, boolean multiline) {
 		if (p == null) {
 			return true;
 		} else if (m == null) {
 			// only happens if the param is of a type we don't know?
 			return false;
 		} else {
-			// using "find" allows us to work over multi-lines
-			return p.matcher(m).find();
+			Matcher matcher = p.matcher(m);
+			if (multiline) {
+				// using "find" allows us to work over multi-lines
+				return matcher.find();
+			} else {
+				return matcher.matches();
+			}
 		}
 	}
 
@@ -143,6 +203,10 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 
 	public String getDescriptionRegex() {
 		return descriptionRegex;
+	}
+	
+	public boolean isUseDefaultValue() {
+		return useDefaultValue;
 	}
 
 	@Extension
