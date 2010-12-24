@@ -103,7 +103,7 @@ public class RegExJobFilterTest extends TestCase {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private class TestItem extends Job implements SCMedItem, TopLevelItem {
 
 		private SCM scm;

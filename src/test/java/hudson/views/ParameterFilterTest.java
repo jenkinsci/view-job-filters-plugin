@@ -1,24 +1,21 @@
 package hudson.views;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
 import hudson.model.Action;
+import hudson.model.FreeStyleBuild;
+import hudson.model.ParameterValue;
 import hudson.model.Cause;
 import hudson.model.ChoiceParameterDefinition;
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.ParameterDefinition;
-import hudson.model.ParameterValue;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.StringParameterValue;
 
-import net.sf.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 import org.jvnet.hudson.test.HudsonTestCase;
-import org.kohsuke.stapler.StaplerRequest;
 
 public class ParameterFilterTest extends HudsonTestCase {
 

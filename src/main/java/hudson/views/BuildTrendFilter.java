@@ -36,7 +36,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 	
 	public static enum StatusType {
 		Started() {
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings("rawtypes")
 			@Override
 			public boolean matches(Run run) {
 				return !run.hasntStartedYet();
@@ -77,7 +77,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 			}
 		};
 		
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public boolean matches(Run run) {
 			return matches(run.getResult());
 		}
@@ -124,7 +124,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
         return super.readResolve();
     }
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;

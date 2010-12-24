@@ -23,7 +23,7 @@ public class BuildStatusFilter extends AbstractIncludeExcludeJobFilter {
 		this.building = building;
 		this.inBuildQueue = inBuildQueue;
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;

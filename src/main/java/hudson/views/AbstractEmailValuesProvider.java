@@ -11,7 +11,7 @@ import java.util.List;
 
 public abstract class AbstractEmailValuesProvider {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof AbstractProject) {

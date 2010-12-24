@@ -17,7 +17,7 @@ public class MavenValuesHelper {
 	private static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
 	private static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof Project) {

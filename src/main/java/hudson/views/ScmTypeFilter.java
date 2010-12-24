@@ -23,7 +23,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		this.scmType = scmType;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public SCMDescriptor getScmType() {
 		List<SCMDescriptor> types = ((DescriptorImpl) getDescriptor()).getScmTypes();
 		for (SCMDescriptor type: types) {
@@ -33,7 +33,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		return null;
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private boolean matches(SCMDescriptor type) {
 		// this is the correct behavior
 		if (type.clazz.getName().equals(scmType)) {
@@ -47,7 +47,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof SCMedItem) {
@@ -73,7 +73,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public String getScmTestString() {
 			return getScmTypes().toString();
 		}
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 		public List<SCMDescriptor> getScmTypes() {
 			List<SCMDescriptor> types = new ArrayList<SCMDescriptor>();
 			DescriptorExtensionList<SCM, SCMDescriptor<?>> scms = SCM.all();

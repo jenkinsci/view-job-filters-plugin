@@ -29,7 +29,7 @@ public class JobStatusFilter extends AbstractIncludeExcludeJobFilter {
 		this.disabled = disabled;
 		this.stable = stable;
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof AbstractProject) {
 			AbstractProject project = (AbstractProject) item;

@@ -78,7 +78,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
     	}
     }
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
@@ -93,7 +93,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected boolean matchesDefaultValue(Job job) {
 		ParametersDefinitionProperty property = 
 			(ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
@@ -111,7 +111,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	protected boolean matchesBuildValue(Job job) {
 		Run run = job.getLastCompletedBuild();
 		if (run == null) {
