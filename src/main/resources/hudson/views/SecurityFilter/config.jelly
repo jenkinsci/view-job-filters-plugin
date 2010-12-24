@@ -3,8 +3,8 @@
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <f:entry>
   	<select name="permissionCheckType">
-      <f:option value="MustMatchAll" selected="${instance.permissionCheckType == 'MustMatchAll'}">${%Match jobs for which the current user has all of these permissions}</f:option>
-      <f:option value="AtLeastOne" selected="${instance.permissionCheckType == 'AtLeastOne'}">${%Match jobs for which current user has at least one of these permissions}</f:option>
+      <f:option value="MustMatchAll" selected="${instance.permissionCheckType == 'MustMatchAll'}">${%Must Match All - Match jobs for which the current user has all of these permissions}</f:option>
+      <f:option value="AtLeastOne" selected="${instance.permissionCheckType == 'AtLeastOne'}">${%Match At Least One - Match jobs for which current user has at least one of these permissions}</f:option>
     </select>
     <br/>
     <f:checkbox name="configure" field="configure"/> ${%Configure} <br/>
