@@ -23,14 +23,22 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		this.jobType = jobType;
 	}
 
-	public TopLevelItemDescriptor getJobType() {
+	/**
+	 * Used to display the selected option.
+	 * TODO still does not work in IE 7 (Tested on Version 7.0.5730.11)
+	 * 	- will work if we change this class/jelly to be exactly the way the ScmTypeFilter is.
+	 *  - the observed behavior at this time is that the selection 
+	 *  	will always display the first option regardless of what was saved 
+	 */
+	public String getJobType() {
 		for (TopLevelItemDescriptor type: Items.all()) {
 			if (matches(type)) {
-				return type;
+				return type.clazz.getName();
 			}
 		}
 		return null;
 	}
+
 
 	private boolean matches(TopLevelItemDescriptor type) {
         return type.clazz.getName().equals(jobType);
@@ -51,7 +59,7 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public ListBoxModel doFillJobTypeItems() {
             ListBoxModel r = new ListBoxModel();
             for (TopLevelItemDescriptor type: Items.all()) {
-                r.add(type.getDisplayName(),type.clazz.getName());
+                r.add(type.getDisplayName(), type.clazz.getName());
             }
 			return r;
 		}
