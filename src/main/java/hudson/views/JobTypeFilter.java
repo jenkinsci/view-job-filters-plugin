@@ -1,11 +1,15 @@
 package hudson.views;
 
+import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Items;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
-import hudson.util.ListBoxModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -23,22 +27,14 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		this.jobType = jobType;
 	}
 
-	/**
-	 * Used to display the selected option.
-	 * TODO still does not work in IE 7 (Tested on Version 7.0.5730.11)
-	 * 	- will work if we change this class/jelly to be exactly the way the ScmTypeFilter is.
-	 *  - the observed behavior at this time is that the selection 
-	 *  	will always display the first option regardless of what was saved 
-	 */
-	public String getJobType() {
+	public TopLevelItemDescriptor getJobType() {
 		for (TopLevelItemDescriptor type: Items.all()) {
 			if (matches(type)) {
-				return type.clazz.getName();
+				return type;
 			}
 		}
 		return null;
 	}
-
 
 	private boolean matches(TopLevelItemDescriptor type) {
         return type.clazz.getName().equals(jobType);
@@ -55,13 +51,13 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public String getDisplayName() {
 			return "Job Type Filter";
 		}
-
-		public ListBoxModel doFillJobTypeItems() {
-            ListBoxModel r = new ListBoxModel();
-            for (TopLevelItemDescriptor type: Items.all()) {
-                r.add(type.getDisplayName(), type.clazz.getName());
-            }
-			return r;
+		public List<TopLevelItemDescriptor> getJobTypes() {
+			List<TopLevelItemDescriptor> types = new ArrayList<TopLevelItemDescriptor>();
+			DescriptorExtensionList<TopLevelItem, TopLevelItemDescriptor> all = Items.all();
+			for (TopLevelItemDescriptor one: all) {
+				types.add(one);
+			}
+			return types;
 		}
 	}
 }
