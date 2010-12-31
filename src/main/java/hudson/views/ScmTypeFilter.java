@@ -70,9 +70,6 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
         public String getHelpFile() {
             return "/plugin/view-job-filters/scm-help.html";
         }
-		public String getScmTestString() {
-			return getScmTypes().toString();
-		}
 		@SuppressWarnings("rawtypes")
 		public List<SCMDescriptor> getScmTypes() {
 			List<SCMDescriptor> types = new ArrayList<SCMDescriptor>();
