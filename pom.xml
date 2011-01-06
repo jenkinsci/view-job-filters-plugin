@@ -59,6 +59,17 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<profiles>
 		<profile>
 			<id>cobertura2</id>
@@ -101,5 +112,12 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<distributionManagement>
+		<repository>
+			<id>java.net-m2-repository</id>
+			<url>http://maven.hudson-labs.org:8081/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
 
 </project>
