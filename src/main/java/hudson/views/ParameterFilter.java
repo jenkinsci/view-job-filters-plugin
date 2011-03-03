@@ -36,13 +36,18 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	 * Default is true to help backwards compatibility when deserializing.
 	 */
 	private Boolean useDefaultValue = Boolean.TRUE;
+	
+	private boolean matchBuildsInProgress;
+	private boolean matchAllBuilds;
 
 	@DataBoundConstructor
 	public ParameterFilter(String includeExcludeTypeString,
 			String nameRegex,
 			String valueRegex, 
 			String descriptionRegex,
-			boolean useDefaultValue) {
+			boolean useDefaultValue,
+			boolean matchAllBuilds,
+			boolean matchBuildsInProgress) {
 		super(includeExcludeTypeString);
 		this.nameRegex = nameRegex;
 		this.valueRegex = valueRegex;
@@ -51,6 +56,8 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		this.valuePattern = toPattern(valueRegex);
 		this.descriptionPattern = toPattern(descriptionRegex);
 		this.useDefaultValue = useDefaultValue;
+		this.matchAllBuilds = matchAllBuilds;
+		this.matchBuildsInProgress = matchBuildsInProgress;
 	}
 
     Object readResolve() {
@@ -113,10 +120,25 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 
 	@SuppressWarnings("rawtypes")
 	protected boolean matchesBuildValue(Job job) {
-		Run run = job.getLastCompletedBuild();
-		if (run == null) {
-			return false;
+		boolean matched = false;
+		Run run = job.getLastBuild();
+		while (run != null && !matched) {
+			// only match against the builds we care about
+			boolean isBuilding = run.isBuilding();
+			if (matchBuildsInProgress || !isBuilding) {
+				matched = matchesBuildValue(run);
+				// now that we've checked one build, see if we should stop
+				if (!matchAllBuilds) {
+					break;
+				}
+			}
+			run = run.getPreviousBuild();
 		}
+		
+		return matched;
+	}
+	@SuppressWarnings("rawtypes")
+	protected boolean matchesBuildValue(Run run) {
 		ParametersAction action = run.getAction(ParametersAction.class);
 		if (action == null) {
 			return false;
@@ -207,6 +229,14 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	
 	public boolean isUseDefaultValue() {
 		return useDefaultValue;
+	}
+	
+	public boolean isMatchAllBuilds() {
+		return matchAllBuilds;
+	}
+	
+	public boolean isMatchBuildsInProgress() {
+		return matchBuildsInProgress;
 	}
 
 	@Extension

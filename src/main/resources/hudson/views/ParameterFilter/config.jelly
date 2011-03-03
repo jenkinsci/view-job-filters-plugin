@@ -10,6 +10,12 @@
   <f:entry help="/plugin/view-job-filters/parameter-default-help.html">
       <f:checkbox name="useDefaultValue" field="useDefaultValue"/> ${%Match the configured default values instead of the actual value from last successful build}
   </f:entry>
+  <f:entry>
+      <f:checkbox name="matchAllBuilds" field="matchAllBuilds"/> ${%Match against any build in the build history, not just the last build}
+  </f:entry>
+  <f:entry>
+      <f:checkbox name="matchBuildsInProgress" field="matchBuildsInProgress"/> ${%Match against builds in progress}
+  </f:entry>
   <f:entry title="${%Description}">
       <f:textbox name="descriptionRegex" field="descriptionRegex" />
   </f:entry>
