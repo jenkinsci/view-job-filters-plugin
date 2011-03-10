@@ -1,5 +1,6 @@
 package hudson.views;
 
+import hudson.matrix.MatrixProject;
 import hudson.model.Project;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Builder;
@@ -22,6 +23,11 @@ public class MavenValuesHelper {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof Project) {
 			Project project = (Project) item;
+			List<Builder> builders = project.getBuilders();
+			addValues(values, builders);
+		}
+		if(item instanceof MatrixProject) {
+			MatrixProject project = (MatrixProject) item;
 			List<Builder> builders = project.getBuilders();
 			addValues(values, builders);
 		}
