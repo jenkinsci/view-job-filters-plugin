@@ -18,7 +18,9 @@ public class MavenProjectValuesHelper {
 		if (item instanceof MavenModuleSet) {
 			MavenModuleSet set = (MavenModuleSet) item;
 			values.add(set.getMavenOpts());
-			values.add(set.getMaven().getName());
+			if (set.getMaven() != null) {
+				values.add(set.getMaven().getName());
+			}
 			values.add(set.getAlternateSettings());
 
 			String goals = set.getGoals();

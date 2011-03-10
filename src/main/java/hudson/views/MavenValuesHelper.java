@@ -18,15 +18,14 @@ public class MavenValuesHelper {
 	private static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
 	private static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	public static List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof Project) {
 			Project project = (Project) item;
 			List<Builder> builders = project.getBuilders();
 			addValues(values, builders);
-		}
-		if(item instanceof MatrixProject) {
+		} else if (item instanceof MatrixProject) {
 			MatrixProject project = (MatrixProject) item;
 			List<Builder> builders = project.getBuilders();
 			addValues(values, builders);
