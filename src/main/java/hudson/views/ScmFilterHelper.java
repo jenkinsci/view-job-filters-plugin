@@ -35,6 +35,11 @@ public class ScmFilterHelper {
 		} catch (Throwable e) {
 			// probably not loaded
 		}
+		try {
+			matchers.add(buildGit());
+		} catch (Throwable e) {
+			// probably not loaded
+		}
 		return matchers;
 	}
 	private static ScmValuesProvider buildSvn() {
@@ -42,6 +47,19 @@ public class ScmFilterHelper {
 	}
 	private static ScmValuesProvider buildCvs() {
 		return new CvsValuesProvider();
+	}
+	private static ScmValuesProvider buildGit() {
+		// try both providers to allow legacy data format for git api
+		// look for the legacy provider first, because it is backwards compatible
+		ScmValuesProvider provider = null;
+		try {
+			provider = new GitLegacyValuesProvider();
+		} catch (Throwable e) {
+			// if we get here it means the legacy api isn't present
+			// if this constructor fails too, it means git isn't present at all
+			provider = new GitValuesProvider();
+		}
+		return provider;
 	}
 	
 }

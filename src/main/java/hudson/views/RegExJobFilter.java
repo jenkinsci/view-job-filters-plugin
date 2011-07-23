@@ -24,7 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
 	static enum ValueType {
-		NAME, DESCRIPTION, SCM, EMAIL, MAVEN
+		NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE
 	}
 	
 	transient private ValueType valueType;
@@ -74,6 +74,9 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     	} else if (valueType == ValueType.MAVEN) {
     		List<String> mavenValues = MavenValuesHelper.getValues(item);
     		values.addAll(mavenValues);
+    	} else if (valueType == ValueType.SCHEDULE) {
+    		List<String> scheduleValues = TriggerFilterHelper.getValues(item);
+    		values.addAll(scheduleValues);
     	}
     	return values;
     }
