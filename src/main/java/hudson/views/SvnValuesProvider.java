@@ -9,6 +9,11 @@ import java.util.List;
 
 public class SvnValuesProvider implements ScmValuesProvider {
 
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return ModuleLocation.class;
+	}
+	
 	public List<String> getValues(SCM scm) {
 		if (!(scm instanceof SubversionSCM)) {
 			return null;

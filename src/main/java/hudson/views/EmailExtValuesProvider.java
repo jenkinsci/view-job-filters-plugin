@@ -15,5 +15,8 @@ public class EmailExtValuesProvider extends AbstractEmailValuesProvider {
 		ExtendedEmailPublisher mailer = (ExtendedEmailPublisher) publisher;
 		return mailer.recipientList;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return ExtendedEmailPublisher.class;
+	}
 }

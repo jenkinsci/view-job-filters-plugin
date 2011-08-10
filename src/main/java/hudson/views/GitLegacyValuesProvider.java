@@ -6,9 +6,9 @@ import org.spearce.jgit.transport.URIish;
 
 public class GitLegacyValuesProvider extends GitValuesProvider {
 
-	public GitLegacyValuesProvider() {
-		// perform some check to ensure the right classes are loaded
-		new org.spearce.jgit.transport.RemoteConfig();
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return URIish.class;
 	}
 	
 	public void addRepositoryValues(Object repoObject, List<String> values) {

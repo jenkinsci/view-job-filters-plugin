@@ -4,6 +4,7 @@ import hudson.maven.MavenModuleSet;
 import hudson.model.TopLevelItem;
 import hudson.plugins.m2extrasteps.M2ExtraStepsWrapper;
 import hudson.tasks.BuildWrapper;
+import hudson.views.PluginHelperUtils.PluginHelperTestable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * 
  * @author jacob.robertson
  */
-public class MavenExtraStepsValuesHelper {
+public class MavenExtraStepsValuesHelper implements PluginHelperTestable {
 
 	public List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
@@ -33,5 +34,8 @@ public class MavenExtraStepsValuesHelper {
 		}
 		return values;
 	}
-
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return M2ExtraStepsWrapper.class;
+	}
 }

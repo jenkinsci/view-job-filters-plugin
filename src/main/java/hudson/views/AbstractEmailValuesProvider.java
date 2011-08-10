@@ -5,11 +5,12 @@ import hudson.model.Descriptor;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
+import hudson.views.PluginHelperUtils.PluginHelperTestable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractEmailValuesProvider {
+public abstract class AbstractEmailValuesProvider implements PluginHelperTestable {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<String> getValues(TopLevelItem item) {

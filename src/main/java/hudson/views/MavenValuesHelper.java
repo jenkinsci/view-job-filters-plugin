@@ -15,8 +15,8 @@ public class MavenValuesHelper {
 	/**
 	 * If I add any more helpers, switch to a better design first.
 	 */
-	private static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
-	private static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
+	public static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
+	public static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
 
 	@SuppressWarnings({ "unchecked" })
 	public static List<String> getValues(TopLevelItem item) {
@@ -75,7 +75,7 @@ public class MavenValuesHelper {
 
 	private static MavenProjectValuesHelper buildMavenProjectValuesHelper() {
 		try {
-			return new MavenProjectValuesHelper();
+			return PluginHelperUtils.validateAndThrow(new MavenProjectValuesHelper());
 		} catch (Throwable t) {
 			// necessary maven plugins not installed
 			return null;
@@ -84,7 +84,7 @@ public class MavenValuesHelper {
 
 	private static MavenExtraStepsValuesHelper buildMavenExtraStepsValuesHelper() {
 		try {
-			return new MavenExtraStepsValuesHelper();
+			return PluginHelperUtils.validateAndThrow(new MavenExtraStepsValuesHelper());
 		} catch (Throwable t) {
 			// necessary maven plugins not installed
 			return null;

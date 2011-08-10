@@ -29,6 +29,20 @@ import junit.framework.TestCase;
 public class RegExJobFilterTest extends TestCase {
 
 	/**
+	 * Test all the helpers to see that no exceptions are thrown.
+	 */
+	public void testHelpers() {
+		PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
+		PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
+		PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
+		PluginHelperUtils.validateAndThrow(new GitLegacyValuesProvider());
+		PluginHelperUtils.validateAndThrow(new GitValuesProvider());
+		PluginHelperUtils.validateAndThrow(new MavenExtraStepsValuesHelper());
+		PluginHelperUtils.validateAndThrow(new MavenProjectValuesHelper());
+		PluginHelperUtils.validateAndThrow(new SvnValuesProvider());
+	}
+	
+	/**
 	 * Tests that the example given in the help page works as described.
 	 */
 	public void testHelpExample() {

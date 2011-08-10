@@ -15,5 +15,8 @@ public class CoreEmailValuesProvider extends AbstractEmailValuesProvider {
 		Mailer mailer = (Mailer) publisher;
 		return mailer.recipients;
 	}
-	
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return Mailer.class;
+	}
 }

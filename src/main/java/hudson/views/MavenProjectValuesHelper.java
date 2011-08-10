@@ -11,7 +11,7 @@ import java.util.List;
  * 
  * @author jacob.robertson
  */
-public class MavenProjectValuesHelper {
+public class MavenProjectValuesHelper implements PluginHelperUtils.PluginHelperTestable {
 
 	public List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
@@ -29,5 +29,8 @@ public class MavenProjectValuesHelper {
 		}
 		return values;
 	}
-
+	@SuppressWarnings("unchecked")
+	public Class getPluginTesterClass() {
+		return MavenModuleSet.class;
+	}
 }

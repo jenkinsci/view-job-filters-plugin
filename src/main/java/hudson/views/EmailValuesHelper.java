@@ -25,7 +25,11 @@ public class EmailValuesHelper {
 	
 	private static List<AbstractEmailValuesProvider> buildMatchers() {
 		List<AbstractEmailValuesProvider> matchers = new ArrayList<AbstractEmailValuesProvider>();
-		matchers.add(new CoreEmailValuesProvider());
+		try {
+			matchers.add(PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider()));
+		} catch (Throwable e) {
+			// provider not available
+		}
 		try {
 			matchers.add(buildEmailExt());
 		} catch (Throwable e) {
@@ -34,7 +38,7 @@ public class EmailValuesHelper {
 		return matchers;
 	}
 	private static AbstractEmailValuesProvider buildEmailExt() {
-		return new EmailExtValuesProvider();
+		return PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
 	}
 	
 }
