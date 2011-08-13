@@ -1,11 +1,18 @@
 package hudson.views;
 
 import hudson.Extension;
+import hudson.cli.BuildCommand.CLICause;
+import hudson.model.Cause;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
+import hudson.model.Cause.RemoteCause;
+import hudson.model.Cause.UpstreamCause;
+import hudson.model.Cause.UserCause;
+import hudson.triggers.SCMTrigger.SCMTriggerCause;
+import hudson.triggers.TimerTrigger.TimerTriggerCause;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -36,7 +43,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 	
 	public static enum StatusType {
 		Started() {
-			@SuppressWarnings("rawtypes")
+			@SuppressWarnings("unchecked")
 			@Override
 			public boolean matches(Run run) {
 				return !run.hasntStartedYet();
@@ -75,14 +82,74 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 						|| result == Result.ABORTED
 						);
 			}
-		};
-		
-		@SuppressWarnings("rawtypes")
+		},
+		TriggeredByScmPoll(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof SCMTriggerCause);
+			}
+		},
+		TriggeredByTimer(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof TimerTriggerCause);
+			}
+		},
+		TriggeredByUser(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof UserCause);
+			}
+		},
+		TriggeredByRemote(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof RemoteCause);
+			}
+		},
+		TriggeredByUpstream(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof UpstreamCause);
+			}
+		},
+		TriggeredByCli(true) {
+			@Override
+			protected boolean matchesCause(Cause cause) {
+				return (cause instanceof CLICause);
+			}
+		},
+		;
+		@SuppressWarnings("unchecked")
+		public boolean matchesCause(Run run) {
+			for (Object causeObject: run.getCauses()) {
+				Cause cause = (Cause) causeObject;
+				if (matchesCause(cause)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		protected boolean matchesCause(Cause cause) {
+			return false;
+		}
+		@SuppressWarnings("unchecked")
 		public boolean matches(Run run) {
-			return matches(run.getResult());
+			if (matchCause) {
+				return matchesCause(run);
+			} else {
+				return matches(run.getResult());
+			}
 		}
 		public boolean matches(Result result) {
 			return false;
+		}
+		
+		private boolean matchCause = false;
+		StatusType() {
+		}
+		StatusType(boolean matchCause) {
+			this.matchCause = matchCause;
 		}
 	}
 	
@@ -124,7 +191,7 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
         return super.readResolve();
     }
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;
@@ -134,22 +201,23 @@ public class BuildTrendFilter extends AbstractIncludeExcludeJobFilter {
 			boolean oneMatched = false;
 			int count = 0;
 			
-			
 			while (run != null) {
-				count++;
 				// check the different types of durations to see if we've checked back far enough
-				if (amountType == AmountType.Builds) {
-					if (count > amount) {
-						break;
-					}
-				} else {
-					// get the amount of time since it last built
-					long now = System.currentTimeMillis();
-					long then = run.getTimeInMillis();
-					float diff = now - then;
-					diff = amountType.convertMillisToAmount(diff);
-					if (diff > amount) {
-						break;
+				if (amount > 0) {
+					count++;
+					if (amountType == AmountType.Builds) {
+						if (count > amount) {
+							break;
+						}
+					} else {
+						// get the amount of time since it last built
+						long now = System.currentTimeMillis();
+						long then = run.getTimeInMillis();
+						float diff = now - then;
+						diff = amountType.convertMillisToAmount(diff);
+						if (diff > amount) {
+							break;
+						}
 					}
 				}
 				// now evaluate the build status
