@@ -58,7 +58,8 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     	List<String> values = new ArrayList<String>();
     	if (valueType == ValueType.DESCRIPTION) {
     		if (item instanceof AbstractItem) {
-    			values.add(((AbstractItem) item).getDescription());
+    			String desc = ((AbstractItem) item).getDescription();
+    			addSplitValues(values, desc);
     		}
     	} else if (valueType == ValueType.SCM) {
 	    	if (item instanceof SCMedItem) {
@@ -76,11 +77,23 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     		values.addAll(mavenValues);
     	} else if (valueType == ValueType.SCHEDULE) {
     		List<String> scheduleValues = TriggerFilterHelper.getValues(item);
-    		values.addAll(scheduleValues);
+    		for (String scheduleValue: scheduleValues) {
+    			// we do this split, because the spec may have multiple lines - especially including the comment
+    			addSplitValues(values, scheduleValue);
+    		}
     	}
     	return values;
     }
-    
+    private void addSplitValues(List<String> values, String value) {
+    	if (value != null) {
+    		String[] split = value.split("\n");
+    		for (String s: split) {
+    			// trimming this is necessary to remove odd characters that cause problems
+    			// the real example here is the description won't work without this trim
+    			values.add(s.trim());
+    		}
+    	}
+    }
     public boolean matches(TopLevelItem item) {
         List<String> matchValues = getMatchValues(item);
         boolean matched = false;
@@ -89,6 +102,8 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         	if (matchValue != null &&
         				// this doesn't use "find" because that would be too inclusive, 
         				// and at this point it might break existing people's regexes
+        				// - just to clarify this a bit more - if someone configures the regex of "Util.*"
+        				//		we cannot assume they want to match (find) a value of "SpecialUtil"
 	        			pattern.matcher(matchValue).matches()) {
         		matched = true;
         		break;

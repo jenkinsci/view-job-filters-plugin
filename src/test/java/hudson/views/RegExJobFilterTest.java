@@ -2,7 +2,10 @@ package hudson.views;
 
 import hudson.model.AbstractProject;
 import hudson.model.Cause;
+import hudson.model.DependencyGraph;
 import hudson.model.Hudson;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.Label;
 import hudson.model.Node;
@@ -17,16 +20,21 @@ import hudson.model.queue.CauseOfBlockage;
 import hudson.scm.CVSSCM;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
+import hudson.security.Permission;
+import hudson.triggers.TimerTrigger;
+import hudson.util.DescribableList;
 import hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
-import junit.framework.TestCase;
+import org.jvnet.hudson.test.HudsonTestCase;
 
-public class RegExJobFilterTest extends TestCase {
+public class RegExJobFilterTest extends HudsonTestCase {
 
 	/**
 	 * Test all the helpers to see that no exceptions are thrown.
@@ -117,9 +125,43 @@ public class RegExJobFilterTest extends TestCase {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	
+	public void testDescription() throws IOException {
+		doTestDescription("", false);
+		doTestDescription(null, false);
+		doTestDescription("nothing", false);
+		doTestDescription("desc=test", true);
+		doTestDescription("mydesc=test2", true);
+		doTestDescription("thisis\nmydesc=testn2\nforyou", true);
+		doTestDescription("1&#xd;\ndesc=test&#xd;\n2", true);
+		doTestDescription("1 desc=test 2", true);
+	}
+	private void doTestDescription(String desc, boolean expectMatch) throws IOException {
+		RegExJobFilter filter = new RegExJobFilter(".*desc=test.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.DESCRIPTION.toString());
+		TestItem item = new TestItem("name");
+		item.setDescription(desc);
+		boolean matched = filter.matches(item);
+		assertEquals(expectMatch, matched);
+	}
+	public void testTrigger() throws Exception {
+		doTestTrigger("# monday", true);
+		doTestTrigger("# tuesday", false);
+		doTestTrigger("* * * * *", false);
+		doTestTrigger("* * * * *\n#monday", true);
+		doTestTrigger("#monday\n* * * * *", true);
+	}
+	@SuppressWarnings("unchecked")
+	private void doTestTrigger(String spec, boolean expectMatch) throws Exception {
+		RegExJobFilter filter = new RegExJobFilter(".*monday.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCHEDULE.toString());
+		TestProject proj = new TestProject("proj");
+		proj.addTrigger(new TimerTrigger(spec));
+		boolean matched = filter.matches(proj);
+		assertEquals(expectMatch, matched);
+	}
+	@SuppressWarnings({ "unchecked" })
 	private class TestItem extends Job implements SCMedItem, TopLevelItem {
 
+		private String description;
 		private SCM scm;
 		
 		public TestItem(String name) {
@@ -130,7 +172,7 @@ public class RegExJobFilterTest extends TestCase {
 			super(null, name);
 			this.scm = scm;
 		}
-
+		
 		public AbstractProject<?, ?> asProject() {
 			return null;
 		}
@@ -225,6 +267,89 @@ public class RegExJobFilterTest extends TestCase {
 
 		public boolean isConcurrentBuild() {
 			return false;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
+	}
+	@SuppressWarnings("unchecked")
+	static class TestProject extends AbstractProject implements TopLevelItem {
+
+		public TestProject(String name) {
+			super(new TestItemGroup(), name);
+		}
+		@Override
+		protected void buildDependencyGraph(DependencyGraph graph) {
+		}
+		@Override
+		protected Class getBuildClass() {
+			return null;
+		}
+		@Override
+		public DescribableList getPublishersList() {
+			return null;
+		}
+		@Override
+		public boolean isFingerprintConfigured() {
+			return false;
+		}
+		protected void removeRun(Run run) {
+		}
+		@Override
+		protected synchronized void saveNextBuildNumber() throws IOException {
+		}
+		@Override
+		public void checkPermission(Permission p) {
+			super.checkPermission(p);
+		}
+		public TopLevelItemDescriptor getDescriptor() {
+			return null;
+		}
+		@Override
+		public Hudson getParent() {
+			return null;
+		}
+		@Override
+		public synchronized void save() throws IOException {
+			// do nothing!
+		}
+	}
+	@SuppressWarnings("unchecked")
+	static class TestItemGroup implements ItemGroup {
+		public String getDisplayName() {
+			return null;
+		}
+		public void save() throws IOException {
+		}
+		public String getFullDisplayName() {
+			return null;
+		}
+		public String getFullName() {
+			return null;
+		}
+		public Item getItem(String name) {
+			return null;
+		}
+		public Collection getItems() {
+			return null;
+		}
+		public File getRootDirFor(Item child) {
+			return null;
+		}
+		public String getUrl() {
+			return null;
+		}
+		public String getUrlChildPrefix() {
+			return null;
+		}
+		public File getRootDir() {
+			return null;
 		}
 		
 	}
