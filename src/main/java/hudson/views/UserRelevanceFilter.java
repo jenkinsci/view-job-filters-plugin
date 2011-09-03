@@ -210,7 +210,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "User Relevance Filter";
+			return "Logged-in User Relevance Filter";
 		}
 		@Override
         public String getHelpFile() {
