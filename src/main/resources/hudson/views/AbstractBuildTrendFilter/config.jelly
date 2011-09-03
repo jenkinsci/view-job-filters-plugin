@@ -1,0 +1,15 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%How far back to check:}">  	
+    <st:nbsp />
+  	<input type="text" name="amount" value="${instance.amount}" size="10" maxlength="10" />
+  	<st:nbsp />
+    <select name="amountTypeString" class="amountType">
+      <f:option value="Hours" selected="${instance.amountTypeString == 'Hours'}">${%Hours}</f:option>
+      <f:option value="Days" selected="${instance.amountTypeString == 'Days'}">${%Days}</f:option>
+      <f:option value="Builds" selected="${instance.amountTypeString == 'Builds'}">${%Builds}</f:option>
+    </select>
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+</j:jelly>
