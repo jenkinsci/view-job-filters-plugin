@@ -16,12 +16,20 @@ public class BuildTrendFilterTest extends TestCase {
 		doTestCause(StatusType.Completed, new UserCause(), false);
 		
 		doTestCause(StatusType.TriggeredByUser, new UserCause(), true);
+		doTestCause(StatusType.TriggeredByUser, new UserTestCause(), true);
+		doTestCause(StatusType.TriggeredByUser, null, false);
+		
 		doTestCause(StatusType.TriggeredByCli, new CLICause(), true);
 		doTestCause(StatusType.TriggeredByRemote, new RemoteCause("re", "mote"), true);
 		doTestCause(StatusType.TriggeredByScmPoll, new SCMTriggerCause(), true);
 		doTestCause(StatusType.TriggeredByTimer, new TimerTriggerCause(), true);
 	}
-
+	private class UserTestCause extends Cause {
+		@Override
+		public String getShortDescription() {
+			return null;
+		}
+	}
 	private void doTestCause(StatusType statusType, Cause cause, boolean expect) {
 		boolean matches = statusType.matchesCause(cause);
 		assertEquals(expect, matches);

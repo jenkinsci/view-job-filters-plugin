@@ -1,5 +1,6 @@
 package hudson.views;
 
+import hudson.model.Cause;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
 
@@ -10,6 +11,50 @@ import junit.framework.TestCase;
 
 public class UserRelevanceFilterTest extends TestCase {
 
+	public void testCauses() {
+		doTestCause(new TestCause() {
+			@SuppressWarnings("unused")
+			public String getUserBad() { return "bad";}
+		}, null, null);
+		doTestCause(new TestCause() {
+			@SuppressWarnings("unused")
+			public String getUserId() { return "user-id";}
+		}, "USERID", null);
+		doTestCause(new TestCause() {
+			@SuppressWarnings("unused")
+			public String getUserName() { return "User Name";}
+		}, null, "USERNAME");
+		doTestCause(new TestCause() {
+			@SuppressWarnings("unused")
+			public String getUserId() { return "user-id";}
+			@SuppressWarnings("unused")
+			public String getUserName() { return "User Name";}
+		}, "USERID", "USERNAME");
+	}
+	private class TestCause extends Cause {
+		@Override
+		public String getShortDescription() {
+			return null;
+		}
+	}
+	private void doTestCause(Cause cause, String expectedId, String expectedName) {
+		doTestCause(cause, false, expectedId);
+		doTestCause(cause, true, expectedName);
+	}
+	private void doTestCause(Cause cause, boolean matchAgainstFullName, String expected) {
+		UserRelevanceFilter filter = new UserRelevanceFilter(
+				true, true, true, true, true,
+				true, true, true,
+				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
+				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
+				);
+		String value = filter.getUserValue(cause, matchAgainstFullName);
+		if (expected == null) {
+			assertNull(value);
+		} else {
+			assertEquals(expected, value);
+		}
+	}
 	public void testEmailFilter() {
 		List<String> emails = new ArrayList<String>();
 		emails.add("user1@gmail.com, user.2@gmail.com");

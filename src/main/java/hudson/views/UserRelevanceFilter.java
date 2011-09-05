@@ -8,10 +8,11 @@ import hudson.model.Hudson;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.model.User;
-import hudson.model.Cause.UserCause;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
+import hudson.util.ReflectionUtils;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -93,7 +94,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     		}
     	}
     	if (matchBuilder) {
-    		boolean matches = matchesUserCause(userName, run);
+    		boolean matches = matchesUserCause(userName, matchAgainstFullName, run);
     		if (matches) {
     			return true;
     		}
@@ -167,13 +168,11 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 		return false;
 	}
 	@SuppressWarnings("unchecked")
-	public boolean matchesUserCause(String userName, Run run) {			
+	public boolean matchesUserCause(String userName, boolean matchAgainstFullName, Run run) {
 		for (Object causeObject: run.getCauses()) {
 			Cause cause = (Cause) causeObject;
-			if (cause instanceof UserCause) {
-				UserCause userCause = (UserCause) cause;
-				String builderName = userCause.getUserName();
-				builderName = normalize(builderName);
+			String builderName = getUserValue(cause, matchAgainstFullName);
+			if (builderName != null) {
 				boolean matches = userName.equals(builderName);
 				if (matches) {
 					return true;
@@ -181,6 +180,30 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 			} 
 		}
 		return false;
+	}
+	public String getUserValue(Cause cause, boolean matchAgainstFullName) {
+		String builderName;
+		if (matchAgainstFullName) {
+			builderName = getUserValue(cause, "getUserName");
+		} else {
+			builderName = getUserValue(cause, "getUserId");
+		}
+		return builderName;
+	}
+	public String getUserValue(Cause cause, String methodName) {
+		Method m = ReflectionUtils.getPublicMethodNamed(cause.getClass(), methodName);
+		if (m == null) {
+			return null;
+		}
+		try {
+			String value = (String) m.invoke(cause, (Object[]) null);
+			if (value != null) {
+				value = normalize(value);
+			}
+			return value;
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public boolean matchesChangeLog(String userName, boolean matchAgainstFullName, Run run) {

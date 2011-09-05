@@ -8,7 +8,6 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.Cause.RemoteCause;
 import hudson.model.Cause.UpstreamCause;
-import hudson.model.Cause.UserCause;
 import hudson.triggers.SCMTrigger.SCMTriggerCause;
 import hudson.triggers.TimerTrigger.TimerTriggerCause;
 
@@ -71,9 +70,17 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 			}
 		},
 		TriggeredByUser(true) {
+			@SuppressWarnings("unchecked")
 			@Override
 			protected boolean matchesCause(Cause cause) {
-				return (cause instanceof UserCause);
+				if (cause == null) {
+					return false;
+				}
+				// have to have this check because jenkins 1.427 introduced "UserIdCause" (vs "UserCause")
+				// and I don't want to make this class depend on the bleeding edge
+				Class cls = cause.getClass();
+				String name = cls.getSimpleName();
+				return name.startsWith("User");
 			}
 		},
 		TriggeredByRemote(true) {
