@@ -70,7 +70,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     @SuppressWarnings("unchecked")
 	@Override
     protected boolean runMatches(Run run) {
-		User user = Hudson.getInstance().getMe();
+		User user = getUser();
 		if (matchUserFullName) {
 			String userName = normalize(user.getFullName());
 			if (runMatches(userName, true, run)) {
@@ -84,6 +84,17 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 			}
 		}
 		return false;
+    }
+    private User getUser() {
+    	try {
+    		return Hudson.getInstance().getMe();
+    	} catch (Exception e) {
+        	try {
+        		return Hudson.getInstance().getUser(Hudson.ANONYMOUS.getName());
+        	} catch (Exception e2) {
+            	return null;
+        	}
+    	}
     }
     @SuppressWarnings("unchecked")
 	public boolean runMatches(String userName, boolean matchAgainstFullName, Run run) {
@@ -125,7 +136,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     }
     
 	public boolean matchesEmail(TopLevelItem item) {
-		User user = Hudson.getInstance().getMe();
+		User user = getUser();
 		if (matchUserFullName) {
 			String userName = normalize(user.getFullName());
 			if (matchesEmail(item, userName)) {

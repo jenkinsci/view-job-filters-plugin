@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
+import hudson.model.Hudson;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public abstract class AbstractEmailValuesProvider implements PluginHelperTestable {
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	public List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
 		if (item instanceof AbstractProject) {
@@ -28,6 +29,9 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 		return values;
 	}
 
-	protected abstract Descriptor<Publisher> getDescriptor();
+	@SuppressWarnings("unchecked")
+	protected Descriptor<Publisher> getDescriptor() {
+		return Hudson.getInstance().getDescriptor(getPluginTesterClass());
+	}
 	protected abstract String getValue(Publisher publisher);
 }
