@@ -18,6 +18,12 @@ import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
+/**
+ * This column wraps another column so that when that delegate column renders, it is
+ * given a JobWrapper that provides a filtered list of Runs to the column.
+ * 
+ * @author jacob robertson
+ */
 public class BuildFilterColumn extends ListViewColumn {
 
 	private ListViewColumn delegate;
