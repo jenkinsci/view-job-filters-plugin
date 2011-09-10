@@ -23,6 +23,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 
+	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase();
+	
 	private boolean matchUserId = true;
 	private boolean matchUserFullName = true;
 	
@@ -69,7 +71,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 	
     @SuppressWarnings("unchecked")
 	@Override
-    protected boolean runMatches(Run run) {
+    public boolean matchesRun(Run run) {
 		User user = getUser();
 		if (matchUserFullName) {
 			String userName = normalize(user.getFullName());
@@ -198,6 +200,9 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 			builderName = getUserValue(cause, "getUserName");
 		} else {
 			builderName = getUserValue(cause, "getUserId");
+		}
+		if (builderName == null) {
+			builderName = ANONYMOUS;
 		}
 		return builderName;
 	}

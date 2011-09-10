@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jvnet.hudson.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.363</version>
+		<version>1.395</version>
 	</parent>
 
 	<artifactId>view-job-filters</artifactId>
@@ -73,51 +73,15 @@
 					<goals>deploy</goals>
 				</configuration>
 			</plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>cobertura2</id>
-			<reporting>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>2.4</version>
-						<configuration>
-							<formats>
-								<format>html</format>
-								<format>xml</format>
-							</formats>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-project-info-reports-plugin</artifactId>
-						<version>2.2</version>
-						<reportSets>
-							<reportSet>
-								<reports>
-									<report>scm</report>
-								</reports>
-							</reportSet>
-						</reportSets>
-					</plugin>
-
-				</plugins>
-			</reporting>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>cobertura-maven-plugin</artifactId>
-						<version>2.4</version>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 	<distributionManagement>
 		<repository>

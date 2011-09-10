@@ -15,15 +15,15 @@ public class UserRelevanceFilterTest extends TestCase {
 		doTestCause(new TestCause() {
 			@SuppressWarnings("unused")
 			public String getUserBad() { return "bad";}
-		}, null, null);
+		}, "ANONYMOUS", "ANONYMOUS");
 		doTestCause(new TestCause() {
 			@SuppressWarnings("unused")
 			public String getUserId() { return "user-id";}
-		}, "USERID", null);
+		}, "USERID", "ANONYMOUS");
 		doTestCause(new TestCause() {
 			@SuppressWarnings("unused")
 			public String getUserName() { return "User Name";}
-		}, null, "USERNAME");
+		}, "ANONYMOUS", "USERNAME");
 		doTestCause(new TestCause() {
 			@SuppressWarnings("unused")
 			public String getUserId() { return "user-id";}

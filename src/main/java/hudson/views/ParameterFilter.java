@@ -85,7 +85,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
     	}
     }
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
@@ -100,7 +100,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	protected boolean matchesDefaultValue(Job job) {
 		ParametersDefinitionProperty property = 
 			(ParametersDefinitionProperty) job.getProperty(ParametersDefinitionProperty.class);
@@ -118,7 +118,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	protected boolean matchesBuildValue(Job job) {
 		boolean matched = false;
 		Run run = job.getLastBuild();
@@ -126,7 +126,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			// only match against the builds we care about
 			boolean isBuilding = run.isBuilding();
 			if (matchBuildsInProgress || !isBuilding) {
-				matched = matchesBuildValue(run);
+				matched = matchesRun(run);
 				// now that we've checked one build, see if we should stop
 				if (!matchAllBuilds) {
 					break;
@@ -137,8 +137,8 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		
 		return matched;
 	}
-	@SuppressWarnings("rawtypes")
-	protected boolean matchesBuildValue(Run run) {
+	@SuppressWarnings("unchecked")
+	public boolean matchesRun(Run run) {
 		ParametersAction action = run.getAction(ParametersAction.class);
 		if (action == null) {
 			return false;

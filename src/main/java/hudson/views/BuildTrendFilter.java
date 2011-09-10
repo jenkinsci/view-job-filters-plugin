@@ -156,7 +156,7 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 
     @SuppressWarnings("unchecked")
 	@Override
-    protected boolean runMatches(Run run) {
+    public boolean matchesRun(Run run) {
     	return statusType.matches(run);
     }
 	public String getStatusTypeString() {

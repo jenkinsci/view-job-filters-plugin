@@ -16,7 +16,9 @@ import hudson.model.TaskListener;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
 import hudson.model.Queue.Executable;
+import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
+import hudson.model.queue.SubTask;
 import hudson.scm.CVSSCM;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
@@ -245,10 +247,6 @@ public class RegExJobFilterTest extends HudsonTestCase {
 			return null;
 		}
 
-		public long getEstimatedDuration() {
-			return 0;
-		}
-
 		public Node getLastBuiltOn() {
 			return null;
 		}
@@ -275,6 +273,21 @@ public class RegExJobFilterTest extends HudsonTestCase {
 
 		public void setDescription(String description) {
 			this.description = description;
+		}
+		
+		@Override
+		public Collection<? extends SubTask> getSubTasks() {
+			return null;
+		}
+
+		@Override
+		public Task getOwnerTask() {
+			return null;
+		}
+
+		@Override
+		public Object getSameNodeConstraint() {
+			return null;
 		}
 		
 	}
@@ -350,6 +363,14 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		}
 		public File getRootDir() {
 			return null;
+		}
+		@Override
+		public void onDeleted(Item arg0) throws IOException {
+			
+		}
+		@Override
+		public void onRenamed(Item arg0, String arg1, String arg2)
+				throws IOException {
 		}
 		
 	}

@@ -6,7 +6,8 @@ import hudson.model.TopLevelItem;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-public abstract class AbstractBuildTrendFilter extends AbstractIncludeExcludeJobFilter {
+public abstract class AbstractBuildTrendFilter 
+	extends AbstractIncludeExcludeJobFilter implements RunMatcher {
 
     private static final long ONE_SECOND_MS = 1000;
     private static final long ONE_MINUTE_MS = 60 * ONE_SECOND_MS;
@@ -91,7 +92,7 @@ public abstract class AbstractBuildTrendFilter extends AbstractIncludeExcludeJob
 					}
 				}
 				// now evaluate the build status
-				boolean runMatches = runMatches(run);
+				boolean runMatches = matchesRun(run);
 				if (runMatches) {
 					if (buildCountType == BuildCountType.AtLeastOne || buildCountType == BuildCountType.Latest) {
 						return true;
@@ -123,8 +124,6 @@ public abstract class AbstractBuildTrendFilter extends AbstractIncludeExcludeJob
 			return false;
 		}
 	}
-	@SuppressWarnings("unchecked")
-	protected abstract boolean runMatches(Run run);
 	
 	public String getAmountTypeString() {
 		return amountTypeString;
