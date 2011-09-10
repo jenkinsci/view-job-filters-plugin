@@ -20,7 +20,6 @@ public abstract class AbstractHudsonTest extends HudsonTestCase {
 		addRegexView("View-56", "Job.*[56]");
 		addRegexView("View-13", "Job.*[13]");
 	}
-	@SuppressWarnings("unchecked")
 	private void addRegexView(String name, String regex) throws IOException {
 		ListView v = new ListView(name);
 		DescribableList<ViewJobFilter, Descriptor<ViewJobFilter>> filters = 
