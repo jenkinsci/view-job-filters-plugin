@@ -1,12 +1,12 @@
 package hudson.views;
 
 import hudson.Extension;
+import hudson.model.TopLevelItem;
 import hudson.model.AbstractBuild;
 import hudson.model.Cause;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Run;
-import hudson.model.TopLevelItem;
 import hudson.model.User;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.Entry;
@@ -180,6 +180,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 		}
 		return false;
 	}
+	
 	@SuppressWarnings("unchecked")
 	public boolean matchesUserCause(String userName, boolean matchAgainstFullName, Run run) {
 		for (Object causeObject: run.getCauses()) {

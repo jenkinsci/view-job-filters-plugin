@@ -4,6 +4,7 @@ import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.RunMap;
 import hudson.model.Descriptor;
+import hudson.model.Hudson;
 import hudson.model.Job;
 import hudson.model.ListView;
 import hudson.model.Run;
@@ -56,7 +57,20 @@ public class BuildFilterColumn extends ListViewColumn {
 		@Override
 		public ListViewColumn newInstance(StaplerRequest req, JSONObject obj)
 				throws hudson.model.Descriptor.FormException {
-			BuildFilterColumn col = (BuildFilterColumn) super.newInstance(req, obj);
+			BuildFilterColumn col;
+			try {
+				col = (BuildFilterColumn) super.newInstance(req, obj);
+			} catch (Exception e) {
+				// this might have failed because the column didn't have the DataboundConstructor annotation
+				ListViewColumn delegate;
+				try {
+					delegate = newInstanceFromClass(req, obj);
+				} catch (Exception e1) {
+					throw new IllegalArgumentException(
+							"Unable to wrap column:" + e.getMessage() + "/" + obj, e1);
+				}
+				col = new BuildFilterColumn(delegate);
+			}
 			if (req != null) {
 		        View view = req.findAncestorObject(View.class);
 		        if (view instanceof ListView) {
@@ -65,6 +79,16 @@ public class BuildFilterColumn extends ListViewColumn {
 		        	throw new IllegalArgumentException("BuildFilterColumn can only be added to a ListView");
 		        }
 			}
+			return col;
+		}
+		@SuppressWarnings("unchecked")
+		private ListViewColumn newInstanceFromClass(StaplerRequest req, JSONObject obj) 
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, FormException {
+			// {"delegate":{"stapler-class":"hudson.plugins.column.console.LastBuildColumn","value":"7"} ...
+			JSONObject delegate = obj.getJSONObject("delegate");
+			String staplerClass = delegate.getString("stapler-class");
+			Descriptor desc = Hudson.getInstance().getDescriptor(staplerClass);
+			ListViewColumn col = (ListViewColumn) desc.newInstance(req, delegate);
 			return col;
 		}
 		
@@ -125,8 +149,6 @@ public class BuildFilterColumn extends ListViewColumn {
 			// can't do this - it's protected
 //			delegate.removeRun(run);
 		}
-		
-		
 	}
 	
 }
