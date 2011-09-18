@@ -16,10 +16,10 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 	@SuppressWarnings("unchecked")
 	public List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
+		Descriptor<Publisher> descriptor = getDescriptor();
 		if (item instanceof AbstractProject) {
 			AbstractProject project = (AbstractProject) item;
 			DescribableList<Publisher,Descriptor<Publisher>> publishers = project.getPublishersList();
-			Descriptor<Publisher> descriptor = getDescriptor();
 			Publisher emailPublisher = publishers.get(descriptor);
 			if (emailPublisher != null) {
 				String value = getValue(emailPublisher);
