@@ -12,7 +12,7 @@
 	<version>1.19-SNAPSHOT</version>
 	<name>View Job Filters</name>
 	<description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well as "chaining" of filters and negating filters.</description>
-	<url>http://wiki.hudson-ci.org/display/HUDSON/View+Job+Filters</url>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters</url>
 
 	<developers>
 		<developer>
