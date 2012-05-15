@@ -139,6 +139,9 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     
 	public boolean matchesEmail(TopLevelItem item) {
 		User user = getUser();
+		if (user == null) {
+			return false;
+		}
 		if (matchUserFullName) {
 			String userName = normalize(user.getFullName());
 			if (matchesEmail(item, userName)) {

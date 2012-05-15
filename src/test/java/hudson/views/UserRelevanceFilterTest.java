@@ -89,5 +89,16 @@ public class UserRelevanceFilterTest extends TestCase {
 		String normalized = filter.normalize(input);
 		assertEquals(output, normalized);
 	}
+	public void testMatchesEmail_JENKINS_13781() {
+		UserRelevanceFilter filter = new UserRelevanceFilter(
+				true, true, true, true, true,
+				true, true, true,
+				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
+				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
+				);
+		// FIXED: would throw null-pointer
+		boolean matched = filter.matchesEmail(null);
+		assertFalse(matched);
+	}
 	
 }

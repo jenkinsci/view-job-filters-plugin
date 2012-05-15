@@ -145,6 +145,10 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	}
 	
 	public static List<View> getAllViews() {
+		// TODO this line seems to be what I would have to fix for JENKINS 21738
+		// the problem here is that I don't want to upgrade to a newer version of Jenkins, because that would make me maintain for Hudson
+		// and there is no fix for this in the 1.395 API.
+		// also, it appears that this problem will most likely only occur with the sectioned-view plugin
 		Collection<View> baseViews = Hudson.getInstance().getViews();
 		
 		// build comprehensive list
