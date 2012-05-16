@@ -35,16 +35,21 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
 
    		for (TopLevelItem next: added) {
    			if (includeUpstream) {
-   				addUpstream(next, filtered, all);
+   		    	Set<TopLevelItem> filteredUpstream = new HashSet<TopLevelItem>();
+   				addUpstream(next, filteredUpstream, all);
+   				filtered.addAll(filteredUpstream);
    			}
    			if (includeDownstream) {
-   				addDownstream(next, filtered, all);
+   		    	Set<TopLevelItem> filteredDownstream = new HashSet<TopLevelItem>();
+   				addDownstream(next, filteredDownstream, all);
+   				filtered.addAll(filteredDownstream);
    			}
     	}
     	
     	List<TopLevelItem> sorted = new ArrayList<TopLevelItem>(all);
     	
     	// ensure all the previously added items are included
+    	// - Note that they might have been added anyways through recursion up/down
     	if (!excludeOriginals) {
     		filtered.addAll(added);
     	}
