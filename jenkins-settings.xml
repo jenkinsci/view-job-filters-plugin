@@ -5,6 +5,14 @@
 <!-- 
 	<localRepository>C:/softwaredistribution/.m2/repository-view-job-filters</localRepository>
 -->
+	<mirrors>
+		<mirror>
+			<id>mirror-all</id>
+			<url>http://repo1.maven.org/maven2</url>
+			<mirrorOf>*</mirrorOf>
+		</mirror>
+	</mirrors>
+
 	<profiles>
 		<profile>
 			<id>jenkins-repos</id>
