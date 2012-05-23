@@ -35,10 +35,18 @@ public class EmailValuesHelper {
 		} catch (Throwable e) {
 			// plug-in probably not installed
 		}
+		try {
+			matchers.add(buildEmailMaven());
+		} catch (Throwable e) {
+			// plug-in probably not installed
+		}
 		return matchers;
 	}
 	private static AbstractEmailValuesProvider buildEmailExt() {
 		return PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
+	}
+	private static AbstractEmailValuesProvider buildEmailMaven() {
+		return PluginHelperUtils.validateAndThrow(new EmailMavenValuesProvider());
 	}
 	
 }
