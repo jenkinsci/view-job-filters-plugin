@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -19,6 +20,10 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
 	private boolean includeUpstream;
 	private boolean recursive;
 	private boolean excludeOriginals;
+	
+	private static final transient Logger log = Logger.getLogger("updown");
+
+	private static final transient UpstreamDownstreamMavenHelper mavenHelper = buildMavenHelper();
 	
 	@DataBoundConstructor
 	public UpstreamDownstreamJobsFilter(boolean includeDownstream, boolean includeUpstream,  
@@ -90,14 +95,17 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
     
 	@SuppressWarnings("unchecked")
 	private boolean isFirstUpstreamFromSecond(TopLevelItem first, TopLevelItem second) {
+		boolean isUpstream = false;
     	if (second instanceof AbstractProject) {
     		AbstractProject secondProject = (AbstractProject) second;
         	List<AbstractProject> upstream = secondProject.getBuildTriggerUpstreamProjects();
-    		return upstream.contains(first);
+    		isUpstream = upstream.contains(first);
+    	} 
+    	if (!isUpstream && mavenHelper != null) {
+    		isUpstream = mavenHelper.isFirstUpstreamFromSecond(first, second);
     	}
-    	return false;
+    	return isUpstream;
     }
-    
 	
 	@Extension
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
@@ -126,6 +134,18 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
 
 	public boolean isExcludeOriginals() {
 		return excludeOriginals;
+	}
+	private static UpstreamDownstreamMavenHelper buildMavenHelper() {
+		log.warning("buildMavenHelper");
+		try {
+			UpstreamDownstreamMavenHelper helper = PluginHelperUtils.validateAndThrow(new UpstreamDownstreamMavenHelper());
+			log.warning("buildMavenHelper." + helper);
+			return helper;
+		} catch (Throwable t) {
+			log.warning("buildMavenHelper.null");
+			// plugin is not installed
+			return null;
+		}
 	}
 
 }
