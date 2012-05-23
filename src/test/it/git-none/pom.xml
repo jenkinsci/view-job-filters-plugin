@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>view-job-filters-it-git-none</artifactId>
-	<version>1.14-SNAPSHOT</version>
+	<version>1.21-SNAPSHOT</version>
 	
 	<dependencies>
 		<dependency>	
