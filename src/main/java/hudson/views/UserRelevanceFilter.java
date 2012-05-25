@@ -73,6 +73,9 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 	@Override
     public boolean matchesRun(Run run) {
 		User user = getUser();
+		if (user == null) {
+			return false;
+		}
 		if (matchUserFullName) {
 			String userName = normalize(user.getFullName());
 			if (runMatches(userName, true, run)) {
