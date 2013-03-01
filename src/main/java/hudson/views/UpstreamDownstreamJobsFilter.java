@@ -98,7 +98,7 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
 		boolean isUpstream = false;
     	if (second instanceof AbstractProject) {
     		AbstractProject secondProject = (AbstractProject) second;
-        	List<AbstractProject> upstream = secondProject.getBuildTriggerUpstreamProjects();
+        	List<AbstractProject> upstream = secondProject.getUpstreamProjects();
     		isUpstream = upstream.contains(first);
     	} 
     	if (!isUpstream && mavenHelper != null) {
