@@ -3,7 +3,7 @@
 
 	<groupId>org.jvnet.hudson.plugins</groupId>
 	<artifactId>view-job-filters-it</artifactId>
-	<version>1.14-SNAPSHOT</version>
+	<version>1.23-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
 	<modules>
