@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.Extension;
 import hudson.model.AbstractItem;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.SCMedItem;
 import hudson.model.TopLevelItem;
@@ -24,7 +25,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
 	static enum ValueType {
-		NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE
+		NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
 	}
 	
 	transient private ValueType valueType;
@@ -54,7 +55,8 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     /**
      * TODO this pattern works fine, but it may be better to provide this as a list of helpers.
      */
-    public List<String> getMatchValues(TopLevelItem item) {
+    @SuppressWarnings("rawtypes")
+	public List<String> getMatchValues(TopLevelItem item) {
     	List<String> values = new ArrayList<String>();
     	if (valueType == ValueType.DESCRIPTION) {
     		if (item instanceof AbstractItem) {
@@ -81,6 +83,11 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     			// we do this split, because the spec may have multiple lines - especially including the comment
     			addSplitValues(values, scheduleValue);
     		}
+    	} else if (valueType == ValueType.NODE) {
+	    	if (item instanceof AbstractProject) {
+	    		String node = ((AbstractProject) item).getAssignedLabelString();
+    			values.add(node);
+	    	}
     	}
     	return values;
     }

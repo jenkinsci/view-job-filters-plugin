@@ -27,14 +27,14 @@ public class ParameterFilterTest extends HudsonTestCase {
 	private void doTestMatchesParameter(String nameRegex, String valueRegex, String descRegex, 
 			String name, String value, String desc, boolean expectMatched) {
 		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
-				nameRegex, valueRegex, descRegex, false, false, false);
+				nameRegex, valueRegex, descRegex, false, false, 0, false);
 		boolean matched = filter.matchesParameter(name, value, false, desc);
 		assertEquals(expectMatched, matched);
 	}
 	
 	public void testBuildValue() throws Exception {
 		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
-				"N", "V1", "", true, false, false);
+				"N", "V1", "", true, false, 0, false);
 
 		FreeStyleProject proj = createFreeStyleProject("P1");
 
@@ -55,7 +55,7 @@ public class ParameterFilterTest extends HudsonTestCase {
 		
 		
 		ParameterFilter filter2 = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
-				"N", "V1", "", false, false, false);
+				"N", "V1", "", false, false, 0, false);
 		// won't match, because it's not a build param
 		matches = filter2.matches(proj);
 		assertFalse(matches);

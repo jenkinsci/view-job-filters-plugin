@@ -11,7 +11,9 @@
       <f:checkbox name="useDefaultValue" field="useDefaultValue"/> ${%Match the configured default values instead of the actual value from last successful build}
   </f:entry>
   <f:entry>
-      <f:checkbox name="matchAllBuilds" field="matchAllBuilds"/> ${%Match against any build in the build history, not just the last build}
+      <f:checkbox name="matchAllBuilds" field="matchAllBuilds"/> ${%Match against this many previous builds} (${%blank or 0 for all}):
+      <st:nbsp />
+      <input type="text" name="maxBuildsToMatch" value="${instance.maxBuildsToMatch}" size="10" maxlength="10" />
   </f:entry>
   <f:entry>
       <f:checkbox name="matchBuildsInProgress" field="matchBuildsInProgress"/> ${%Match against builds in progress}

@@ -39,6 +39,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	
 	private boolean matchBuildsInProgress;
 	private boolean matchAllBuilds;
+	private int maxBuildsToMatch;
 
 	@DataBoundConstructor
 	public ParameterFilter(String includeExcludeTypeString,
@@ -47,6 +48,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			String descriptionRegex,
 			boolean useDefaultValue,
 			boolean matchAllBuilds,
+			int maxBuildsToMatch,
 			boolean matchBuildsInProgress) {
 		super(includeExcludeTypeString);
 		this.nameRegex = nameRegex;
@@ -57,6 +59,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		this.descriptionPattern = toPattern(descriptionRegex);
 		this.useDefaultValue = useDefaultValue;
 		this.matchAllBuilds = matchAllBuilds;
+		this.maxBuildsToMatch = maxBuildsToMatch;
 		this.matchBuildsInProgress = matchBuildsInProgress;
 	}
 
@@ -121,6 +124,7 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	@SuppressWarnings("unchecked")
 	protected boolean matchesBuildValue(Job job) {
 		boolean matched = false;
+		int count = 1;
 		Run run = job.getLastBuild();
 		while (run != null && !matched) {
 			// only match against the builds we care about
@@ -128,11 +132,12 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			if (matchBuildsInProgress || !isBuilding) {
 				matched = matchesRun(run);
 				// now that we've checked one build, see if we should stop
-				if (!matchAllBuilds) {
+				if (!matchAllBuilds || (maxBuildsToMatch > 0 && count >= maxBuildsToMatch)) {
 					break;
 				}
 			}
 			run = run.getPreviousBuild();
+			count++;
 		}
 		
 		return matched;
@@ -182,7 +187,14 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	private boolean isValueMultiline(ParameterDefinition def) {
 		return (def instanceof ChoiceParameterDefinition);
 	}
+	
 	protected String getStringValue(ParameterValue value) {
+		String sv = dogetStringValue(value);
+		System.out.println("getStringValue." + sv);
+		return sv;
+	}
+
+	protected String dogetStringValue(ParameterValue value) {
 		if (value instanceof StringParameterValue) {
 			return ((StringParameterValue) value).value;
 		} else if (value instanceof BooleanParameterValue) {
@@ -194,7 +206,8 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			String file = ((FileParameterValue) value).getOriginalFileName();
 			return file;
 		} else {
-			return null;
+			// means we can match on "null" - not sure that's useful though
+			return String.valueOf(value);
 		}
 	}
 	
@@ -233,6 +246,10 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	
 	public boolean isMatchAllBuilds() {
 		return matchAllBuilds;
+	}
+	
+	public int getMaxBuildsToMatch() {
+		return maxBuildsToMatch;
 	}
 	
 	public boolean isMatchBuildsInProgress() {
