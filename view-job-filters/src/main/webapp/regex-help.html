@@ -1,0 +1,21 @@
+<div>
+  You can use as many Regular Expression Filters as you like - they will each apply in the order you put them in.
+  <br/><br/>
+  <b>Match Value</b>: Choose from the following to match on
+  <ul>
+  	<li><u>Job name</u></li>
+  	<li><u>Job description</u></li>
+  	<li><u>Job SCM configuration</u>: Matching by SCM is extremely useful if you have hundreds of jobs that need to be "auto organized", and are already organized under source control.  (Currently matches against SVN, Git, and CVS paths/configuration)</li>
+  	<li><u>Email recipients</u>: Matching by Email is useful for organizing by "who cares about this job."</li>
+  	<li><u>Maven configuration</u>: Use this to match against "what does this job do"</li>
+  	<li><u>Job schedule</u>: Matches against the chron pattern and any comments for Timer and SCM triggers.</li>
+  	<li><u>Node label expression</u>: Matches against the Label Expression under the "Restrict where this project can be run" option.</li>
+  </ul>
+  <br/>
+  <b>Match Type</b>: Choose whether this filter will add additional jobs, or remove jobs.
+  <br/><br/>
+  <b>Example</b> - combine two Regular Expression Filters in this way:<br/> 
+  One with a Regular Expression of "<b>.*_Nightly</b>" for a Match Value of "<b>Job name</b>", and a Match Type of "<b>Include Matched</b>",<br/> 
+  And another with a Regular Expression of "<b>.*site:deploy.*</b>" for a Match Value of "<b>Maven configuration</b>", and a Match Type of "<b>Exclude Unmatched</b>".<br/>
+  This combination creates a view that shows all nightly jobs that also deploy a Maven site.
+</div>

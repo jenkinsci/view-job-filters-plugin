@@ -1,0 +1,25 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Name}">
+      <f:textbox name="nameRegex" field="nameRegex" />
+  </f:entry>
+  <f:entry title="${%Value}">
+      <f:textbox name="valueRegex" field="valueRegex" />
+  </f:entry>
+  <f:entry help="/plugin/view-job-filters/parameter-default-help.html">
+      <f:checkbox name="useDefaultValue" field="useDefaultValue"/> ${%Match the configured default values instead of the actual value from last successful build}
+  </f:entry>
+  <f:entry>
+      <f:checkbox name="matchAllBuilds" field="matchAllBuilds"/> ${%Match against this many previous builds} (${%blank or 0 for all}):
+      <st:nbsp />
+      <input type="text" name="maxBuildsToMatch" value="${instance.maxBuildsToMatch}" size="10" maxlength="10" />
+  </f:entry>
+  <f:entry>
+      <f:checkbox name="matchBuildsInProgress" field="matchBuildsInProgress"/> ${%Match against builds in progress}
+  </f:entry>
+  <f:entry title="${%Description}">
+      <f:textbox name="descriptionRegex" field="descriptionRegex" />
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+</j:jelly>

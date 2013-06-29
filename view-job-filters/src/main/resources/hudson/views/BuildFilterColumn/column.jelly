@@ -1,0 +1,4 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+	<j:set var="job" value="${it.getJobWrapper(job)}"/>
+    <st:include it="${it.delegate}" page="column.jelly"/>
+</j:jelly>

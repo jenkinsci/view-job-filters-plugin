@@ -1,0 +1,13 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+
+    <j:invokeStatic var="allColumns" className="hudson.views.BuildFilterColumn" method="doGetAllColumns"/>
+    
+    <f:block>
+      <f:hetero-radio
+                     descriptors="${allColumns}"
+                     field="delegate" />
+    </f:block>
+    
+</j:jelly>

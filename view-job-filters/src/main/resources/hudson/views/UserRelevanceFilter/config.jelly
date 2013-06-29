@@ -1,0 +1,24 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Name Matching}">
+    <f:checkbox name="matchUserId" field="matchUserId" default="true" /> ${%Match user id} <br/>
+    <f:checkbox name="matchUserFullName" field="matchUserFullName" default="true" /> ${%Match user full name} <br/>
+    <f:checkbox name="ignoreCase" field="ignoreCase" default="true" /> ${%Ignore case} <br/>
+    <f:checkbox name="ignoreWhitespace" field="ignoreWhitespace" default="true" /> ${%Ignore whitespace} <br/>
+    <f:checkbox name="ignoreNonAlphaNumeric" field="ignoreNonAlphaNumeric" default="true" /> ${%Ignore non-alphanumeric} <br/>
+  </f:entry>
+  <f:entry title="${%Relevance Matching}">
+    <f:checkbox name="matchBuilder" field="matchBuilder" default="true" /> ${%Match jobs with builds "started by" user} <br/>
+    <f:checkbox name="matchEmail" field="matchEmail" default="true" /> ${%Match email recipients} <br/>
+    <f:checkbox name="matchScmChanges" field="matchScmChanges" default="true" /> ${%Match source code committers (i.e. changes)} <br/>
+  </f:entry>
+  <f:entry title="${%Build trend type:}">  	
+    <select name="buildCountTypeString" class="buildCountType">
+      <f:option value="AtLeastOne" selected="${instance.buildCountTypeString == 'AtLeastOne'}">${%Match any build}</f:option>
+      <f:option value="Latest" selected="${instance.buildCountTypeString == 'Latest'}">${%Match latest build only}</f:option>
+      <f:option value="All" selected="${instance.buildCountTypeString == 'All'}">${%Require all builds to match}</f:option>
+    </select>
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractBuildTrendFilter" optional="false"/>
+</j:jelly>

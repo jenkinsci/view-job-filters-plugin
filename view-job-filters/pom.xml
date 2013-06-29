@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.jvnet.hudson.plugins</groupId>
+		<artifactId>plugin</artifactId>
+		<version>1.395</version>
+	</parent>
+
+	<artifactId>view-job-filters</artifactId>
+	<packaging>hpi</packaging>
+	<version>1.23</version>
+	<name>View Job Filters</name>
+	<description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well as "chaining" of filters and negating filters.</description>
+	<url>http://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters</url>
+
+	<developers>
+		<developer>
+			<id>jacob_robertson</id>
+			<name>Jacob Robertson</name>
+			<email>jacob.robertson.work@gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:svn:https://svn.jenkins-ci.org/tags/view-job-filters-1.23</connection>
+		<developerConnection>scm:svn:https://svn.jenkins-ci.org/tags/view-job-filters-1.23</developerConnection>
+		<url>https://svn.jenkins-ci.org/tags/view-job-filters-1.23</url>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>org.jvnet.hudson.plugins</groupId>
+			<artifactId>cvs</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.hudson.plugins</groupId>
+			<artifactId>subversion</artifactId>
+			<version>1.11</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jenkinsci.plugins</groupId>
+			<artifactId>git</artifactId>
+			<!-- Use this version so we can cover legacy values too -->
+			<version>1.1.9</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<!-- Other versions not found, this project could not build -->
+			<version>1.3.0.201202151440-r</version>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.hudson.plugins</groupId>
+			<artifactId>email-ext</artifactId>
+			<version>2.7</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet.hudson.plugins</groupId>
+			<artifactId>m2-extra-steps</artifactId>
+			<version>1.1.3</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>maven.jenkins-ci.org</id>
+			<url>http://maven.jenkins-ci.org/content/repositories/releases/</url>
+		</repository>
+	</distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>repo.jenkins-ci.org</id>
+            <url>http://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>  
+  
+

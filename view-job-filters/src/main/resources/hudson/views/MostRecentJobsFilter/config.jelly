@@ -1,0 +1,10 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Number of Jobs To Include}">
+      <f:textbox name="maxToInclude" field="maxToInclude" />
+  </f:entry>
+  <f:entry title="${%Use job start time instead of completion time}">
+      <f:checkbox name="checkStartTime" field="checkStartTime"/>
+  </f:entry>
+</j:jelly>

@@ -1,0 +1,27 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Build trend type:}">  	
+    <select name="buildCountTypeString" class="buildCountType">
+      <f:option value="Latest" selected="${instance.buildCountTypeString == 'Latest'}">${%Latest build was}</f:option>
+      <f:option value="AtLeastOne" selected="${instance.buildCountTypeString == 'AtLeastOne'}">${%At least one build was}</f:option>
+      <f:option value="All" selected="${instance.buildCountTypeString == 'All'}">${%All builds were}</f:option>
+    </select>
+  	<st:nbsp />
+    <select name="statusTypeString" class="statusType">
+      <f:option value="Completed" selected="${instance.statusTypeString == 'Completed'}">${%Completed}</f:option>
+      <f:option value="Started" selected="${instance.statusTypeString == 'Started'}">${%Started}</f:option>
+      <f:option value="Stable" selected="${instance.statusTypeString == 'Stable'}">${%Stable}</f:option>
+      <f:option value="Unstable" selected="${instance.statusTypeString == 'Unstable'}">${%Unstable}</f:option>
+      <f:option value="Failed" selected="${instance.statusTypeString == 'Failed'}">${%Failed}</f:option>
+      <f:option value="NotStable" selected="${instance.statusTypeString == 'NotStable'}">${%Not Stable}</f:option>
+      <f:option value="TriggeredByScmPoll" selected="${instance.statusTypeString == 'TriggeredByScmPoll'}">${%Triggered by SCM Poll}</f:option>
+      <f:option value="TriggeredByTimer" selected="${instance.statusTypeString == 'TriggeredByTimer'}">${%Triggered by Timer}</f:option>
+      <f:option value="TriggeredByUser" selected="${instance.statusTypeString == 'TriggeredByUser'}">${%Triggered by User}</f:option>
+      <f:option value="TriggeredByRemote" selected="${instance.statusTypeString == 'TriggeredByRemote'}">${%Triggered by Remote}</f:option>
+      <f:option value="TriggeredByUpstream" selected="${instance.statusTypeString == 'TriggeredByUpstream'}">${%Triggered by Upstream job}</f:option>
+      <f:option value="TriggeredByCli" selected="${instance.statusTypeString == 'TriggeredByCli'}">${%Triggered by CLI}</f:option>
+    </select>
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractBuildTrendFilter" optional="false"/>
+</j:jelly>

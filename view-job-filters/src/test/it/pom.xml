@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.jvnet.hudson.plugins</groupId>
+	<artifactId>view-job-filters-it</artifactId>
+	<version>1.23-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<modules>
+		<module>git-none</module>
+		<module>git-1.1.9</module>
+		<module>git-1.1.11</module>
+		<module>maven-none</module>
+		<module>maven-ext</module>
+	</modules>
+	
+</project>
