@@ -189,12 +189,6 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 	}
 	
 	protected String getStringValue(ParameterValue value) {
-		String sv = dogetStringValue(value);
-		System.out.println("getStringValue." + sv);
-		return sv;
-	}
-
-	protected String dogetStringValue(ParameterValue value) {
 		if (value instanceof StringParameterValue) {
 			return ((StringParameterValue) value).value;
 		} else if (value instanceof BooleanParameterValue) {
