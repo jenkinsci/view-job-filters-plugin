@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-// TODO use official version when depending on 1.517+
+// TODO use official version when depending on 1.517+ or 1.509.3
 
 /**
  * Utility to determine when a build record is loaded.
