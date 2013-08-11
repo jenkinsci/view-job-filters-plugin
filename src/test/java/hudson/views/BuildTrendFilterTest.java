@@ -8,8 +8,14 @@ import hudson.triggers.SCMTrigger.SCMTriggerCause;
 import hudson.triggers.TimerTrigger.TimerTriggerCause;
 import hudson.views.BuildTrendFilter.StatusType;
 import junit.framework.TestCase;
+import org.acegisecurity.context.SecurityContextHolder;
 
 public class BuildTrendFilterTest extends TestCase {
+
+    @Override protected void setUp() throws Exception {
+        // Only necessary if run as part of the whole project:
+        SecurityContextHolder.getContext().setAuthentication(null);
+    }
 
 	public void testCauses() {
 		doTestCause(StatusType.Completed, null, false);
