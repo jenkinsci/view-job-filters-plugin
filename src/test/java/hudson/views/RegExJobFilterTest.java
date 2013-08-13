@@ -20,6 +20,7 @@ import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
 import hudson.model.queue.SubTask;
 import hudson.scm.CVSSCM;
+import hudson.scm.CvsRepository;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
 import hudson.security.Permission;
@@ -122,7 +123,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 	}
 	private void doTestScmRegEx(String root, String modules, String branch, boolean expectMatch) throws IOException {
 		RegExJobFilter filter = new RegExJobFilter(".*my-office.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCM.toString());
-		CVSSCM scm = new CVSSCM(root, modules, branch, null, false, false, false, null);
+		CVSSCM scm = new CVSSCM(root, modules, branch, "cvsRsh", false, false, false, false, "excludedRegions", null);
 		TestItem item = new TestItem("name", scm);
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);

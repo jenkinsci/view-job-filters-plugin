@@ -7,6 +7,11 @@ import org.eclipse.jgit.transport.URIish;
 
 public class GitValuesProvider extends AbstractGitValuesProvider {
 
+	@Override
+	public boolean checkLoaded() {
+		return true;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Class getPluginTesterClass() {
 		return URIish.class;
