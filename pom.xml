@@ -23,9 +23,9 @@
 	</developers>
 
 	<scm>
-		<connection>scm:svn:https://svn.jenkins-ci.org/tags/view-job-filters-1.23</connection>
-		<developerConnection>scm:svn:https://svn.jenkins-ci.org/tags/view-job-filters-1.23</developerConnection>
-		<url>https://svn.jenkins-ci.org/tags/view-job-filters-1.23</url>
+		<connection>scm:svn:https://svn.jenkins-ci.org/trunk/hudson/plugins/view-job-filters</connection>
+		<developerConnection>scm:svn:https://svn.jenkins-ci.org/trunk/hudson/plugins/view-job-filters</developerConnection>
+		<url>https://svn.jenkins-ci.org/trunk/hudson/plugins/view-job-filters</url>
             <!-- If on GitHub:
             <connection>scm:git:git://github.com/jenkinsci/${artifactId}-plugin.git</connection>
             <developerConnection>scm:git:git@github.com:jenkinsci/${artifactId}-plugin.git</developerConnection>
