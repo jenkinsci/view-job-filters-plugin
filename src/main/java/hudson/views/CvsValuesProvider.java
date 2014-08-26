@@ -1,12 +1,15 @@
 package hudson.views;
 
 import hudson.scm.CVSSCM;
+import hudson.scm.CvsModule;
+import hudson.scm.CvsRepository;
+import hudson.scm.CvsRepositoryItem;
 import hudson.scm.SCM;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CvsValuesProvider implements ScmValuesProvider {
+public class CvsValuesProvider extends AbstractScmValuesProvider {
 
 	@SuppressWarnings("unchecked")
 	public Class getPluginTesterClass() {
@@ -19,9 +22,27 @@ public class CvsValuesProvider implements ScmValuesProvider {
 		}
 		CVSSCM cvs = (CVSSCM) scm;
 		List<String> values = new ArrayList<String>();
-		values.add(cvs.getCvsRoot());
-		values.add(cvs.getAllModules());
-		values.add(cvs.getBranch());
+		CvsRepository[] repos = cvs.getRepositories();
+		if (repos != null) {
+			for (CvsRepository repo: repos) {
+				values.add(repo.getCvsRoot());
+				CvsRepositoryItem[] items = repo.getRepositoryItems();
+				if (items != null) {
+					for (CvsRepositoryItem item: items) {
+						values.add(item.getLocation().getLocationName());
+						CvsModule[] modules = item.getModules();
+						if (modules != null) {
+							for (CvsModule module: modules) {
+								values.add(module.getCheckoutName());
+								values.add(module.getLocalName());
+								values.add(module.getProjectsetFileName());
+								values.add(module.getRemoteName());
+							}
+						}
+					}
+				}
+			}
+		}
 		return values;
 	}
 
