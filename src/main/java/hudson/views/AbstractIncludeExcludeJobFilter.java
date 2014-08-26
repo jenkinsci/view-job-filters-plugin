@@ -1,14 +1,9 @@
 package hudson.views;
 
-import hudson.model.Item;
-import hudson.model.ItemGroup;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -58,10 +53,6 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
 	 */
     @Override
     public List<TopLevelItem> filter(List<TopLevelItem> added, List<TopLevelItem> all, View filteringView) {
-
-        if (isRecurse(filteringView))
-            all = expand(all, new ArrayList<TopLevelItem>());
-
     	List<TopLevelItem> filtered = new ArrayList<TopLevelItem>(added);
     	doFilter(filtered, all, filteringView);
     	
@@ -69,31 +60,6 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
     	sorted.retainAll(filtered);
         return sorted;
     }
-
-    protected boolean isRecurse(View v) {
-        try {
-            Method m = v.getClass().getMethod("isRecurse", null);
-            if (m != null)
-                return (Boolean) m.invoke(v, null);
-        } catch (Exception e) {
-            // Not a 1.515+ ListView
-        }
-        return false;
-    }
-
-    private List<TopLevelItem> expand(Collection<TopLevelItem> items, List<TopLevelItem> allItems) {
-        for (Item item : items) {
-            if (item instanceof ItemGroup) {
-                ItemGroup<TopLevelItem> ig = (ItemGroup<TopLevelItem>) item;
-                expand(ig.getItems(), allItems);
-            }
-            if (item instanceof TopLevelItem) {
-                allItems.add((TopLevelItem) item);
-            }
-        }
-        return allItems;
-    }
-
     /**
      * Subclasses needing more control over how the lists are filtered should override this method.
      */
