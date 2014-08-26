@@ -13,6 +13,8 @@ import hudson.model.View;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sf.json.JSONObject;
 
@@ -32,11 +34,13 @@ public class BuildFilterColumn extends ListViewColumn {
 
 	@DataBoundConstructor
 	public BuildFilterColumn(ListViewColumn delegate) {
+		LOGGER.log(Level.INFO, "");
 		this.delegate = delegate;
 	}
 
 	@SuppressWarnings("unchecked")
 	public static List doGetAllColumns() {
+		LOGGER.log(Level.INFO, "");
 		DescriptorExtensionList<ListViewColumn, Descriptor<ListViewColumn>> all = ListViewColumn.all();
 		List list = new ArrayList();
 		for (Object descriptor: all) {
@@ -58,6 +62,7 @@ public class BuildFilterColumn extends ListViewColumn {
 		public ListViewColumn newInstance(StaplerRequest req, JSONObject obj)
 				throws hudson.model.Descriptor.FormException {
 			BuildFilterColumn col;
+			LOGGER.log(Level.INFO, "");
 			try {
 				col = (BuildFilterColumn) super.newInstance(req, obj);
 			} catch (Exception e) {
@@ -84,6 +89,7 @@ public class BuildFilterColumn extends ListViewColumn {
 		@SuppressWarnings("unchecked")
 		private ListViewColumn newInstanceFromClass(StaplerRequest req, JSONObject obj) 
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException, FormException {
+			LOGGER.log(Level.INFO, "");
 			// {"delegate":{"stapler-class":"hudson.plugins.column.console.LastBuildColumn","value":"7"} ...
 			JSONObject delegate = obj.getJSONObject("delegate");
 			String staplerClass = delegate.getString("stapler-class");
@@ -99,9 +105,20 @@ public class BuildFilterColumn extends ListViewColumn {
 	}
 	@SuppressWarnings("unchecked")
 	public Job getJobWrapper(Job job) {
+		LOGGER.log(Level.INFO, "getJobWrapper called for job {0}", job.getName());
 		return new JobWrapper(job);
 	}
 	public ListViewColumn getDelegate() {
+		Descriptor delegate_descriptor;
+		
+		delegate_descriptor = delegate.getDescriptor();
+		if (delegate_descriptor != null) {
+			LOGGER.log(Level.INFO, "has descriptor: {0}", delegate_descriptor.getDescriptorFullUrl());
+			LOGGER.log(Level.INFO, "descriptor getDisplayName: {0}", delegate_descriptor.getDisplayName());
+		} else {
+			LOGGER.log(Level.INFO, "doesn't have descriptor");
+		}
+		LOGGER.log(Level.INFO, "caption {0}", delegate.getColumnCaption());
 		return delegate;
 	}
 	
@@ -112,11 +129,13 @@ public class BuildFilterColumn extends ListViewColumn {
 		
 		public JobWrapper(Job delegate) {
 			super(delegate.getParent(), delegate.getName());
+			LOGGER.log(Level.INFO, "delegate {0}", delegate.getName());
 			this.delegate = delegate;
 		}
 
 		@Override
 		protected SortedMap _getRuns() {
+			// LOGGER.log(Level.INFO, "");
 			RunMap builds = new RunMap();
 			SortedMap map = delegate.getBuildsAsMap();
 			for (Object runObject: map.values()) {
@@ -136,11 +155,13 @@ public class BuildFilterColumn extends ListViewColumn {
 					}
 				}
 			}
+			// LOGGER.log(Level.INFO, "returning true");
 			return true;
 		}
 
 		@Override
 		public boolean isBuildable() {
+			LOGGER.log(Level.INFO, "");
 			return delegate.isBuildable();
 		}
 
@@ -149,6 +170,10 @@ public class BuildFilterColumn extends ListViewColumn {
 			// can't do this - it's protected
 //			delegate.removeRun(run);
 		}
+		
+
 	}
+
+    private static final Logger LOGGER = Logger.getLogger(BuildFilterColumn.class.getName());
 	
 }
