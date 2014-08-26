@@ -4,9 +4,6 @@ import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public abstract class AbstractBuildTrendFilter 
@@ -70,8 +67,6 @@ public abstract class AbstractBuildTrendFilter
 		if (item instanceof Job) {
 			Job job = (Job) item;
 			
-			LOGGER.log(Level.INFO, "");
-
 			// iterate over runs and check conditions
 			Run run = job.getLastBuild();
 			boolean oneMatched = false;
@@ -137,7 +132,5 @@ public abstract class AbstractBuildTrendFilter
 	public String getBuildCountTypeString() {
 		return buildCountTypeString;
 	}
-
-    private static final Logger LOGGER = Logger.getLogger(AbstractBuildTrendFilter.class.getName());
 	
 }

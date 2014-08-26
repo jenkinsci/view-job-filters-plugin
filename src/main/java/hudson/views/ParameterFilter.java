@@ -13,14 +13,10 @@ import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Run;
 import hudson.model.StringParameterValue;
 import hudson.model.TopLevelItem;
-import hudson.model.View;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.lang.StackTraceElement;
 
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -92,43 +88,11 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
     	}
     }
 	
-	@Override
-    protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
-		StackTraceElement[] elements = new Throwable().getStackTrace();
-
-		String calleeMethod = elements[0].getMethodName();
-		String callerMethodName = elements[1].getMethodName();
-		String callerClassName = elements[1].getClassName();
-
-		LOGGER.log(Level.INFO, "CallerClassName {0}", callerClassName);
-		LOGGER.log(Level.INFO, "Caller method name: {0}", callerMethodName);
-		LOGGER.log(Level.INFO, "Callee method name: {0}", calleeMethod);
-		
-        for (TopLevelItem item: all) {
-        	boolean matched = matches(item);
-        	filterItem(filtered, item, matched);
-        }
-    }
- 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected boolean matches(TopLevelItem item) {
-		
-		StackTraceElement[] elements = new Throwable().getStackTrace();
-
-		String calleeMethod = elements[0].getMethodName();
-		String callerMethodName = elements[1].getMethodName();
-		String callerClassName = elements[1].getClassName();
-
-		LOGGER.log(Level.INFO, "CallerClassName {0}", callerClassName);
-		LOGGER.log(Level.INFO, "Caller method name: {0}", callerMethodName);
-		LOGGER.log(Level.INFO, "Callee method name: {0}", calleeMethod);
-		
-		
-		LOGGER.log(Level.INFO, "Item is a(n) {0} ", item.getClass().getName());		
 		if (item instanceof Job) {
 			Job job = (Job) item;
-			LOGGER.log(Level.INFO, "Item is a job called {0} ", job.getName());
 			
 			if (useDefaultValue) {
 				return matchesDefaultValue(job);
@@ -167,11 +131,6 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			boolean isBuilding = run.isBuilding();
 			if (matchBuildsInProgress || !isBuilding) {
 				matched = matchesRun(run);
-				if (matched) {
-					LOGGER.log(Level.INFO, "Matched run {0}", run.getNumber());
-				} else {
-					LOGGER.log(Level.INFO, "Didn\'t match run {0}", run.getNumber());
-				}
 				// now that we've checked one build, see if we should stop
 				if (!matchAllBuilds || (maxBuildsToMatch > 0 && count >= maxBuildsToMatch)) {
 					break;
@@ -181,9 +140,6 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 			count++;
 		}
 		
-		if (matched) {
-			LOGGER.log(Level.INFO, "Returning matched job {0}", job.getName());
-		}
 		return matched;
 	}
 	@SuppressWarnings("unchecked")
@@ -192,15 +148,10 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
 		if (action == null) {
 			return false;
 		}
-		//LOGGER.log(Level.INFO, "action toString: {0}", action.toString());
-		//LOGGER.log(Level.INFO, "action getDisplayName: {0}", action.getDisplayName());
-		//LOGGER.log(Level.INFO, "action getUrlName: {0}", action.getUrlName());
-		
 		// look for one parameter value that matches our criteria
 		for (ParameterValue value: action.getParameters()) {
 			String sval = getStringValue(value);
 			if (matchesParameter(value.getName(), sval, false, null)) {
-				//LOGGER.log(Level.INFO, "Parameter matched: {0}", sval);
 				return true;
 			}
 		}
@@ -311,6 +262,4 @@ public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
         }
 	}
 	
-	private static final Logger LOGGER = Logger.getLogger(ParameterFilter.class.getName());
-
 }
