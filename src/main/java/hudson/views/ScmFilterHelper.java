@@ -16,9 +16,11 @@ public class ScmFilterHelper {
 			return values;
 		}
 		for (ScmValuesProvider matcher: matchers) {
-			List<String> some = matcher.getValues(scm);
-			if (some != null) {
-				values.addAll(some);
+			if (matcher.checkLoaded()) {
+				List<String> some = matcher.getValues(scm);
+				if (some != null) {
+					values.addAll(some);
+				}
 			}
 		}
 		return values;

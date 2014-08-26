@@ -7,7 +7,7 @@ import hudson.scm.SubversionSCM.ModuleLocation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SvnValuesProvider implements ScmValuesProvider {
+public class SvnValuesProvider extends AbstractScmValuesProvider {
 
 	@SuppressWarnings("unchecked")
 	public Class getPluginTesterClass() {
