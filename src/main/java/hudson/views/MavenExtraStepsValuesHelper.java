@@ -21,8 +21,7 @@ public class MavenExtraStepsValuesHelper implements PluginHelperTestable {
 		if (item instanceof MavenModuleSet) {
 			MavenModuleSet set = (MavenModuleSet) item;
 
-			List<BuildWrapper> wrappers = set.getBuildWrappersList().toList();
-			for (BuildWrapper wrapper : wrappers) {
+			for (BuildWrapper wrapper : set.getBuildWrappers()) {
 				if (wrapper instanceof M2ExtraStepsWrapper) {
 					M2ExtraStepsWrapper mwrap = (M2ExtraStepsWrapper) wrapper;
 					MavenValuesHelper.addValues(values, mwrap

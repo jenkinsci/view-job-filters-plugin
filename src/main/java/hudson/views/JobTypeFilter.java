@@ -1,13 +1,13 @@
 package hudson.views;
 
-import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.Descriptor;
+import hudson.model.DescriptorVisibilityFilter;
+import hudson.model.ItemGroup;
 import hudson.model.Items;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -29,20 +29,17 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 
 	public TopLevelItemDescriptor getJobType() {
 		for (TopLevelItemDescriptor type: Items.all()) {
-			if (matches(type)) {
+			if (type.getId().equals(jobType)) {
 				return type;
 			}
 		}
 		return null;
 	}
 
-	private boolean matches(TopLevelItemDescriptor type) {
-        return type.clazz.getName().equals(jobType);
-    }
-
 	@Override
 	protected boolean matches(TopLevelItem item) {
-        return matches(item.getDescriptor());
+        TopLevelItemDescriptor d = getJobType();
+        return d != null && d.testInstance(item);
 	}
 
 	@Extension
@@ -51,13 +48,8 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public String getDisplayName() {
 			return "Job Type Filter";
 		}
-		public List<TopLevelItemDescriptor> getJobTypes() {
-			List<TopLevelItemDescriptor> types = new ArrayList<TopLevelItemDescriptor>();
-			DescriptorExtensionList<TopLevelItem, TopLevelItemDescriptor> all = Items.all();
-			for (TopLevelItemDescriptor one: all) {
-				types.add(one);
-			}
-			return types;
+		public List<TopLevelItemDescriptor> getJobTypes(ItemGroup<?> context) {
+            return DescriptorVisibilityFilter.apply(context, Items.all());
 		}
 	}
 }
