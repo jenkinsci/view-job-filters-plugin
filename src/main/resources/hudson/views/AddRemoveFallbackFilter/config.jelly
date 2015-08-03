@@ -1,0 +1,14 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+    xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+    xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Action}">
+    <select name="fallbackTypeString" class="setting-input">
+      <f:option value="ADD_ALL_IF_NONE_INCLUDED" selected="${instance.fallbackTypeString == 'ADD_ALL_IF_NONE_INCLUDED'}">
+        ${%Add all jobs if no jobs are included}
+      </f:option>
+      <f:option value="REMOVE_ALL_IF_ALL_INCLUDED" selected="${instance.fallbackTypeString == 'REMOVE_ALL_IF_ALL_INCLUDED'}">
+        ${%Remove all jobs if all jobs are included}
+      </f:option>
+    </select>
+  </f:entry>
+</j:jelly>
