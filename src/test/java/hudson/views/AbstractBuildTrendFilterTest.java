@@ -13,18 +13,18 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Rule;
+import org.junit.Test;
 import org.jvnet.hudson.test.Bug;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.FailureBuilder;
+import org.jvnet.hudson.test.RunLoadCounter;
 
 public class AbstractBuildTrendFilterTest {
 
     @Rule public JenkinsRule j = new JenkinsRule();
 
     @Bug(18986)
-//    @Test
-    // skip - I cannot get this test to succeed no matter what version of jdk/maven I use.
-    // it works from within eclipse, but not from command line or from jenkins
+    @Test
     public void lazyLoading() throws Exception {
         final FreeStyleProject p1 = j.createFreeStyleProject("p1");
         RunLoadCounter.prepare(p1);
