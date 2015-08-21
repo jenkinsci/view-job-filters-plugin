@@ -21,7 +21,9 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-public class ParameterFilter extends AbstractIncludeExcludeJobFilter {
+public class ParameterFilter 
+	extends AbstractIncludeExcludeJobFilter 
+	implements RunMatcher {
 
 	private String nameRegex;
 	transient private Pattern namePattern;

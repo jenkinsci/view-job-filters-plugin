@@ -74,22 +74,15 @@ public abstract class AbstractBuildTrendFilter
 			
 			while (run != null) {
 				// check the different types of durations to see if we've checked back far enough
-				if (amount > 0) {
-					count++;
-					if (amountType == AmountType.Builds) {
-						if (count > amount) {
-							break;
-						}
-					} else {
-						// get the amount of time since it last built
-						long now = System.currentTimeMillis();
-						long then = run.getTimeInMillis();
-						float diff = now - then;
-						diff = amountType.convertMillisToAmount(diff);
-						if (diff > amount) {
-							break;
-						}
-					}
+				if (amount > 0 && amountType != AmountType.Builds) {
+                        // get the amount of time since it last built
+                        long now = System.currentTimeMillis();
+                        long then = run.getTimeInMillis();
+                        float diff = now - then;
+                        diff = amountType.convertMillisToAmount(diff);
+                        if (diff > amount) {
+                            break;
+                        }
 				}
 				// now evaluate the build status
 				boolean runMatches = matchesRun(run);
@@ -109,6 +102,11 @@ public abstract class AbstractBuildTrendFilter
 				}
 				
 				oneMatched = true;
+                if (amount > 0 && amountType == AmountType.Builds) {
+                    if (++count >= amount) {
+                        break;
+                    }
+                }
 				run = run.getPreviousBuild();
 			}
 			// if we're talking about "all builds" and there was at least one build, then
