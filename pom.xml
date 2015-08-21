@@ -13,15 +13,6 @@
 	<name>View Job Filters</name>
 	<description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well as "chaining" of filters and negating filters.</description>
 	<url>http://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters</url>
-
-	<developers>
-		<developer>
-			<id>jacob_robertson</id>
-			<name>Jacob Robertson</name>
-			<email>jacob.robertson.work@gmail.com</email>
-		</developer>
-	</developers>
-
 	<scm>
             <connection>scm:git:git://github.com/jenkinsci/${artifactId}-plugin.git</connection>
             <developerConnection>scm:git:git@github.com:jenkinsci/${artifactId}-plugin.git</developerConnection>
@@ -73,12 +64,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<goals>deploy</goals>
-				</configuration>
-			</plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
@@ -88,14 +73,6 @@
             </plugin>
 		</plugins>
 	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>maven.jenkins-ci.org</id>
-			<url>http://maven.jenkins-ci.org/content/repositories/releases/</url>
-		</repository>
-	</distributionManagement>
-
     <repositories>
         <repository>
             <id>repo.jenkins-ci.org</id>
