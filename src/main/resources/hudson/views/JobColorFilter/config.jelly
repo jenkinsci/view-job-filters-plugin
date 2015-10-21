@@ -1,0 +1,23 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
+	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+  <f:entry title="${%Job Colors}:">
+    <select name="ballColorTypeString" class="setting-input">
+        <f:option value="red" selected="${instance.red}">${%Red}</f:option>
+        <f:option value="yellow" selected="${instance.yellow}">${%Yellow}</f:option>
+        <f:option value="blue" selected="${instance.blue}">${%Blue}</f:option>
+        <f:option value="grey" selected="${instance.grey}">${%Grey}</f:option>
+        <f:option value="disabled" selected="${instance.disabled}">${%Disabled}</f:option>
+        <f:option value="aborted" selected="${instance.aborted}">${%Aborted}</f:option>
+        <f:option value="notbuilt" selected="${instance.notbuilt}">${%Not Built}</f:option>
+
+        <f:option value="yellow_anime" selected="${instance.yellow_anime}">${%Yellow In Progress}</f:option>
+        <f:option value="blue_anime" selected="${instance.blue_anime}">${%Blue In Progress}</f:option>
+        <f:option value="grey_anime" selected="${instance.grey_anime}">${%Grey In Progress}</f:option>
+        <f:option value="disabled_anime" selected="${instance.disabled_anime}">${%Disabled In Progress}</f:option>
+        <f:option value="aborted_anime" selected="${instance.aborted_anime}">${%Aborted In Progress}</f:option>
+        <f:option value="notbuilt_anime" selected="${instance.notbuilt_anime}">${%Not Built In Progress}</f:option>
+    </select>
+  </f:entry>
+  <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+</j:jelly>
