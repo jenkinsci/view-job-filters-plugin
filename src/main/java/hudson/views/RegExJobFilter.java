@@ -1,14 +1,11 @@
 package hudson.views;
 
 import hudson.Extension;
-import hudson.model.AbstractItem;
-import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
-import hudson.model.SCMedItem;
-import hudson.model.TopLevelItem;
+import hudson.model.*;
 import hudson.scm.SCM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -24,8 +21,109 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
-	static enum ValueType {
-		NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
+	enum ValueType {
+		NAME {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return Collections.singletonList(item.getName());
+			}
+		},
+		DESCRIPTION(AbstractItem.class) {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				String desc = ((AbstractItem) item).getDescription();
+				List<String> result = new ArrayList<String>();
+				addSplitValues(result, desc);
+				return result;
+			}
+		},
+		SCM(SCMedItem.class) {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				SCM scm = ((SCMedItem) item).getScm();
+				return ScmFilterHelper.getValues(scm);
+			}
+		},
+		EMAIL {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return EmailValuesHelper.getValues(item);
+			}
+		},
+		MAVEN {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return MavenValuesHelper.getValues(item);
+			}
+		},
+		SCHEDULE {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				List<String> scheduleValues = TriggerFilterHelper.getValues(item);
+				for (String scheduleValue: scheduleValues) {
+					// we do this split, because the spec may have multiple lines - especially including the comment
+					addSplitValues(scheduleValues, scheduleValue);
+				}
+				return scheduleValues;
+			}
+		},
+		NODE(AbstractProject.class) {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				String node = ((AbstractProject) item).getAssignedLabelString();
+				return Collections.singletonList(node);
+			}
+		};
+
+		/**
+		 * An instance that applies only to specific types
+		 * @param itemTypeFilter The Item type required for this filter to match at all.
+		 */
+		ValueType(Class<? extends Item> itemTypeFilter) {
+			this.itemTypeFilter = itemTypeFilter;
+		}
+
+		/**
+		 * An instance with no type filter.
+		 */
+		ValueType() {
+			this(Item.class);
+		}
+
+		final Class<? extends Item> itemTypeFilter;
+
+		private static void addSplitValues(List<String> values, String value) {
+			if (value != null) {
+				String[] split = value.split("\n");
+				for (String s : split) {
+					// trimming this is necessary to remove odd characters that cause problems
+					// the real example here is the description won't work without this trim
+					values.add(s.trim());
+				}
+			}
+		}
+
+		/**
+		 * Extracts the values to match against for a given Item. The item is guaranteed to match the itemTypeFilter
+		 * of the enum, but still needs to be casted.
+		 * @param item The item to match against
+		 * @return A list containing all values to match against. Never null.
+		 */
+		abstract List<String> doGetMatchValues(TopLevelItem item);
+
+		/**
+		 * Returns a list of the match values for this Enum value. If the filter type of the enum
+		 * is not matched, an empty list is returned.
+		 * @param item The item to match against.
+		 * @return A list containing all values to match against. Never null.
+		 */
+		public List<String> getMatchValues(TopLevelItem item) {
+			if (!itemTypeFilter.isInstance(item))
+				return Collections.emptyList();
+			return doGetMatchValues(item);
+		}
+
+
 	}
 	
 	transient private ValueType valueType;
@@ -57,50 +155,9 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
      */
     @SuppressWarnings("rawtypes")
 	public List<String> getMatchValues(TopLevelItem item) {
-    	List<String> values = new ArrayList<String>();
-    	if (valueType == ValueType.DESCRIPTION) {
-    		if (item instanceof AbstractItem) {
-    			String desc = ((AbstractItem) item).getDescription();
-    			addSplitValues(values, desc);
-    		}
-    	} else if (valueType == ValueType.SCM) {
-	    	if (item instanceof SCMedItem) {
-	    		SCM scm = ((SCMedItem) item).getScm();
-	    		List<String> scmValues = ScmFilterHelper.getValues(scm);
-	    		values.addAll(scmValues);
-	    	}
-    	} else if (valueType == ValueType.NAME) {
-    		values.add(item.getName());
-    	} else if (valueType == ValueType.EMAIL) {
-    		List<String> emailValues = EmailValuesHelper.getValues(item);
-    		values.addAll(emailValues);
-    	} else if (valueType == ValueType.MAVEN) {
-    		List<String> mavenValues = MavenValuesHelper.getValues(item);
-    		values.addAll(mavenValues);
-    	} else if (valueType == ValueType.SCHEDULE) {
-    		List<String> scheduleValues = TriggerFilterHelper.getValues(item);
-    		for (String scheduleValue: scheduleValues) {
-    			// we do this split, because the spec may have multiple lines - especially including the comment
-    			addSplitValues(values, scheduleValue);
-    		}
-    	} else if (valueType == ValueType.NODE) {
-	    	if (item instanceof AbstractProject) {
-	    		String node = ((AbstractProject) item).getAssignedLabelString();
-    			values.add(node);
-	    	}
-    	}
-    	return values;
+		return valueType.doGetMatchValues(item);
     }
-    private void addSplitValues(List<String> values, String value) {
-    	if (value != null) {
-    		String[] split = value.split("\n");
-    		for (String s: split) {
-    			// trimming this is necessary to remove odd characters that cause problems
-    			// the real example here is the description won't work without this trim
-    			values.add(s.trim());
-    		}
-    	}
-    }
+
     public boolean matches(TopLevelItem item) {
         List<String> matchValues = getMatchValues(item);
         boolean matched = false;
