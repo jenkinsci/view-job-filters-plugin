@@ -20,7 +20,6 @@ import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
 import hudson.model.queue.SubTask;
 import hudson.scm.CVSSCM;
-import hudson.scm.CvsRepository;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
 import hudson.security.Permission;
@@ -146,6 +145,35 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
+
+	public void testFullName() throws IOException {
+		doTestFullName(null, "job", false);
+		doTestFullName("otherFolder", "job", false);
+		doTestFullName("myFolder", "job", true);
+		doTestFullName("myFolder", "bob", false);
+	}
+	private void doTestFullName(String folder, String name, boolean expectMatch) throws IOException {
+		RegExJobFilter filter = new RegExJobFilter("myFolder/job.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.FULL_NAME.toString());
+		TestItem item = new TestItem(new TestItemGroup(folder), name);
+		boolean matched = filter.matches(item);
+		assertEquals(expectMatch, matched);
+	}
+
+	public void testFolderName() throws IOException {
+		doTestFolderName(null, "job", false);
+		doTestFolderName("otherFolder", "job", false);
+		doTestFolderName("myFolder", "job", true);
+		doTestFolderName("myFolder", "bob", true);
+		doTestFolderName("myFolder-2", "bob", true);
+		doTestFolderName("2-myFolder-2", "bob", true);
+	}
+	private void doTestFolderName(String folder, String name, boolean expectMatch) throws IOException {
+		RegExJobFilter filter = new RegExJobFilter("myFolder.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.FOLDER_NAME.toString());
+		TestItem item = new TestItem(new TestItemGroup(folder), name);
+		boolean matched = filter.matches(item);
+		assertEquals(expectMatch, matched);
+	}
+
 	public void testTrigger() throws Exception {
 		doTestTrigger("# monday", true);
 		doTestTrigger("# tuesday", false);
@@ -166,7 +194,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 
 		private String description;
 		private SCM scm;
-		
+
 		public TestItem(String name) {
 			this(name, null);
 		}
@@ -174,6 +202,9 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		public TestItem(String name, SCM scm) {
 			super(null, name);
 			this.scm = scm;
+		}
+		public TestItem(ItemGroup parent, String name) {
+			super(parent, name);
 		}
 		
 		public AbstractProject<?, ?> asProject() {
@@ -188,7 +219,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 			return null;
 		}
 		@Override
-		public Hudson getParent() {
+		public ItemGroup getParent() {
 			return null;
 		}
 		@Override
@@ -336,6 +367,14 @@ public class RegExJobFilterTest extends HudsonTestCase {
 	}
 	@SuppressWarnings("unchecked")
 	static class TestItemGroup implements ItemGroup {
+		private String name;
+
+		public TestItemGroup(String name) {
+			this.name = name;
+		}
+		public TestItemGroup() {
+		}
+
 		public String getDisplayName() {
 			return null;
 		}
@@ -345,7 +384,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 			return null;
 		}
 		public String getFullName() {
-			return null;
+			return name;
 		}
 		public Item getItem(String name) {
 			return null;

@@ -73,6 +73,24 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 				String node = ((AbstractProject) item).getAssignedLabelString();
 				return Collections.singletonList(node);
 			}
+		},
+		DISPLAY_NAME {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return Collections.singletonList(item.getDisplayName());
+			}
+		},
+		FULL_NAME {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return Collections.singletonList(item.getFullName());
+			}
+		},
+		FOLDER_NAME {
+			@Override
+			List<String> doGetMatchValues(TopLevelItem item) {
+				return Collections.singletonList(item.getParent().getFullName());
+			}
 		};
 
 		/**
@@ -150,10 +168,6 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         return super.readResolve();
     }
 
-    /**
-     * TODO this pattern works fine, but it may be better to provide this as a list of helpers.
-     */
-    @SuppressWarnings("rawtypes")
 	public List<String> getMatchValues(TopLevelItem item) {
 		return valueType.doGetMatchValues(item);
     }
