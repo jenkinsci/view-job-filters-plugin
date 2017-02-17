@@ -59,12 +59,12 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 		SCHEDULE {
 			@Override
 			List<String> doGetMatchValues(TopLevelItem item) {
-				List<String> scheduleValues = TriggerFilterHelper.getValues(item);
-				for (String scheduleValue: scheduleValues) {
+				List<String> result = new ArrayList<String>();
+				for (String scheduleValue: TriggerFilterHelper.getValues(item)) {
 					// we do this split, because the spec may have multiple lines - especially including the comment
-					addSplitValues(scheduleValues, scheduleValue);
+					addSplitValues(result, scheduleValue);
 				}
-				return scheduleValues;
+				return result;
 			}
 		},
 		NODE(AbstractProject.class) {
@@ -89,6 +89,8 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 		FOLDER_NAME {
 			@Override
 			List<String> doGetMatchValues(TopLevelItem item) {
+				if (item.getParent() == null)
+					return Collections.emptyList();
 				return Collections.singletonList(item.getParent().getFullName());
 			}
 		};
@@ -174,7 +176,6 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 
     public boolean matches(TopLevelItem item) {
         List<String> matchValues = getMatchValues(item);
-        boolean matched = false;
         for (String matchValue: matchValues) {
         	// check null here so matchers don't have to
         	if (matchValue != null &&
@@ -183,11 +184,10 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         				// - just to clarify this a bit more - if someone configures the regex of "Util.*"
         				//		we cannot assume they want to match (find) a value of "SpecialUtil"
 	        			pattern.matcher(matchValue).matches()) {
-        		matched = true;
-        		break;
+        		return true;
         	}
         }
-        return matched;
+        return false;
     }
 
 	public String getRegex() {
