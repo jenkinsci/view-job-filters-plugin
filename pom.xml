@@ -9,6 +9,8 @@
 
     <properties>
         <jenkins-test-harness.version>2.39</jenkins-test-harness.version>
+        <java.level>8</java.level>
+        <jenkins.version>2.62</jenkins.version>
     </properties>
 
 	<artifactId>view-job-filters</artifactId>
@@ -24,6 +26,23 @@
 	  <tag>HEAD</tag>
   </scm>
 	<dependencies>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-job</artifactId>
+            <version>2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>junit</artifactId>
+            <version>1.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>matrix-auth</artifactId>
+            <version>1.7</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>cvs</artifactId>
@@ -44,19 +63,6 @@
 			<version>3.9.1</version>
 			<optional>true</optional>
 		</dependency>
-		<!--dependency>
-			<groupId>org.eclipse.jgit</groupId>
-			<artifactId>org.eclipse.jgit</artifactId>
-			<version>2.2.0.201212191850-r</version>
-			<optional>true</optional>
-		</dependency-->
-        <dependency>
-            <groupId>org.jenkins-ci.plugins</groupId>
-            <artifactId>matrix-auth</artifactId>
-            <version>1.7</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
 		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>email-ext</artifactId>
