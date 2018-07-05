@@ -40,7 +40,6 @@ public abstract class AbstractBuildTrendFilter
 	
 	private float amount;
 	
-	@DataBoundConstructor
 	public AbstractBuildTrendFilter(
 			String buildCountTypeString, 
 			float amount, String amountTypeString,

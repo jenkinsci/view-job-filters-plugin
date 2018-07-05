@@ -1,20 +1,6 @@
 package hudson.views;
 
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.DependencyGraph;
-import hudson.model.Hudson;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Job;
-import hudson.model.Label;
-import hudson.model.Node;
-import hudson.model.ResourceList;
-import hudson.model.Run;
-import hudson.model.SCMedItem;
-import hudson.model.TaskListener;
-import hudson.model.TopLevelItem;
-import hudson.model.TopLevelItemDescriptor;
+import hudson.model.*;
 import hudson.model.Queue.Executable;
 import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
@@ -23,6 +9,7 @@ import hudson.scm.CVSSCM;
 import hudson.scm.CvsRepository;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
+import hudson.security.ACL;
 import hudson.security.Permission;
 import hudson.triggers.TimerTrigger;
 import hudson.util.DescribableList;
@@ -35,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.acegisecurity.Authentication;
 import org.jvnet.hudson.test.HudsonTestCase;
 
 public class RegExJobFilterTest extends HudsonTestCase {
@@ -166,7 +154,17 @@ public class RegExJobFilterTest extends HudsonTestCase {
 
 		private String description;
 		private SCM scm;
-		
+
+		@Override
+		public org.acegisecurity.Authentication getDefaultAuthentication() {
+			return ACL.SYSTEM;
+		}
+
+		@Override
+		public Authentication getDefaultAuthentication(Queue.Item var1) {
+			return ACL.SYSTEM;
+		}
+
 		public TestItem(String name) {
 			this(name, null);
 		}
