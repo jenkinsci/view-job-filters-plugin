@@ -14,9 +14,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.acegisecurity.Authentication;
+import org.junit.Test;
+
+import static junit.framework.TestCase.assertFalse;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class SecurityFilterTest extends AbstractHudsonTest {
 
+	@Test
 	public void testWorkspace() {
 		TestACL acl = new TestACL();
 		TestItem item = new TestItem(acl);
@@ -28,7 +34,8 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 		acl.add(Item.WORKSPACE.name);
 		assertTrue(filter.matches(item));
 	}
-	
+
+	@Test
 	public void testViewJobsRestrictedInSomeWay() {
 		TestACL acl = new TestACL();
 		TestItem item = new TestItem(acl);
@@ -67,11 +74,11 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(0, filtered.size());
 	}
-	
+
 	private class TestItem extends FreeStyleProject {
 		private TestACL acl;
 		public TestItem(TestACL acl) {
-			super(Hudson.getInstance(), "item");
+			super(j.jenkins, "item");
 			this.acl = acl;
 		}
 		@Override
@@ -79,6 +86,7 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 			return acl;
 		}
 	}
+
 	private class TestACL extends ACL {
 		private Set<String> perms = new HashSet<String>();
 		@Override

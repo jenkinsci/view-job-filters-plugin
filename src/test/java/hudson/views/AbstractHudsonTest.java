@@ -6,16 +6,22 @@ import hudson.util.DescribableList;
 
 import java.io.IOException;
 
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.Before;
+import org.junit.Rule;
+import org.jvnet.hudson.test.JenkinsRule;
 
-public abstract class AbstractHudsonTest extends HudsonTestCase {
+public abstract class AbstractHudsonTest {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Rule
+	public JenkinsRule j = new JenkinsRule();
+
+	@Before
+	public void setUp() throws Exception {
 		// create some jobs
 		for (int i = 0; i < 10; i++) {
-			createFreeStyleProject("Job-" + i);
+			j.createFreeStyleProject("Job-" + i);
+			j.createProject(WorkflowJob.class, "Workflow-" + i);
 		}
 		addRegexView("View-56", "Job.*[56]");
 		addRegexView("View-13", "Job.*[13]");
@@ -28,6 +34,6 @@ public abstract class AbstractHudsonTest extends HudsonTestCase {
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
 				RegExJobFilter.ValueType.NAME.toString());
 		filters.add(regexFilter);
-		hudson.addView(v);
+		j.jenkins.addView(v);
 	}
 }

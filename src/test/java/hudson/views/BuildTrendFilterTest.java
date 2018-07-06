@@ -9,14 +9,18 @@ import hudson.triggers.TimerTrigger.TimerTriggerCause;
 import hudson.views.BuildTrendFilter.StatusType;
 import junit.framework.TestCase;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.junit.Before;
+import org.junit.Test;
 
 public class BuildTrendFilterTest extends TestCase {
 
-    @Override protected void setUp() throws Exception {
+	@Before
+    public void setUp() throws Exception {
         // Only necessary if run as part of the whole project:
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 
+    @Test
 	public void testCauses() {
 		doTestCause(StatusType.Completed, null, false);
 		doTestCause(StatusType.Completed, new UserCause(), false);

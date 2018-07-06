@@ -23,13 +23,17 @@ import java.util.List;
 import java.util.SortedMap;
 
 import org.acegisecurity.Authentication;
+import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 
-public class RegExJobFilterTest extends HudsonTestCase {
+import static org.junit.Assert.assertEquals;
+
+public class RegExJobFilterTest {
 
 	/**
 	 * Test all the helpers to see that no exceptions are thrown.
 	 */
+	@Test
 	public void testHelpers() {
 		PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
 		PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
@@ -44,6 +48,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 	/**
 	 * Tests that the example given in the help page works as described.
 	 */
+	@Test
 	public void testHelpExample() {
 		List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
@@ -78,7 +83,8 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		}
 		return items;
 	}
-	
+
+	@Test
 	public void testIncludeExclude() {
 		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeMatched, true, false);
 		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeUnmatched, false, false);
@@ -100,7 +106,8 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		assertEquals(expectExclude, filter.exclude(matched));
 		assertEquals(expectInclude, filter.include(matched));
 	}
-	
+
+	@Test
 	public void testScmRegEx() throws IOException {
 		doTestScmRegEx("root", "modules", "branch", false);
 		doTestScmRegEx(null, "modules", "branch", false);
@@ -116,7 +123,8 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
-	
+
+	@Test
 	public void testDescription() throws IOException {
 		doTestDescription("", false);
 		doTestDescription(null, false);
@@ -134,6 +142,8 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
+
+	@Test
 	public void testTrigger() throws Exception {
 		doTestTrigger("# monday", true);
 		doTestTrigger("# tuesday", false);
