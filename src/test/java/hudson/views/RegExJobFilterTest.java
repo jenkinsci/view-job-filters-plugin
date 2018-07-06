@@ -23,12 +23,17 @@ import java.util.List;
 import java.util.SortedMap;
 
 import org.acegisecurity.Authentication;
+import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 
 import static org.junit.Assert.assertEquals;
 
 public class RegExJobFilterTest {
+
+	@Rule
+	public JenkinsRule j = new JenkinsRule();
 
 	/**
 	 * Test all the helpers to see that no exceptions are thrown.
