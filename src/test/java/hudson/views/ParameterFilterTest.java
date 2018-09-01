@@ -15,15 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.junit.Rule;
+import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 
-public class ParameterFilterTest extends HudsonTestCase {
+import static org.junit.Assert.*;
 
+public class ParameterFilterTest extends AbstractHudsonTest {
+
+	@Test
 	public void testMatchesParameter() {
 		doTestMatchesParameter("N1", null, null, "N2", null, null, false);
 		doTestMatchesParameter("N.*", null, null,"N2", null, null, true);
 		doTestMatchesParameter("N.*", null, null, "AN2", null, null, false);
 	}
+
 	private void doTestMatchesParameter(String nameRegex, String valueRegex, String descRegex, 
 			String name, String value, String desc, boolean expectMatched) {
 		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
@@ -31,12 +38,13 @@ public class ParameterFilterTest extends HudsonTestCase {
 		boolean matched = filter.matchesParameter(name, value, false, desc);
 		assertEquals(expectMatched, matched);
 	}
-	
+
+	@Test
 	public void testBuildValue() throws Exception {
 		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
 				"N", "V1", "", true, false, 0, false);
 
-		FreeStyleProject proj = createFreeStyleProject("P1");
+		FreeStyleProject proj = j.createFreeStyleProject("P1");
 
 		List<ParameterDefinition> defs = new ArrayList<ParameterDefinition>();
 		ParametersDefinitionProperty prop = new ParametersDefinitionProperty(defs);

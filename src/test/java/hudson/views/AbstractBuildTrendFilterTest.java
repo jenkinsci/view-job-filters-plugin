@@ -21,7 +21,8 @@ import org.jvnet.hudson.test.RunLoadCounter;
 
 public class AbstractBuildTrendFilterTest {
 
-    @Rule public JenkinsRule j = new JenkinsRule();
+    @Rule
+    public JenkinsRule j = new JenkinsRule();
 
     @Bug(18986)
     @Test

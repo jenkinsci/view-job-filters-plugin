@@ -7,16 +7,23 @@ import hudson.model.Cause.UserCause;
 import hudson.triggers.SCMTrigger.SCMTriggerCause;
 import hudson.triggers.TimerTrigger.TimerTriggerCause;
 import hudson.views.BuildTrendFilter.StatusType;
-import junit.framework.TestCase;
 import org.acegisecurity.context.SecurityContextHolder;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 
-public class BuildTrendFilterTest extends TestCase {
+import static org.junit.Assert.*;
 
-    @Override protected void setUp() throws Exception {
+public class BuildTrendFilterTest extends AbstractHudsonTest {
+
+    @Before
+	public void setUp() throws Exception {
         // Only necessary if run as part of the whole project:
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 
+    @Test
 	public void testCauses() {
 		doTestCause(StatusType.Completed, null, false);
 		doTestCause(StatusType.Completed, new UserCause(), false);
@@ -30,12 +37,14 @@ public class BuildTrendFilterTest extends TestCase {
 		doTestCause(StatusType.TriggeredByScmPoll, new SCMTriggerCause(), true);
 		doTestCause(StatusType.TriggeredByTimer, new TimerTriggerCause(), true);
 	}
+
 	private class UserTestCause extends Cause {
 		@Override
 		public String getShortDescription() {
 			return null;
 		}
 	}
+
 	private void doTestCause(StatusType statusType, Cause cause, boolean expect) {
 		boolean matches = statusType.matchesCause(cause);
 		assertEquals(expect, matches);

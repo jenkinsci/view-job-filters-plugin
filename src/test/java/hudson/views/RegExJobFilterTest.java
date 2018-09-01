@@ -1,20 +1,6 @@
 package hudson.views;
 
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.DependencyGraph;
-import hudson.model.Hudson;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Job;
-import hudson.model.Label;
-import hudson.model.Node;
-import hudson.model.ResourceList;
-import hudson.model.Run;
-import hudson.model.SCMedItem;
-import hudson.model.TaskListener;
-import hudson.model.TopLevelItem;
-import hudson.model.TopLevelItemDescriptor;
+import hudson.model.*;
 import hudson.model.Queue.Executable;
 import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
@@ -23,6 +9,7 @@ import hudson.scm.CVSSCM;
 import hudson.scm.CvsRepository;
 import hudson.scm.PollingResult;
 import hudson.scm.SCM;
+import hudson.security.ACL;
 import hudson.security.Permission;
 import hudson.triggers.TimerTrigger;
 import hudson.util.DescribableList;
@@ -35,13 +22,22 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.acegisecurity.Authentication;
+import org.junit.Rule;
+import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
+import org.jvnet.hudson.test.JenkinsRule;
 
-public class RegExJobFilterTest extends HudsonTestCase {
+import javax.annotation.Nonnull;
+
+import static org.junit.Assert.*;
+
+public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	/**
 	 * Test all the helpers to see that no exceptions are thrown.
 	 */
+	@Test
 	public void testHelpers() {
 		PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
 		PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
@@ -56,6 +52,7 @@ public class RegExJobFilterTest extends HudsonTestCase {
 	/**
 	 * Tests that the example given in the help page works as described.
 	 */
+	@Test
 	public void testHelpExample() {
 		List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
@@ -279,6 +276,18 @@ public class RegExJobFilterTest extends HudsonTestCase {
 		@Override
 		public Collection<? extends SubTask> getSubTasks() {
 			return null;
+		}
+
+		@Nonnull
+		@Override
+		public Authentication getDefaultAuthentication() {
+			return ACL.SYSTEM;
+		}
+
+		@Nonnull
+		@Override
+		public Authentication getDefaultAuthentication(Queue.Item item) {
+			return ACL.SYSTEM;
 		}
 
 		@Override
