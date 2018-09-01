@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -149,7 +150,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		// the problem here is that I don't want to upgrade to a newer version of Jenkins, because that would make me maintain for Hudson
 		// and there is no fix for this in the 1.395 API.
 		// also, it appears that this problem will most likely only occur with the sectioned-view plugin
-		Collection<View> baseViews = Hudson.getInstance().getViews();
+		Collection<View> baseViews = JenkinsUtil.getInstance().getViews();
 		
 		// build comprehensive list
 		List<View> views = new ArrayList<View>();

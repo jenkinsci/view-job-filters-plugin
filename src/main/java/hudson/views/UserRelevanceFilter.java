@@ -92,10 +92,10 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     }
     private User getUser() {
     	try {
-    		return Hudson.getInstance().getMe();
+    		return JenkinsUtil.getInstance().getMe();
     	} catch (Exception e) {
         	try {
-        		return Hudson.getInstance().getUser(Hudson.ANONYMOUS.getName());
+        		return JenkinsUtil.getInstance().getUser(Hudson.ANONYMOUS.getName());
         	} catch (Exception e2) {
             	return null;
         	}

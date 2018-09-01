@@ -31,7 +31,7 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 
 	@SuppressWarnings("unchecked")
 	protected Descriptor<Publisher> getDescriptor() {
-		return Hudson.getInstance().getDescriptor(getPluginTesterClass());
+		return JenkinsUtil.getInstance().getDescriptor(getPluginTesterClass());
 	}
 	protected abstract String getValue(Publisher publisher);
 }

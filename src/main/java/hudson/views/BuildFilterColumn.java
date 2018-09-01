@@ -87,7 +87,7 @@ public class BuildFilterColumn extends ListViewColumn {
 			// {"delegate":{"stapler-class":"hudson.plugins.column.console.LastBuildColumn","value":"7"} ...
 			JSONObject delegate = obj.getJSONObject("delegate");
 			String staplerClass = delegate.getString("stapler-class");
-			Descriptor desc = Hudson.getInstance().getDescriptor(staplerClass);
+			Descriptor desc = JenkinsUtil.getInstance().getDescriptor(staplerClass);
 			ListViewColumn col = (ListViewColumn) desc.newInstance(req, delegate);
 			return col;
 		}
