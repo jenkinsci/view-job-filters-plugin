@@ -15,8 +15,8 @@ public class MavenValuesHelper {
 	/**
 	 * If I add any more helpers, switch to a better design first.
 	 */
-	public static MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
-	public static MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
+	public static final MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
+	public static final MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
 
 	@SuppressWarnings({ "unchecked" })
 	public static List<String> getValues(TopLevelItem item) {
