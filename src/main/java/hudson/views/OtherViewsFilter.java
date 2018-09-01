@@ -179,9 +179,12 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	private static String toName(View view) {
 		String name = view.getViewName();
 		ViewGroup owner = view.getOwner();
-		if (owner instanceof View && owner != view) {
-			String parentName = toName((View) owner);
-			name = parentName + " / " + name;
+		if (owner instanceof View) {
+			View ownerView = (View)owner;
+		    if (!ownerView.equals(view)) {
+				String parentName = toName((View) owner);
+				name = parentName + " / " + name;
+			}
 		}
 		return name;
 	}
