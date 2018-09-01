@@ -41,10 +41,16 @@ public class SecurityFilter extends AbstractIncludeExcludeJobFilter {
 	protected boolean matches(TopLevelItem item) {
 		boolean all = permissionCheckType.equals(ALL);
 		Boolean matches = null;
-		
-		matches = matches(build, item, Item.BUILD, all, matches);
-		matches = matches(configure, item, Item.CONFIGURE, all, matches);
-		matches = matches(workspace, item, Item.WORKSPACE, all, matches);
+
+		if (build) {
+			matches = matches(item, Item.BUILD, all, matches);
+		}
+		if (configure) {
+			matches = matches(item, Item.CONFIGURE, all, matches);
+		}
+		if (workspace) {
+			matches = matches(item, Item.WORKSPACE, all, matches);
+		}
 		
 		// this should only happen when the view is misconfigured
 		if (matches == null) {
@@ -53,7 +59,7 @@ public class SecurityFilter extends AbstractIncludeExcludeJobFilter {
 		return matches;
 	}
 	
-	private Boolean matches(boolean isSelected, TopLevelItem item, 
+	private Boolean matches(TopLevelItem item,
 			Permission permission, boolean all, Boolean lastMatched) {
 		// if we require all, and already we know one doesn't match, no need to check further
 		if (all && lastMatched != null && !lastMatched) {
@@ -63,12 +69,7 @@ public class SecurityFilter extends AbstractIncludeExcludeJobFilter {
 		if (!all && lastMatched != null && lastMatched) {
 			return true;
 		}
-		// don't bother matching against this one if it wasn't selected
-		if (!isSelected) {
-			return null;
-		}
-		boolean matches = item.getACL().hasPermission(permission);
-		return matches;
+		return item.getACL().hasPermission(permission);
 	}
 	public String getPermissionCheckType() {
 		return permissionCheckType;
