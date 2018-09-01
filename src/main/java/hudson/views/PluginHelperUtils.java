@@ -1,9 +1,13 @@
 package hudson.views;
 
+import javax.annotation.CheckReturnValue;
+import javax.annotation.meta.When;
+
 public class PluginHelperUtils {
 
 	public static interface PluginHelperTestable {
 		@SuppressWarnings("unchecked")
+		@CheckReturnValue(when = When.NEVER)
 		Class getPluginTesterClass();
 	}
 	
