@@ -34,7 +34,7 @@ public class ParameterFilter
 	private String descriptionRegex;
 	transient private Pattern descriptionPattern;
 	
-	/**
+	/*
 	 * Default is true to help backwards compatibility when deserializing.
 	 */
 	private Boolean useDefaultValue = Boolean.TRUE;
@@ -174,7 +174,7 @@ public class ParameterFilter
 		return true;
 	}
 	
-	/**
+	/*
 	 * Do our best to get the value out.
 	 * There might be a better way to do this.
 	 */

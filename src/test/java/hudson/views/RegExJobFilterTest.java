@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 public class RegExJobFilterTest extends AbstractHudsonTest {
 
-	/**
+	/*
 	 * Test all the helpers to see that no exceptions are thrown.
 	 */
 	@Test
@@ -49,7 +49,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		PluginHelperUtils.validateAndThrow(new SvnValuesProvider());
 	}
 	
-	/**
+	/*
 	 * Tests that the example given in the help page works as described.
 	 */
 	@Test

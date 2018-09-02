@@ -33,7 +33,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	private String otherViewName;
 	private transient View otherView;
 	
-	/**
+	/*
 	 * Constructor called by stapler to inject fields.
 	 */
 	@DataBoundConstructor
@@ -100,7 +100,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
         }
 		
 
-        /**
+        /*
          * This method determines the values of the other views drop-down list box.
          */
         public ListBoxModel doFillOtherViewNameItems() throws ServletException {
@@ -160,7 +160,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		return views;
 	}
 	
-	/**
+	/*
 	 * Takes into account nested names.
 	 */
 	private View getView(String name) {
@@ -173,7 +173,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		return null;
 	}
-	/**
+	/*
 	 * Alternate strategy for getting name, to handle nested views.
 	 */
 	private static String toName(View view) {

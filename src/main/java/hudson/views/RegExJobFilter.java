@@ -52,7 +52,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         return super.readResolve();
     }
 
-    /**
+    /*
      * TODO this pattern works fine, but it may be better to provide this as a list of helpers.
      */
     @SuppressWarnings("rawtypes")
@@ -137,7 +137,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
             return "/plugin/view-job-filters/regex-help.html";
         }
         
-        /**
+        /*
          * Checks if the regular expression is valid.
          * 
          * Does not work in hetero-list?

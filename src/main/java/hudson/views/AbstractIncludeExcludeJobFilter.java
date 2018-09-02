@@ -48,7 +48,7 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
 		return includeExcludeTypeString;
 	}
 
-	/**
+	/*
 	 * Subclasses should not have to override this method.
 	 */
     @Override
@@ -60,7 +60,7 @@ public abstract class AbstractIncludeExcludeJobFilter extends ViewJobFilter {
     	sorted.retainAll(filtered);
         return sorted;
     }
-    /**
+    /*
      * Subclasses needing more control over how the lists are filtered should override this method.
      */
     protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
