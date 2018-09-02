@@ -1,6 +1,7 @@
 package hudson.views;
 
 import hudson.model.*;
+import hudson.model.Queue;
 import hudson.model.Queue.Executable;
 import hudson.model.Queue.Task;
 import hudson.model.queue.CauseOfBlockage;
@@ -12,25 +13,29 @@ import hudson.scm.SCM;
 import hudson.security.ACL;
 import hudson.security.Permission;
 import hudson.triggers.TimerTrigger;
+import hudson.triggers.Trigger;
+import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
 import hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedMap;
+import java.util.*;
 
 import org.acegisecurity.Authentication;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.mockito.Mockito;
 
 import javax.annotation.Nonnull;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public class RegExJobFilterTest extends AbstractHudsonTest {
 
@@ -82,8 +87,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	private List<TopLevelItem> toList(String... names) {
 		List<TopLevelItem> items = new ArrayList<TopLevelItem>();
 		for (String name: names) {
-			TopLevelItem item = new TestItem(name);
-			items.add(item);
+			Job item =  mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class));
+			when(item.getName()).thenReturn(name);
+			items.add((TopLevelItem)item);
 		}
 		return items;
 	}
@@ -104,9 +110,10 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	private void doTestIncludeExclude(String jobName,
 			String regex, IncludeExcludeType includeExcludeType, // boolean negate, boolean exclude, 
 			boolean expectInclude, boolean expectExclude) {
-		TopLevelItem item = new TestItem(jobName);
+		Job item =  mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class));
+		when(item.getName()).thenReturn(jobName);
 		RegExJobFilter filter = new RegExJobFilter(regex, includeExcludeType.toString(), RegExJobFilter.ValueType.NAME.toString());
-		boolean matched = filter.matches(item);
+		boolean matched = filter.matches((TopLevelItem)item);
 		assertEquals(expectExclude, filter.exclude(matched));
 		assertEquals(expectInclude, filter.include(matched));
 	}
@@ -123,8 +130,10 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	private void doTestScmRegEx(String root, String modules, String branch, boolean expectMatch) throws IOException {
 		RegExJobFilter filter = new RegExJobFilter(".*my-office.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCM.toString());
 		CVSSCM scm = new CVSSCM(root, modules, branch, "cvsRsh", false, false, false, false, "excludedRegions", null);
-		TestItem item = new TestItem("name", scm);
-		boolean matched = filter.matches(item);
+		Job item =  mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class, SCMedItem.class));
+		when(item.getName()).thenReturn("name");
+		when(((SCMedItem)item).getScm()).thenReturn(scm);
+		boolean matched = filter.matches((TopLevelItem)item);
 		assertEquals(expectMatch, matched);
 	}
 
@@ -139,11 +148,15 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		doTestDescription("1&#xd;\ndesc=test&#xd;\n2", true);
 		doTestDescription("1 desc=test 2", true);
 	}
+
 	private void doTestDescription(String desc, boolean expectMatch) throws IOException {
 		RegExJobFilter filter = new RegExJobFilter(".*desc=test.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.DESCRIPTION.toString());
-		TestItem item = new TestItem("name");
-		item.setDescription(desc);
-		boolean matched = filter.matches(item);
+
+		Job item =  mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class));
+		when(item.getName()).thenReturn("name");
+		when(item.getDescription()).thenReturn(desc);
+
+		boolean matched = filter.matches((TopLevelItem)item);
 		assertEquals(expectMatch, matched);
 	}
 
@@ -158,235 +171,14 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	@SuppressWarnings("unchecked")
 	private void doTestTrigger(String spec, boolean expectMatch) throws Exception {
 		RegExJobFilter filter = new RegExJobFilter(".*monday.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCHEDULE.toString());
-		TestProject proj = new TestProject("proj");
-		proj.addTrigger(new TimerTrigger(spec));
-		boolean matched = filter.matches(proj);
+
+		Map<TriggerDescriptor, Trigger<?>> triggers = new HashMap<TriggerDescriptor, Trigger<?>>();
+		triggers.put(mock(TriggerDescriptor.class), new TimerTrigger(spec));
+
+		AbstractProject project = mock(AbstractProject.class, withSettings().extraInterfaces(TopLevelItem.class));
+		when(project.getTriggers()).thenReturn(triggers);
+
+		boolean matched = filter.matches((TopLevelItem)project);
 		assertEquals(expectMatch, matched);
-	}
-	@SuppressWarnings({ "unchecked" })
-	private class TestItem extends Job implements SCMedItem, TopLevelItem {
-
-		private String description;
-		private SCM scm;
-		
-		public TestItem(String name) {
-			this(name, null);
-		}
-
-		public TestItem(String name, SCM scm) {
-			super(null, name);
-			this.scm = scm;
-		}
-		
-		public AbstractProject<?, ?> asProject() {
-			return null;
-		}
-
-		public SCM getScm() {
-			return scm;
-		}
-		
-		public TopLevelItemDescriptor getDescriptor() {
-			return null;
-		}
-		@Override
-		public Hudson getParent() {
-			return null;
-		}
-		@Override
-		protected SortedMap _getRuns() {
-			return null;
-		}
-
-		@Override
-		public boolean isBuildable() {
-			return false;
-		}
-
-		@Override
-		protected void removeRun(Run arg0) {
-		}
-
-		public PollingResult poll(TaskListener tasklistener) {
-			return null;
-		}
-
-		public boolean pollSCMChanges(TaskListener tasklistener) {
-			return false;
-		}
-
-		public ResourceList getResourceList() {
-			return null;
-		}
-
-		public boolean scheduleBuild() {
-			return false;
-		}
-
-		public boolean scheduleBuild(Cause cause) {
-			return false;
-		}
-
-		public boolean scheduleBuild(int i, Cause cause) {
-			return false;
-		}
-
-		public boolean scheduleBuild(int i) {
-			return false;
-		}
-
-		public void checkAbortPermission() {
-		}
-
-		public Executable createExecutable() throws IOException {
-			return null;
-		}
-
-		public Label getAssignedLabel() {
-			return null;
-		}
-
-		public CauseOfBlockage getCauseOfBlockage() {
-			return null;
-		}
-
-		public Node getLastBuiltOn() {
-			return null;
-		}
-
-		public String getWhyBlocked() {
-			return null;
-		}
-
-		public boolean hasAbortPermission() {
-			return false;
-		}
-
-		public boolean isBuildBlocked() {
-			return false;
-		}
-
-		public boolean isConcurrentBuild() {
-			return false;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		
-		@Override
-		public Collection<? extends SubTask> getSubTasks() {
-			return null;
-		}
-
-		@Nonnull
-		@Override
-		public Authentication getDefaultAuthentication() {
-			return ACL.SYSTEM;
-		}
-
-		@Nonnull
-		@Override
-		public Authentication getDefaultAuthentication(Queue.Item item) {
-			return ACL.SYSTEM;
-		}
-
-		@Override
-		public Task getOwnerTask() {
-			return null;
-		}
-
-		@Override
-		public Object getSameNodeConstraint() {
-			return null;
-		}
-		
-	}
-	@SuppressWarnings("unchecked")
-	static class TestProject extends AbstractProject implements TopLevelItem {
-
-		public TestProject(String name) {
-			super(new TestItemGroup(), name);
-		}
-		@Override
-		protected void buildDependencyGraph(DependencyGraph graph) {
-		}
-		@Override
-		protected Class getBuildClass() {
-			return null;
-		}
-		@Override
-		public DescribableList getPublishersList() {
-			return null;
-		}
-		@Override
-		public boolean isFingerprintConfigured() {
-			return false;
-		}
-		protected void removeRun(Run run) {
-		}
-		@Override
-		protected synchronized void saveNextBuildNumber() throws IOException {
-		}
-		@Override
-		public void checkPermission(Permission p) {
-			super.checkPermission(p);
-		}
-		public TopLevelItemDescriptor getDescriptor() {
-			return null;
-		}
-		@Override
-		public Hudson getParent() {
-			return null;
-		}
-		@Override
-		public synchronized void save() throws IOException {
-			// do nothing!
-		}
-	}
-	@SuppressWarnings("unchecked")
-	static class TestItemGroup implements ItemGroup {
-		public String getDisplayName() {
-			return null;
-		}
-		public void save() throws IOException {
-		}
-		public String getFullDisplayName() {
-			return null;
-		}
-		public String getFullName() {
-			return null;
-		}
-		public Item getItem(String name) {
-			return null;
-		}
-		public Collection getItems() {
-			return null;
-		}
-		public File getRootDirFor(Item child) {
-			return null;
-		}
-		public String getUrl() {
-			return null;
-		}
-		public String getUrlChildPrefix() {
-			return null;
-		}
-		public File getRootDir() {
-			return null;
-		}
-		@Override
-		public void onDeleted(Item arg0) throws IOException {
-			
-		}
-		@Override
-		public void onRenamed(Item arg0, String arg1, String arg2)
-				throws IOException {
-		}
-		
 	}
 }

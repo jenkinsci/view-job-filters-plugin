@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class SecurityFilterTest extends AbstractHudsonTest {
 
@@ -28,22 +30,25 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testWorkspace() {
-		TestACL acl = new TestACL();
-		TestItem item = new TestItem(acl);
+		ACL acl = mock(ACL.class);
+		TopLevelItem item = mock(TopLevelItem.class);
+		when(item.getACL()).thenReturn(acl);
+
 		SecurityFilter filter = new SecurityFilter(
 				SecurityFilter.ALL, false, false, true, 
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString());
 		assertFalse(filter.matches(item));
 		
-		acl.add(Item.WORKSPACE.name);
+		when(acl.hasPermission(Item.WORKSPACE)).thenReturn(true);
 		assertTrue(filter.matches(item));
 	}
 
 	@Test
 	public void testViewJobsRestrictedInSomeWay() {
-		TestACL acl = new TestACL();
-		TestItem item = new TestItem(acl);
-		
+		ACL acl = mock(ACL.class);
+		TopLevelItem item = mock(TopLevelItem.class);
+		when(item.getACL()).thenReturn(acl);
+
 		List<TopLevelItem> all = new ArrayList<TopLevelItem>();
 		all.add(item);
 
@@ -63,43 +68,19 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 		assertEquals(1, filtered.size());
 		
 		// adding build and read won't affect the results
-		acl.add(Item.BUILD.name);
-		acl.add(Item.READ.name);
+		when(acl.hasPermission(Item.BUILD)).thenReturn(true);
+		when(acl.hasPermission(Item.READ)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(1, filtered.size());
 		
 		// if we add workspace, it will now stop matching
-		acl.add(Item.WORKSPACE.name);
+		when(acl.hasPermission(Item.WORKSPACE)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(0, filtered.size());
 
 		// if we add configure, it will stay the same
-		acl.add(Item.CONFIGURE.name);
+		when(acl.hasPermission(Item.CONFIGURE)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(0, filtered.size());
 	}
-	
-	private class TestItem extends FreeStyleProject {
-		private TestACL acl;
-		public TestItem(TestACL acl) {
-			super(Hudson.getInstance(), "item");
-			this.acl = acl;
-		}
-		@Override
-		public ACL getACL() {
-			return acl;
-		}
-	}
-
-	private class TestACL extends ACL {
-		private Set<String> perms = new HashSet<String>();
-		@Override
-		public boolean hasPermission(Authentication a, Permission permission) {
-			return perms.contains(permission.name);
-		}
-		public void add(String perm) {
-			perms.add(perm);
-		}
-	}
-	
 }
