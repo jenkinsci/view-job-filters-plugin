@@ -5,9 +5,13 @@ import java.util.List;
 import hudson.views.ScmFilterHelper;
 import hudson.views.ScmValuesProvider;
 import junit.framework.TestCase;
+import org.junit.Test;
 
-public class GitTest extends TestCase {
+import static org.junit.Assert.*;
 
+public class GitTest {
+
+	@Test
 	public void testNoGitMatchers() {
 		List<ScmValuesProvider> matchers = ScmFilterHelper.matchers;
 		for (ScmValuesProvider provider: matchers) {

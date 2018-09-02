@@ -4,3 +4,6 @@ work
 # IntelliJ settings
 .idea
 *.iml
+
+# Logfiles
+*.log
