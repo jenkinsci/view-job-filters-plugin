@@ -5,5 +5,10 @@ work
 .idea
 *.iml
 
+# Eclipse settings
+.settings
+.project
+.classpath
+
 # Logfiles
 *.log
