@@ -87,7 +87,8 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		}
 		return items;
 	}
-	
+
+	@Test
 	public void testIncludeExclude() {
 		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeMatched, true, false);
 		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeUnmatched, false, false);
@@ -100,7 +101,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.excludeUnmatched, false, true);
 	}
 	
-	public void doTestIncludeExclude(String jobName, 
+	private void doTestIncludeExclude(String jobName,
 			String regex, IncludeExcludeType includeExcludeType, // boolean negate, boolean exclude, 
 			boolean expectInclude, boolean expectExclude) {
 		TopLevelItem item = new TestItem(jobName);
@@ -109,7 +110,8 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertEquals(expectExclude, filter.exclude(matched));
 		assertEquals(expectInclude, filter.include(matched));
 	}
-	
+
+	@Test
 	public void testScmRegEx() throws IOException {
 		doTestScmRegEx("root", "modules", "branch", false);
 		doTestScmRegEx(null, "modules", "branch", false);
@@ -125,7 +127,8 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
-	
+
+	@Test
 	public void testDescription() throws IOException {
 		doTestDescription("", false);
 		doTestDescription(null, false);
@@ -143,6 +146,8 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		boolean matched = filter.matches(item);
 		assertEquals(expectMatch, matched);
 	}
+
+	@Test
 	public void testTrigger() throws Exception {
 		doTestTrigger("# monday", true);
 		doTestTrigger("# tuesday", false);

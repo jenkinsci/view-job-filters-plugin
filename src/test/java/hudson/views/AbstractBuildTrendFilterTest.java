@@ -14,17 +14,14 @@ import java.util.concurrent.Callable;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.Bug;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.FailureBuilder;
-import org.jvnet.hudson.test.RunLoadCounter;
+import org.jvnet.hudson.test.*;
 
 public class AbstractBuildTrendFilterTest {
 
     @Rule
     public JenkinsRule j = new JenkinsRule();
 
-    @Bug(18986)
+    @Issue("JENKINS-18986")
     @Test
     public void lazyLoading() throws Exception {
         final FreeStyleProject p1 = j.createFreeStyleProject("p1");

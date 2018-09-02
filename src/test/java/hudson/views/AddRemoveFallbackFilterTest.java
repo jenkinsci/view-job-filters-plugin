@@ -53,6 +53,7 @@ public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
 		assertTrue("Expected NO jobs to be in the filtered list", filtered.isEmpty());
 	}
 
+	@Test
 	public void testShouldNotModifyFilteredListWhenAllJobsNotPresent() throws Exception {
 		filter = new AddRemoveFallbackFilter(FallbackTypes.REMOVE_ALL_IF_ALL_INCLUDED.toString());
 		added = Lists.newArrayList(j.getInstance().getItem("Job-1"));

@@ -9,6 +9,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
 import static org.junit.Assert.*;
 
@@ -102,8 +103,9 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		assertEquals(output, normalized);
 	}
 
+	@Issue("JENKINS-13781")
 	@Test
-	public void testMatchesEmail_JENKINS_13781() {
+	public void testMatchesEmail() {
 		UserRelevanceFilter filter = new UserRelevanceFilter(
 				true, true, true, true, true,
 				true, true, true,
