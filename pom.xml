@@ -120,8 +120,7 @@
             <groupId>org.spearce</groupId>
             <artifactId>jgit</artifactId>
             <version>0.4-47e4af3</version>
-            <scope>compile</scope>
-            <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
