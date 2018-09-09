@@ -91,9 +91,10 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     	}
     	return values;
     }
+
     private void addSplitValues(List<String> values, String value) {
     	if (value != null) {
-    		String[] split = value.split("\n");
+    		String[] split = value.split("\n", -1);
     		for (String s: split) {
     			// trimming this is necessary to remove odd characters that cause problems
     			// the real example here is the description won't work without this trim
@@ -101,6 +102,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     		}
     	}
     }
+
     public boolean matches(TopLevelItem item) {
         List<String> matchValues = getMatchValues(item);
         boolean matched = false;
