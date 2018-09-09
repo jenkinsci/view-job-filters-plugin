@@ -20,10 +20,12 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 		if (item instanceof AbstractProject) {
 			AbstractProject project = (AbstractProject) item;
 			DescribableList<Publisher,Descriptor<Publisher>> publishers = project.getPublishersList();
-			Publisher emailPublisher = publishers.get(descriptor);
-			if (emailPublisher != null) {
-				String value = getValue(emailPublisher);
-				values.add(value);
+			if (publishers != null) {
+                Publisher emailPublisher = publishers.get(descriptor);
+                if (emailPublisher != null) {
+                    String value = getValue(emailPublisher);
+                    values.add(value);
+                }
 			}
 		}
 		return values;
