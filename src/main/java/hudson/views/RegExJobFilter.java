@@ -64,11 +64,14 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     			addSplitValues(values, desc);
     		}
     	} else if (valueType == ValueType.SCM) {
-	    	if (item instanceof SCMedItem) {
-	    		SCM scm = ((SCMedItem) item).getScm();
-	    		List<String> scmValues = ScmFilterHelper.getValues(scm);
-	    		values.addAll(scmValues);
+			SCM scm = null;
+			if (item instanceof AbstractProject) {
+			    scm = ((AbstractProject)item).getScm();
+            } else if (item instanceof SCMedItem) {
+				scm = ((SCMedItem) item).getScm();
 	    	}
+			List<String> scmValues = ScmFilterHelper.getValues(scm);
+			values.addAll(scmValues);
     	} else if (valueType == ValueType.NAME) {
     		values.add(item.getName());
     	} else if (valueType == ValueType.EMAIL) {
