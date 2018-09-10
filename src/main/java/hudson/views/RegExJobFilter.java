@@ -24,7 +24,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	
-	static enum ValueType {
+	public enum ValueType {
 		NAME, DESCRIPTION, SCM, EMAIL, MAVEN, SCHEDULE, NODE
 	}
 	

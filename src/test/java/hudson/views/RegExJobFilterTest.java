@@ -3,14 +3,13 @@ package hudson.views;
 import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
-import hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType;
 
 import org.junit.Test;
 
 import static hudson.views.test.JobMocker.jobOf;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+import static hudson.views.test.ViewJobFilters.*;
 
 public class RegExJobFilterTest extends AbstractHudsonTest {
 
@@ -142,47 +141,5 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 			assertFalse(scheduleRegex(".*monday.*").matches(jobOf(type).withTrigger("* * * * *\n#").asItem()));
 			assertTrue(scheduleRegex(".*monday.*").matches(jobOf(type).withTrigger("#monday\n* * * * *").asItem()));
 		}
-	}
-
-	private	RegExJobFilter nameRegex(String regex) {
-		return new RegExJobFilter(
-			regex,
-			IncludeExcludeType.includeMatched.name(),
-			RegExJobFilter.ValueType.NAME.name());
-	}
-
-	private	RegExJobFilter descRegex(String regex) {
-		return new RegExJobFilter(
-				regex,
-				IncludeExcludeType.includeMatched.name(),
-				RegExJobFilter.ValueType.DESCRIPTION.name());
-	}
-
-	private	RegExJobFilter emailRegex(String regex) {
-		return new RegExJobFilter(
-				regex,
-				IncludeExcludeType.includeMatched.name(),
-				RegExJobFilter.ValueType.EMAIL.name());
-	}
-
-	private	RegExJobFilter scheduleRegex(String regex) {
-		return new RegExJobFilter(
-				regex,
-				IncludeExcludeType.includeMatched.name(),
-				RegExJobFilter.ValueType.SCHEDULE.name());
-	}
-
-	private	RegExJobFilter scmRegex(String regex) {
-		return new RegExJobFilter(
-				regex,
-				IncludeExcludeType.includeMatched.name(),
-				RegExJobFilter.ValueType.SCM.name());
-	}
-
-	private	RegExJobFilter mavenRegex(String regex) {
-		return new RegExJobFilter(
-				regex,
-				IncludeExcludeType.includeMatched.name(),
-				RegExJobFilter.ValueType.MAVEN.name());
 	}
 }
