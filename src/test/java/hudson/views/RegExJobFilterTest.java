@@ -4,10 +4,11 @@ import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 
+import hudson.views.test.JobType;
 import org.junit.Test;
 
 import static hudson.views.test.JobMocker.jobOf;
-import static java.util.Arrays.asList;
+import static hudson.views.test.JobType.*;
 import static org.junit.Assert.*;
 import static hudson.views.test.ViewJobFilters.*;
 
@@ -15,7 +16,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testName() {
-	    for (Class<? extends Job> type: asList(FreeStyleProject.class, MatrixProject.class, MavenModuleSet.class)) {
+		assertFalse(nameRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+	    for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(nameRegex(".*").matches(jobOf(type).withName(null).asItem()));
 			assertTrue(nameRegex(".*").matches(jobOf(type).withName("").asItem()));
 			assertTrue(nameRegex("Foo").matches(jobOf(type).withName("Foo").asItem()));
@@ -29,7 +32,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testDescription() {
-		for (Class<? extends Job> type: asList(FreeStyleProject.class, MatrixProject.class, MavenModuleSet.class)) {
+		assertFalse(descRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(descRegex(".*").matches(jobOf(type).withDesc(null).asItem()));
 			assertTrue(descRegex(".*").matches(jobOf(type).withDesc("").asItem()));
 			assertTrue(descRegex("Foo").matches(jobOf(type).withDesc("Foo").asItem()));
@@ -60,7 +65,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testSCM() {
-		for (Class<? extends Job> type: asList(FreeStyleProject.class, MatrixProject.class, MavenModuleSet.class)) {
+		assertFalse(scmRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM)) {
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS("root", "modules", "branch").asItem()));
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS(null, "modules", "branch").asItem()));
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS("root", "modules", null).asItem()));
@@ -108,7 +115,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testEmail() {
-		for (Class<? extends Job> type: asList(FreeStyleProject.class, MatrixProject.class, MavenModuleSet.class)) {
+		assertFalse(emailRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(emailRegex(".*").matches(jobOf(type).withEmail(null).asItem()));
 			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("").asItem()));
 			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("foo@bar.com, quux@baz.net").asItem()));
@@ -131,7 +140,9 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
 	public void testSchedule() {
-		for (Class<? extends Job> type : asList(FreeStyleProject.class, MatrixProject.class, MavenModuleSet.class)) {
+		assertFalse(scheduleRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(scheduleRegex(".*").matches(jobOf(type).withTrigger(null).asItem()));
 			assertTrue(scheduleRegex(".*").matches(jobOf(type).withTrigger("").asItem()));
 			assertTrue(scheduleRegex(".*").matches(jobOf(type).withTrigger("\n").asItem()));

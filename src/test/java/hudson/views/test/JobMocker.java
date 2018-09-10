@@ -18,9 +18,12 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
+import static hudson.views.test.JobType.SCMED_ITEM;
+import static hudson.views.test.JobType.instanceOf;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 public class JobMocker<T extends Job> {
 
@@ -30,8 +33,22 @@ public class JobMocker<T extends Job> {
         this.job = Mockito.mock(jobClass);
     }
 
-    public static <C extends Job> JobMocker<C> jobOf(Class<C> jobClass) {
-       return new JobMocker(jobClass);
+    public JobMocker(Class<T> jobClass, Class... interfaces) {
+        this.job = Mockito.mock(jobClass, withSettings().extraInterfaces(interfaces));
+    }
+
+    public static <C extends Job> JobMocker<C> jobOf(Class<C> jobClass, Class... interfaces) {
+        if (interfaces.length > 0) {
+            return new JobMocker(jobClass, interfaces);
+        }
+        return new JobMocker(jobClass);
+    }
+
+    public static <C extends Job> JobMocker<C> jobOf(JobType<C> jobType) {
+        if (jobType.getInterfaces().length > 0) {
+            return new JobMocker(jobType.getJobClass(), jobType.getInterfaces());
+        }
+        return new JobMocker(jobType.getJobClass());
     }
 
     public JobMocker<T> withName(String name) {
@@ -114,7 +131,7 @@ public class JobMocker<T extends Job> {
     public JobMocker withSCM(SCM scm) {
         if (job instanceof AbstractProject) {
             when(((AbstractProject)job).getScm()).thenReturn(scm);
-        } else if (job instanceof SCMedItem) {
+        } else if (instanceOf(job, SCMED_ITEM)) {
             when(((SCMedItem)job).getScm()).thenReturn(scm);
         }
         return this;
