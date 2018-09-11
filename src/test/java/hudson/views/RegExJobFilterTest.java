@@ -1,13 +1,17 @@
 package hudson.views;
 
-import hudson.matrix.MatrixProject;
-import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 
 import hudson.views.test.JobMocker;
 import hudson.views.test.JobType;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.RegExJobFilter.ValueType.*;
 import static hudson.views.test.JobMocker.jobOf;
 import static hudson.views.test.JobType.*;
 import static org.junit.Assert.*;
@@ -245,6 +249,58 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 			assertTrue(nodeRegex("Foo.*").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
 			assertFalse(nodeRegex("bar").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
 			assertTrue(nodeRegex(".*bar").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
+		}
+	}
+
+	@Test
+	public void testConfigRoundtrip() throws Exception {
+		testConfigRoundtrip(
+			"regex-view-1",
+			new RegExJobFilter("NaMeRegEx", excludeMatched.name(), NAME.name())
+		);
+
+		testConfigRoundtrip(
+			"regex-view-2",
+			new RegExJobFilter("DeScriptionRegEx", excludeMatched.name(), DESCRIPTION.name()),
+			new RegExJobFilter("EmailRegEx", includeUnmatched.name(), EMAIL.name())
+		);
+
+		testConfigRoundtrip(
+			"regex-view-3",
+			new RegExJobFilter("MavenRegEx", excludeUnmatched.name(), MAVEN.name()),
+			new RegExJobFilter("NodeRegEx", excludeMatched.name(), NODE.name()),
+			new RegExJobFilter("ScmRegEx", excludeMatched.name(), SCM.name())
+		);
+	}
+
+	private void testConfigRoundtrip(String viewName, RegExJobFilter... filters) throws Exception {
+		List<RegExJobFilter> expectedFilters = new ArrayList<RegExJobFilter>();
+		for (RegExJobFilter filter: filters) {
+			expectedFilters.add(new RegExJobFilter(filter.getRegex(), filter.getIncludeExcludeTypeString(), filter.getValueTypeString()));
+		}
+
+		ListView view = createFilteredView(viewName, filters);
+		j.configRoundtrip(view);
+
+		ListView viewAfterRoundtrip = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterRoundtrip.getJobFilters());
+
+		viewAfterRoundtrip.save();
+		j.getInstance().reload();
+
+		ListView viewAfterReload = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
+	}
+
+	private void assertFilterEquals(List<RegExJobFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+		assertThat(actualFilters.size(), is(expectedFilters.size()));
+		for (int i = 0; i < actualFilters.size(); i++) {
+			ViewJobFilter actualFilter = actualFilters.get(i);
+		    RegExJobFilter expectedFilter = expectedFilters.get(i);
+			assertThat(actualFilter, instanceOf(RegExJobFilter.class));
+			assertThat(((RegExJobFilter)actualFilter).getRegex(), is(expectedFilter.getRegex()));
+			assertThat(((RegExJobFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
+			assertThat(((RegExJobFilter)actualFilter).getValueTypeString(), is(expectedFilter.getValueTypeString()));
 		}
 	}
 
