@@ -7,19 +7,23 @@ import hudson.model.*;
 import hudson.plugins.emailext.ExtendedEmailPublisher;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
+import hudson.plugins.m2extrasteps.M2ExtraStepsWrapper;
 import hudson.scm.*;
+import hudson.tasks.Builder;
 import hudson.tasks.Mailer;
+import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.util.*;
 
-import static hudson.views.test.JobType.SCMED_ITEM;
-import static hudson.views.test.JobType.instanceOf;
+import static hudson.views.test.JobType.*;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -27,28 +31,26 @@ import static org.mockito.Mockito.withSettings;
 
 public class JobMocker<T extends Job> {
 
+    public enum MavenBuildStep {
+        PRE, POST
+    }
+
     T job;
 
-    public JobMocker(Class<T> jobClass) {
-        this.job = Mockito.mock(jobClass);
-    }
-
     public JobMocker(Class<T> jobClass, Class... interfaces) {
-        this.job = Mockito.mock(jobClass, withSettings().extraInterfaces(interfaces));
-    }
-
-    public static <C extends Job> JobMocker<C> jobOf(Class<C> jobClass, Class... interfaces) {
-        if (interfaces.length > 0) {
-            return new JobMocker(jobClass, interfaces);
-        }
-        return new JobMocker(jobClass);
+        this.job = Mockito.mock(jobClass, withSettings().extraInterfaces(interfaces).defaultAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                if (DescribableList.class.isAssignableFrom(invocationOnMock.getMethod().getReturnType())) {
+                    return new DescribableList(mock(Saveable.class), new ArrayList());
+                }
+                return null;
+            }
+        }));
     }
 
     public static <C extends Job> JobMocker<C> jobOf(JobType<C> jobType) {
-        if (jobType.getInterfaces().length > 0) {
-            return new JobMocker(jobType.getJobClass(), jobType.getInterfaces());
-        }
-        return new JobMocker(jobType.getJobClass());
+        return new JobMocker(jobType.getJobClass(), jobType.getInterfaces());
     }
 
     public JobMocker<T> withName(String name) {
@@ -144,7 +146,7 @@ public class JobMocker<T extends Job> {
             DescribableList publishers = new DescribableList(mock(Saveable.class), asList(mailer));
             when(((AbstractProject)job).getPublishersList()).thenReturn(publishers);
         }
-        if (job instanceof MavenModuleSet) {
+        if (instanceOf(job, MAVEN_MODULE_SET)) {
             MavenMailer mavenMailer = new MavenMailer();
             mavenMailer.recipients = email;
 
@@ -163,7 +165,7 @@ public class JobMocker<T extends Job> {
         if (job instanceof AbstractProject) {
             when(((AbstractProject)job).getPublishersList()).thenReturn(publishers);
         }
-        if (job instanceof MavenModuleSet) {
+        if (instanceOf(job, MAVEN_MODULE_SET)) {
             DescribableList reporters = new DescribableList(mock(Saveable.class), new ArrayList());
             when(((MavenModuleSet)job).getReporters()).thenReturn(reporters);
         }

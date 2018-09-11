@@ -13,8 +13,8 @@ public class JobType<T extends Job> {
     public static final JobType<FreeStyleProject> FREE_STYLE_PROJECT = new JobType("hudson.model.FreeStyleProject");
     public static final JobType<MatrixProject> MATRIX_PROJECT = new JobType("hudson.matrix.MatrixProject");
     public static final JobType<MavenModuleSet> MAVEN_MODULE_SET = new JobType("hudson.maven.MavenModuleSet");
-    public static final JobType<Job> TOP_LEVEL_ITEM = new JobType("hudson.model.Job", "hudson.model.TopLevelItem");
-    public static final JobType<Job> SCMED_ITEM = new JobType("hudson.model.Job", "hudson.model.TopLevelItem", "hudson.model.SCMedItem");
+    public static final JobType<Job> TOP_LEVEL_ITEM = new JobType("hudson.model.Job" );
+    public static final JobType<Job> SCMED_ITEM = new JobType("hudson.model.Job", "hudson.model.SCMedItem");
 
     private Class<T> jobClass;
     private Class<T>[] interfaces;
@@ -23,10 +23,11 @@ public class JobType<T extends Job> {
     private JobType(String className, String... interfaceNames) {
         try {
             jobClass = (Class<T>) Class.forName(className);
-            interfaces = new Class[interfaceNames.length];
+            interfaces = new Class[interfaceNames.length + 1];
             for (int i = 0; i < interfaceNames.length; i++) {
                 interfaces[i] = (Class<T>) Class.forName(interfaceNames[i]);
             }
+            interfaces[interfaces.length - 1] = (Class)TopLevelItem.class;
             available = true;
         } catch (Throwable t) {
             jobClass = null;
