@@ -46,4 +46,11 @@ public class ViewJobFilters {
                 AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
                 RegExJobFilter.ValueType.MAVEN.name());
     }
+
+    public static RegExJobFilter nodeRegex(String regex) {
+        return new RegExJobFilter(
+                regex,
+                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                RegExJobFilter.ValueType.NODE.name());
+    }
 }

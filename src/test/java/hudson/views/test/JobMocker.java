@@ -185,6 +185,66 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> withMavenBuilder(String targets, final String name, String properties, String opts) {
+        Maven maven = mockMaven(targets, name, properties, opts);
+        if (job instanceof Project) {
+            when(((Project)job).getBuilders()).thenReturn(asList(maven));
+        }
+        if (instanceOf(job, MATRIX_PROJECT)) {
+            when(((MatrixProject)job).getBuilders()).thenReturn(asList((Builder)maven));
+        }
+        if (instanceOf(job, MAVEN_MODULE_SET)) {
+            MavenModuleSet set = (MavenModuleSet)job;
+            when(set.getMaven()).thenReturn(maven.getMaven());
+            when(set.getMavenOpts()).thenReturn(opts);
+            when(set.getAlternateSettings()).thenReturn(properties);
+            when(set.getGoals()).thenReturn(targets);
+        }
+        return this;
+    }
+
+    public JobMocker<T> withMavenBuildStep(MavenBuildStep step, String targets, final String name, String properties, String opts) {
+        if (instanceOf(job, MAVEN_MODULE_SET)) {
+            Maven maven = mockMaven(targets, name, properties, opts);
+            M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
+            wrapper.setPreBuildSteps((step == MavenBuildStep.PRE) ? asList((Builder) maven) : new ArrayList<Builder>());
+            wrapper.setPostBuildSteps((step == MavenBuildStep.POST) ? asList((Builder) maven) : new ArrayList<Builder>());
+            DescribableList wrappers = new DescribableList(mock(Saveable.class), asList(wrapper));
+            when(((MavenModuleSet)job).getBuildWrappers()).thenReturn(wrappers);
+        }
+        return this;
+    }
+
+    public JobMocker<T> withMavenPostBuildStep(String targets, final String name, String properties, String opts) {
+        if (instanceOf(job, MAVEN_MODULE_SET)) {
+            Maven maven = mockMaven(targets, name, properties, opts);
+            M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
+            wrapper.setPostBuildSteps(asList((Builder)maven));
+            DescribableList wrappers = new DescribableList(mock(Saveable.class), asList(wrapper));
+            when(((MavenModuleSet)job).getBuildWrappers()).thenReturn(wrappers);
+        }
+        return this;
+    }
+
+    private Maven mockMaven(final String targets, final String name, final String properties, final String opts) {
+        final Maven.MavenInstallation mavenInstallation = mock(Maven.MavenInstallation.class);
+        when(mavenInstallation.getName()).thenReturn(name);
+
+        return new Maven(targets, name, "", properties, opts) {
+            @Override
+            public MavenInstallation getMaven() {
+                return mavenInstallation;
+            }
+        };
+    }
+
+    public JobMocker<T> withAssignedLabel(String label) {
+        if (job instanceof AbstractProject) {
+            when(((AbstractProject)job).getAssignedLabelString()).thenReturn(label);
+        }
+        return this;
+    }
+
     public T asJob() {
         return job;
     }

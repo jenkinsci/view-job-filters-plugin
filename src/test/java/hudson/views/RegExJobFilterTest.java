@@ -4,6 +4,7 @@ import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.*;
 
+import hudson.views.test.JobMocker;
 import hudson.views.test.JobType;
 import org.junit.Test;
 
@@ -153,4 +154,98 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 			assertTrue(scheduleRegex(".*monday.*").matches(jobOf(type).withTrigger("#monday\n* * * * *").asItem()));
 		}
 	}
+
+	@Test
+	public void testMaven() {
+		assertFalse(mavenRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuilder("Foo", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("Foo", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuilder("Foobar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("Foobar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuilder("Foobar", "", "", "").asItem()));
+
+			assertTrue(mavenRegex("Foo bar").matches(jobOf(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("Foo").matches(jobOf(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuilder("", "Foo", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "Foo", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuilder("", "Foobar", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "Foobar", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuilder("", "Foobar", "", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuilder("", "", "Foo", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "", "Foo", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuilder("", "", "Foobar", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "", "Foobar", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuilder("", "", "Foobar", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuilder("", "", "", "Foo").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "", "", "Foo").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuilder("", "", "", "Foobar").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuilder("", "", "", "Foobar").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuilder("", "", "", "Foobar").asItem()));
+		}
+
+		for (JobType<? extends Job> type: availableJobTypes(MAVEN_MODULE_SET)) {
+			for (JobMocker.MavenBuildStep step : JobMocker.MavenBuildStep.values()) {
+				assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
+
+				assertTrue(mavenRegex("Foo bar").matches(jobOf(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("Foo").matches(jobOf(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOf(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
+			}
+		}
+	}
+
+	@Test
+	public void testNode() {
+		assertFalse(nodeRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertTrue(nodeRegex(".*").matches(jobOf(type).withAssignedLabel("").asItem()));
+			assertTrue(nodeRegex("Foo").matches(jobOf(type).withAssignedLabel("Foo").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOf(type).withAssignedLabel("Foo").asItem()));
+			assertTrue(nodeRegex("Foo.*").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
+			assertTrue(nodeRegex(".*bar").matches(jobOf(type).withAssignedLabel("Foobar").asItem()));
+		}
+	}
+
 }
