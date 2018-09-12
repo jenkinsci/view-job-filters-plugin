@@ -15,6 +15,7 @@ import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
+import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.mockito.Mockito;
@@ -82,6 +83,7 @@ public class JobMocker<T extends Job> {
 
         SubversionSCM scm = mock(SubversionSCM.class);
         when(scm.getLocations()).thenReturn(locations);
+        when(scm.getDescriptor()).thenReturn(new SubversionSCM.DescriptorImpl());
         return withSCM(scm);
     }
 
@@ -95,6 +97,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getBranches()).thenReturn(branchSpecs);
+        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
         return withSCM(scm);
     }
 
@@ -111,6 +114,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getRepositories()).thenReturn(remotes);
+        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
         return withSCM(scm);
     }
 
@@ -132,8 +136,12 @@ public class JobMocker<T extends Job> {
 
     public JobMocker withSCM(SCM scm) {
         if (job instanceof AbstractProject) {
-            when(((AbstractProject)job).getScm()).thenReturn(scm);
-        } else if (instanceOf(job, SCMED_ITEM)) {
+            when(((AbstractProject) job).getScm()).thenReturn(scm);
+        }
+        if (job instanceof SCMTriggerItem) {
+            when(((SCMTriggerItem)job).getSCMs()).thenReturn((Collection)asList(scm));
+        }
+        if (instanceOf(job, SCMED_ITEM)) {
             when(((SCMedItem)job).getScm()).thenReturn(scm);
         }
         return this;

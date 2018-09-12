@@ -1,7 +1,13 @@
 package hudson.views.test;
 
+import hudson.model.Descriptor;
+import hudson.scm.SCMDescriptor;
 import hudson.views.AbstractIncludeExcludeJobFilter;
+import hudson.views.OtherViewsFilter;
 import hudson.views.RegExJobFilter;
+import hudson.views.ScmTypeFilter;
+
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 
 public class ViewJobFilters {
 
@@ -53,4 +59,13 @@ public class ViewJobFilters {
                 AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
                 RegExJobFilter.ValueType.NODE.name());
     }
+
+    public static ScmTypeFilter scmType(String type) {
+        return new ScmTypeFilter(type, AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+    }
+
+    public static ScmTypeFilter scmType(SCMDescriptor<?> descriptor) {
+        return scmType(descriptor.clazz.getName());
+    }
+
 }

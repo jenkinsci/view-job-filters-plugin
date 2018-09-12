@@ -11,6 +11,7 @@ import hudson.scm.SCMDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import jenkins.triggers.SCMTriggerItem;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
@@ -56,6 +57,14 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 			SCMDescriptor descriptor = scm.getDescriptor();
 			if (matches(descriptor)) {
 				return true;
+			}
+		}
+		if (item instanceof SCMTriggerItem) {
+			SCMTriggerItem sitem = (SCMTriggerItem) item;
+			for (SCM scm: sitem.getSCMs()) {
+			    if (matches(scm.getDescriptor())) {
+			    	return true;
+				}
 			}
 		}
 		return false;

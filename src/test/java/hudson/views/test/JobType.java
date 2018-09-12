@@ -14,6 +14,7 @@ public class JobType<T extends Job> {
     public static final JobType<MatrixProject> MATRIX_PROJECT = new JobType("hudson.matrix.MatrixProject");
     public static final JobType<MavenModuleSet> MAVEN_MODULE_SET = new JobType("hudson.maven.MavenModuleSet");
     public static final JobType<Job> TOP_LEVEL_ITEM = new JobType("hudson.model.Job" );
+    public static final JobType<Job> SCM_TRIGGER_ITEM = new JobType("hudson.model.Job", "hudson.model.SCMTriggerItem");
     public static final JobType<Job> SCMED_ITEM = new JobType("hudson.model.Job", "hudson.model.SCMedItem");
 
     private Class<T> jobClass;
