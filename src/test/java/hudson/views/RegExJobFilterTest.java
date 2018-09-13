@@ -72,7 +72,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	public void testSCM() {
 		assertFalse(scmRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
 
-		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM)) {
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM, SCM_TRIGGER_ITEM)) {
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS("root", "modules", "branch").asItem()));
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS(null, "modules", "branch").asItem()));
 			assertFalse(scmRegex(".*my-office.*").matches(jobOf(type).withCVS("root", "modules", null).asItem()));

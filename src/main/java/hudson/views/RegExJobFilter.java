@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import jenkins.triggers.SCMTriggerItem;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -64,14 +65,19 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     			addSplitValues(values, desc);
     		}
     	} else if (valueType == ValueType.SCM) {
-			SCM scm = null;
 			if (item instanceof AbstractProject) {
-			    scm = ((AbstractProject)item).getScm();
-            } else if (item instanceof SCMedItem) {
-				scm = ((SCMedItem) item).getScm();
+			    SCM scm = ((AbstractProject)item).getScm();
+				values.addAll(ScmFilterHelper.getValues(scm));
+            }
+            if (item instanceof SCMTriggerItem) {
+				for (SCM scm: ((SCMTriggerItem)item).getSCMs()) {
+					values.addAll(ScmFilterHelper.getValues(scm));
+				}
+			}
+            if (item instanceof SCMedItem) {
+				SCM scm = ((SCMedItem) item).getScm();
+				values.addAll(ScmFilterHelper.getValues(scm));
 	    	}
-			List<String> scmValues = ScmFilterHelper.getValues(scm);
-			values.addAll(scmValues);
     	} else if (valueType == ValueType.NAME) {
     		values.add(item.getName());
     	} else if (valueType == ValueType.EMAIL) {
