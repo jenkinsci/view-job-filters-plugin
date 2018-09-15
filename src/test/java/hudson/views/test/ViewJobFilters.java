@@ -1,11 +1,9 @@
 package hudson.views.test;
 
 import hudson.model.Descriptor;
+import hudson.model.TopLevelItemDescriptor;
 import hudson.scm.SCMDescriptor;
-import hudson.views.AbstractIncludeExcludeJobFilter;
-import hudson.views.OtherViewsFilter;
-import hudson.views.RegExJobFilter;
-import hudson.views.ScmTypeFilter;
+import hudson.views.*;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 
@@ -58,6 +56,16 @@ public class ViewJobFilters {
                 regex,
                 AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
                 RegExJobFilter.ValueType.NODE.name());
+    }
+
+    public static JobTypeFilter jobType(TopLevelItemDescriptor descriptor) {
+        return jobType(descriptor.getId());
+    }
+
+    public static JobTypeFilter jobType(String type) {
+        return new JobTypeFilter(
+                type,
+                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
     }
 
     public static ScmTypeFilter scmType(String type) {
