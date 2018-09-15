@@ -58,6 +58,21 @@ public class ViewJobFilters {
                 RegExJobFilter.ValueType.NODE.name());
     }
 
+    public static JobStatusFilter jobStatus(
+            boolean unstable,
+			boolean failed,
+            boolean aborted,
+            boolean disabled,
+            boolean stable) {
+        return new JobStatusFilter(
+                unstable,
+                failed,
+                aborted,
+                disabled,
+                stable,
+                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+    }
+
     public static JobTypeFilter jobType(TopLevelItemDescriptor descriptor) {
         return jobType(descriptor.getId());
     }

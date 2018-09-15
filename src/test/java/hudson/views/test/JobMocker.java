@@ -64,6 +64,20 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> withResult(Result result) {
+        Build lastBuild = mock(Build.class);
+        when(lastBuild.getResult()).thenReturn(result);
+        when(job.getLastCompletedBuild()).thenReturn(lastBuild);
+        return this;
+    }
+
+    public JobMocker<T> isDisabled(boolean disabled) {
+        if (job instanceof AbstractProject) {
+            when(((AbstractProject) job).isDisabled()).thenReturn(disabled);
+        }
+        return this;
+    }
+
     public JobMocker<T> withCVS(String root, String modules, String branch) {
         List<CvsRepository> cvsRepositories = LegacyConvertor.getInstance().convertLegacyConfigToRepositoryStructure(
                 root, modules, branch,
