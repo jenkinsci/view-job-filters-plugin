@@ -1,6 +1,7 @@
 package hudson.views;
 
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
@@ -8,12 +9,18 @@ import hudson.model.SCMedItem;
 import hudson.model.TopLevelItem;
 import hudson.scm.SCM;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+import hudson.util.FormValidation;
 import jenkins.triggers.SCMTriggerItem;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+
+import javax.servlet.ServletException;
 
 /**
  * Simple JobFilter that filters jobs based on a regular expression, and
@@ -148,12 +155,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
             return "/plugin/view-job-filters/regex-help.html";
         }
         
-        /*
-         * Checks if the regular expression is valid.
-         * 
-         * Does not work in hetero-list?
-         *
-        public FormValidation doCheckRegex( @QueryParameter String value ) throws IOException, ServletException, InterruptedException  {
+        public FormValidation doCheckRegex(@QueryParameter String value ) throws IOException, ServletException, InterruptedException  {
             String v = Util.fixEmpty(value);
             if (v != null) {
                 try {
@@ -164,7 +166,6 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
             }
             return FormValidation.ok();
         }
-        */
     }
 
 }
