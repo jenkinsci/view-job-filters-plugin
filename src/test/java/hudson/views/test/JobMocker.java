@@ -78,6 +78,21 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> isBuilding(boolean building) {
+        when(job.isBuilding()).thenReturn(building);
+        return this;
+    }
+
+    public JobMocker<T> isInQueue(boolean inQueue) {
+        when(job.isInQueue()).thenReturn(inQueue);
+        return this;
+    }
+
+    public JobMocker<T> withLastBuild(Build build) {
+        when(job.getLastBuild()).thenReturn(build);
+        return this;
+    }
+
     public JobMocker<T> withCVS(String root, String modules, String branch) {
         List<CvsRepository> cvsRepositories = LegacyConvertor.getInstance().convertLegacyConfigToRepositoryStructure(
                 root, modules, branch,

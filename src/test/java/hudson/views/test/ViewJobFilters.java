@@ -58,6 +58,18 @@ public class ViewJobFilters {
                 RegExJobFilter.ValueType.NODE.name());
     }
 
+
+    public static BuildStatusFilter buildStatus(
+            boolean neverBuild,
+            boolean building,
+            boolean inBuildQueue) {
+        return new BuildStatusFilter(
+                neverBuild,
+                building,
+                inBuildQueue,
+                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+    }
+
     public static JobStatusFilter jobStatus(
             boolean unstable,
 			boolean failed,
