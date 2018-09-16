@@ -112,6 +112,11 @@ public class ViewJobFilters {
                 AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
     }
 
+
+    public static SecuredJobsFilter secured() {
+        return new SecuredJobsFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+    }
+
     public static ScmTypeFilter scmType(SCMDescriptor<?> descriptor) {
         return scmType(descriptor.clazz.getName());
     }

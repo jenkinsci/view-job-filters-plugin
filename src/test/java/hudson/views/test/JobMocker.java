@@ -294,6 +294,11 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> withProperty(Class<?> clazz, JobProperty property) {
+        when(job.getProperty(clazz)).thenReturn(property);
+        return this;
+    }
+
     public T asJob() {
         return job;
     }
