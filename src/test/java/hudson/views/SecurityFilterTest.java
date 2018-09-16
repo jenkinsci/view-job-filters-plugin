@@ -1,32 +1,27 @@
 package hudson.views;
 
-import hudson.model.Item;
-import hudson.model.TopLevelItem;
-import hudson.model.FreeStyleProject;
-import hudson.model.Hudson;
-import hudson.model.View;
+import hudson.model.*;
 import hudson.security.ACL;
-import hudson.security.Permission;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.acegisecurity.Authentication;
-import org.junit.Before;
+import hudson.views.test.JobType;
 import org.junit.Test;
 
+import static hudson.model.Item.*;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.SecurityFilter.*;
+import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobType.*;
+import static hudson.views.test.ViewJobFilters.security;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SecurityFilterTest extends AbstractHudsonTest {
-
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-	}
 
 	@Test
 	public void testWorkspace() {
@@ -35,11 +30,11 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 		when(item.getACL()).thenReturn(acl);
 
 		SecurityFilter filter = new SecurityFilter(
-				SecurityFilter.ALL, false, false, true, 
+				ALL, false, false, true,
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString());
 		assertFalse(filter.matches(item));
 		
-		when(acl.hasPermission(Item.WORKSPACE)).thenReturn(true);
+		when(acl.hasPermission(WORKSPACE)).thenReturn(true);
 		assertTrue(filter.matches(item));
 	}
 
@@ -58,7 +53,7 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 
 		// this filter looks for jobs that do not have even one of either config or workspace
 		SecurityFilter filter = new SecurityFilter(
-				SecurityFilter.ONE, true, false, true,
+				ONE, true, false, true,
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString());
 		
 		// first time will match, because we didn't assign any permissions at all
@@ -68,19 +63,130 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 		assertEquals(1, filtered.size());
 		
 		// adding build and read won't affect the results
-		when(acl.hasPermission(Item.BUILD)).thenReturn(true);
+		when(acl.hasPermission(BUILD)).thenReturn(true);
 		when(acl.hasPermission(Item.READ)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(1, filtered.size());
 		
 		// if we add workspace, it will now stop matching
-		when(acl.hasPermission(Item.WORKSPACE)).thenReturn(true);
+		when(acl.hasPermission(WORKSPACE)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(0, filtered.size());
 
 		// if we add configure, it will stay the same
-		when(acl.hasPermission(Item.CONFIGURE)).thenReturn(true);
+		when(acl.hasPermission(CONFIGURE)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(0, filtered.size());
+	}
+
+	@Test
+	public void testMatch() {
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(security(ONE, false, false, false).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+
+			assertFalse(security(ONE, true, false, false).matches(jobOf(type).withPermissions().asItem()));
+			assertTrue(security(ONE, true, false, false).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, true, false, false).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertFalse(security(ONE, true, false, false).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+
+			assertFalse(security(ONE, false, true, false).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ONE, false, true, false).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertTrue(security(ONE, false, true, false).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertFalse(security(ONE, false, true, false).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+
+			assertFalse(security(ONE, false, false, true).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ONE, false, false, true).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, false, false, true).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertTrue(security(ONE, false, false, true).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+
+			assertFalse(security(ALL, true, true, false).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ALL, true, true, false).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, true, false).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertTrue(security(ALL, true, true, false).matches(jobOf(type).withPermissions(CONFIGURE, BUILD).asItem()));
+			assertTrue(security(ALL, true, true, false).matches(jobOf(type).withPermissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
+
+			assertFalse(security(ALL, true, false, true).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ALL, true, false, true).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, false, true).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, false, true).matches(jobOf(type).withPermissions(CONFIGURE, WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, false, true).matches(jobOf(type).withPermissions(CONFIGURE, WORKSPACE, BUILD).asItem()));
+
+			assertFalse(security(ALL, false, true, true).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ALL, false, true, true).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertFalse(security(ALL, false, true, true).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+			assertTrue(security(ALL, false, true, true).matches(jobOf(type).withPermissions(BUILD, WORKSPACE).asItem()));
+			assertTrue(security(ALL, false, true, true).matches(jobOf(type).withPermissions(BUILD, WORKSPACE, CONFIGURE).asItem()));
+
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions().asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(BUILD).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(CONFIGURE, BUILD).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(CONFIGURE, WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOf(type).withPermissions(BUILD, WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, true, true).matches(jobOf(type).withPermissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
+		}
+	}
+
+
+	@Test
+	public void testConfigRoundtrip() throws Exception {
+		testConfigRoundtrip(
+				"view-1",
+				new SecurityFilter(ALL, false, true, false, excludeMatched.name())
+		);
+
+		testConfigRoundtrip(
+				"view-2",
+				new SecurityFilter(ALL, true, false, true, includeUnmatched.name()),
+				new SecurityFilter(ONE, false, true, true, excludeMatched.name())
+		);
+
+		testConfigRoundtrip(
+				"view-3",
+				new SecurityFilter(ONE, true, false, true, includeMatched.name()),
+				new SecurityFilter(ALL, false, true, true, excludeUnmatched.name()),
+				new SecurityFilter(ONE, true, true, false, includeUnmatched.name())
+		);
+	}
+
+	private void testConfigRoundtrip(String viewName, SecurityFilter... filters) throws Exception {
+		List<SecurityFilter> expectedFilters = new ArrayList<SecurityFilter>();
+		for (SecurityFilter filter: filters) {
+			expectedFilters.add(new SecurityFilter(
+					filter.getPermissionCheckType(),
+					filter.isConfigure(),
+					filter.isBuild(),
+					filter.isWorkspace(),
+					filter.getIncludeExcludeTypeString()));
+		}
+
+		ListView view = createFilteredView(viewName, filters);
+		j.configRoundtrip(view);
+
+		ListView viewAfterRoundtrip = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterRoundtrip.getJobFilters());
+
+		viewAfterRoundtrip.save();
+		j.getInstance().reload();
+
+		ListView viewAfterReload = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
+	}
+
+	private void assertFilterEquals(List<SecurityFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+		assertThat(actualFilters.size(), is(expectedFilters.size()));
+		for (int i = 0; i < actualFilters.size(); i++) {
+			ViewJobFilter actualFilter = actualFilters.get(i);
+			SecurityFilter expectedFilter = expectedFilters.get(i);
+			assertThat(actualFilter, instanceOf(SecurityFilter.class));
+			assertThat(((SecurityFilter)actualFilter).isConfigure(), is(expectedFilter.isConfigure()));
+			assertThat(((SecurityFilter)actualFilter).isBuild(), is(expectedFilter.isBuild()));
+			assertThat(((SecurityFilter)actualFilter).isWorkspace(), is(expectedFilter.isWorkspace()));
+			assertThat(((SecurityFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
+		}
 	}
 }

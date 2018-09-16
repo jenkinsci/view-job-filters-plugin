@@ -9,6 +9,8 @@ import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.m2extrasteps.M2ExtraStepsWrapper;
 import hudson.scm.*;
+import hudson.security.ACL;
+import hudson.security.Permission;
 import hudson.tasks.Builder;
 import hudson.tasks.Mailer;
 import hudson.tasks.Maven;
@@ -31,6 +33,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 public class JobMocker<T extends Job> {
+
 
     public enum MavenBuildStep {
         PRE, POST
@@ -90,6 +93,15 @@ public class JobMocker<T extends Job> {
 
     public JobMocker<T> withLastBuild(Build build) {
         when(job.getLastBuild()).thenReturn(build);
+        return this;
+    }
+
+    public JobMocker<T> withPermissions(Permission... permissions) {
+        ACL acl = mock(ACL.class);
+        for (Permission permission: permissions) {
+            when(acl.hasPermission(permission)).thenReturn(true);
+        }
+        when(job.getACL()).thenReturn(acl);
         return this;
     }
 

@@ -99,6 +99,19 @@ public class ViewJobFilters {
         return new ScmTypeFilter(type, AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
     }
 
+    public static SecurityFilter security(
+            String permissionCheckType,
+            boolean configure,
+            boolean build,
+            boolean workspace) {
+        return new SecurityFilter(
+                permissionCheckType,
+                configure,
+                build,
+                workspace,
+                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+    }
+
     public static ScmTypeFilter scmType(SCMDescriptor<?> descriptor) {
         return scmType(descriptor.clazz.getName());
     }
