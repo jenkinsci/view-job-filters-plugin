@@ -59,6 +59,7 @@ public class JobMocker<T extends Job> {
 
     public JobMocker<T> withName(String name) {
         when(job.getName()).thenReturn(name);
+        when(job.toString()).thenReturn(name);
         return this;
     }
 
