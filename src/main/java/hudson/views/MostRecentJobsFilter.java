@@ -52,6 +52,9 @@ public class MostRecentJobsFilter extends ViewJobFilter {
     @SuppressWarnings("rawtypes")
     private class MostRecentJobsComparator implements Comparator<TopLevelItem> {
     	public int compare(TopLevelItem i1, TopLevelItem i2) {
+    		if (!(i1 instanceof Job) && !(i2 instanceof Job)) {
+    			return 0;
+			}
     		if (!(i1 instanceof Job)) {
     			return -1;
     		}
