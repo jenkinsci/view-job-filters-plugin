@@ -97,6 +97,16 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> withLastBuilds(Build... builds) {
+        if (builds.length > 0) {
+            withLastBuild(builds[0]);
+            for (int i = 0; i < builds.length - 1; i++) {
+                when(builds[i].getPreviousBuild()).thenReturn(builds[i + 1]);
+            }
+        }
+        return this;
+    }
+
     public JobMocker<T> withPermissions(Permission... permissions) {
         ACL acl = mock(ACL.class);
         for (Permission permission: permissions) {

@@ -111,10 +111,10 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 			jobOf(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(10).create()).asItem(),
 			jobOf(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").durationInMinutes(10).create()).asItem(),
 			jobOf(FREE_STYLE_PROJECT).withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").durationInMinutes(10).create()).asItem(),
-			jobOf(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(
-					build().startTime("2018-01-01 04:00:00").durationInMinutes(10).building(true)
-							.previousBuild(build().startTime("2018-01-01 01:30:00").durationInMinutes(10).create())
-					.create()).asItem()
+			jobOf(FREE_STYLE_PROJECT).withName("job-4").withLastBuilds(
+					build().startTime("2018-01-01 04:00:00").durationInMinutes(10).building(true).create(),
+					build().startTime("2018-01-01 01:30:00").durationInMinutes(10).create()
+				).asItem()
 		);
 
 		List<TopLevelItem> addedJobs = asList(
