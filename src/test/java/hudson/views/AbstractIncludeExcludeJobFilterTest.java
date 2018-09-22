@@ -1,81 +1,190 @@
 package hudson.views;
 
-import hudson.model.Job;
 import hudson.model.TopLevelItem;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.RegExJobFilter.ValueType.NAME;
+import static hudson.views.RegExJobFilter.ValueType.SCHEDULE;
+import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
 
-    @Test
-    public void testIncludeExclude() {
-        doTestIncludeExclude("junit", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched, true, false);
-        doTestIncludeExclude("junit", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched, false, false);
-        doTestIncludeExclude("junit", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched, false, true);
-        doTestIncludeExclude("junit", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeUnmatched, false, false);
+    private class TestIncludeExcludeJobFilter extends AbstractIncludeExcludeJobFilter {
+        public TestIncludeExcludeJobFilter(String includeExcludeTypeString) {
+            super(includeExcludeTypeString);
+        }
 
-        doTestIncludeExclude("test", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched, false, false);
-        doTestIncludeExclude("test", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched, true, false);
-        doTestIncludeExclude("test", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched, false, false);
-        doTestIncludeExclude("test", ".*u.*", AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeUnmatched, false, true);
+        @Override
+        public boolean matches(TopLevelItem item) {
+            return item.getName().endsWith("-matched");
+        }
     }
 
-    private void doTestIncludeExclude(String jobName,
-                                      String regex, AbstractIncludeExcludeJobFilter.IncludeExcludeType includeExcludeType, // boolean negate, boolean exclude,
-                                      boolean expectInclude, boolean expectExclude) {
-        Job item = mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class));
-        when(item.getName()).thenReturn(jobName);
-        RegExJobFilter filter = new RegExJobFilter(regex, includeExcludeType.toString(), RegExJobFilter.ValueType.NAME.toString());
-        boolean matched = filter.matches((TopLevelItem) item);
-        assertEquals(expectExclude, filter.exclude(matched));
-        assertEquals(expectInclude, filter.include(matched));
+    @Test
+    public void testIncludeMatched() {
+        TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeMatched.name());
+        List<TopLevelItem> all = asList(
+            jobOf(FREE_STYLE_PROJECT).withName("0-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("1-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("2-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("3-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("4-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("5-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("6-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("7-unmatched").asItem()
+        );
+        List<TopLevelItem> added = asList(
+            all.get(0),
+            all.get(1),
+            all.get(5)
+        );
+        List<TopLevelItem> expected = asList(
+            all.get(0),
+            all.get(1),
+            all.get(2),
+            all.get(3),
+            all.get(5)
+        );
 
+        List<TopLevelItem> filtered = filter.filter(added, all, null);
+        assertThat(filtered, is(expected));
+    }
+
+    @Test
+    public void testIncludeUnmatched() {
+        TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeUnmatched.name());
+        List<TopLevelItem> all = asList(
+            jobOf(FREE_STYLE_PROJECT).withName("0-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("1-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("2-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("3-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("4-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("5-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("6-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("7-unmatched").asItem()
+        );
+        List<TopLevelItem> added = asList(
+            all.get(0),
+            all.get(1),
+            all.get(5)
+        );
+        List<TopLevelItem> expected = asList(
+            all.get(0),
+            all.get(1),
+            all.get(4),
+            all.get(5),
+            all.get(6),
+            all.get(7)
+        );
+
+        List<TopLevelItem> filtered = filter.filter(added, all, null);
+        assertThat(filtered, is(expected));
+    }
+
+    @Test
+    public void testExcludeMatched() {
+        TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeMatched.name());
+        List<TopLevelItem> all = asList(
+            jobOf(FREE_STYLE_PROJECT).withName("0-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("1-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("2-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("3-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("4-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("5-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("6-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("7-unmatched").asItem()
+        );
+        List<TopLevelItem> added = asList(
+            all.get(0),
+            all.get(1),
+            all.get(3),
+            all.get(4),
+            all.get(5),
+            all.get(7)
+        );
+        List<TopLevelItem> expected = asList(
+            all.get(4),
+            all.get(5),
+            all.get(7)
+        );
+
+        List<TopLevelItem> filtered = filter.filter(added, all, null);
+        assertThat(filtered, is(expected));
+    }
+
+    @Test
+    public void testExcludeUnmatched() {
+        TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeUnmatched.name());
+        List<TopLevelItem> all = asList(
+            jobOf(FREE_STYLE_PROJECT).withName("0-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("1-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("2-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("3-matched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("4-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("5-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("6-unmatched").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("7-unmatched").asItem()
+        );
+        List<TopLevelItem> added = asList(
+            all.get(0),
+            all.get(1),
+            all.get(3),
+            all.get(4),
+            all.get(5),
+            all.get(7)
+        );
+        List<TopLevelItem> expected = asList(
+            all.get(0),
+            all.get(1),
+            all.get(3)
+        );
+
+        List<TopLevelItem> filtered = filter.filter(added, all, null);
+        assertThat(filtered, is(expected));
     }
 
     /*
-     * Tests that the example given in the help page works as described.
+     * Tests that the example given in the wiki works as described.
+     *
+     * https://wiki.jenkins.io/display/JENKINS/Using+the+View+Job+Filters+Match+Type
      */
     @Test
     public void testHelpExample() {
-        List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
+        List<TopLevelItem> all = asList(
+            jobOf(FREE_STYLE_PROJECT).withName("0-Test_Job").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("1-Test_Job").withTrigger("@midnight").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("2-Job").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("3-Test_Job").withTrigger("@daily").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("4-Job").withTrigger("@midnight").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("5-Test_Job").withTrigger("@midnight").asItem(),
+            jobOf(FREE_STYLE_PROJECT).withName("6-Test_Job").asItem()
+        );
+
         List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
 
-        RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly",
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString(), // true, false,
-                RegExJobFilter.ValueType.NAME.toString());
-        filtered = includeNonNightly.filter(filtered, all, null);
-        List<TopLevelItem> expected = toList("Work_Job", "A-utility-job", "My_Job", "My_Util");
-        assertListEquals(expected, filtered);
+        RegExJobFilter includeTests = new RegExJobFilter(".*Test.*", includeMatched.name(), NAME.name());
+        filtered = includeTests.filter(filtered, all, null);
+        assertThat(filtered, is(asList(
+            all.get(0),
+            all.get(1),
+            all.get(3),
+            all.get(5),
+            all.get(6)
+        )));
 
-        RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*",
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched.toString(), // false, true,
-                RegExJobFilter.ValueType.NAME.toString());
-        filtered = excludeUtil.filter(filtered, all, null);
-        expected = toList("Work_Job", "My_Job");
-        assertListEquals(expected, filtered);
-    }
-    private void assertListEquals(List<TopLevelItem> l1, List<TopLevelItem> l2) {
-        assertEquals(l1.size(), l2.size());
-        for (int i = 0; i < l1.size(); i++) {
-            TopLevelItem i1 = l1.get(i);
-            TopLevelItem i2 = l2.get(i);
-            assertEquals(i1.getName(), i2.getName());
-        }
-    }
-    private List<TopLevelItem> toList(String... names) {
-        List<TopLevelItem> items = new ArrayList<TopLevelItem>();
-        for (String name: names) {
-            Job item =  mock(Job.class, withSettings().extraInterfaces(TopLevelItem.class));
-            when(item.getName()).thenReturn(name);
-            items.add((TopLevelItem)item);
-        }
-        return items;
+        RegExJobFilter excludeNonNightly = new RegExJobFilter(".*@midnight.*", excludeUnmatched.name(), SCHEDULE.name());
+        filtered = excludeNonNightly.filter(filtered, all, null);
+        assertThat(filtered, is(asList(
+            all.get(1),
+            all.get(5)
+        )));
     }
 }
