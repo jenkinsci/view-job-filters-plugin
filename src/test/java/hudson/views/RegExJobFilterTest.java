@@ -9,6 +9,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.RegExJobFilter.ValueType.*;
@@ -271,6 +273,43 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 			new RegExJobFilter("NodeRegEx", excludeMatched.name(), NODE.name()),
 			new RegExJobFilter("ScmRegEx", excludeMatched.name(), SCM.name())
 		);
+	}
+
+	/*
+	 * Tests that the example given in the wiki works as described.
+	 *
+	 * https://wiki.jenkins.io/display/JENKINS/Using+the+View+Job+Filters+Match+Type
+	 */
+	@Test
+	public void testHelpExample() {
+		List<TopLevelItem> all = asList(
+			jobOf(FREE_STYLE_PROJECT).withName("0-Test_Job").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("1-Test_Job").withTrigger("@midnight").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("2-Job").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("3-Test_Job").withTrigger("@daily").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("4-Job").withTrigger("@midnight").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("5-Test_Job").withTrigger("@midnight").asItem(),
+			jobOf(FREE_STYLE_PROJECT).withName("6-Test_Job").asItem()
+		);
+
+		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
+
+		RegExJobFilter includeTests = new RegExJobFilter(".*Test.*", includeMatched.name(), NAME.name());
+		filtered = includeTests.filter(filtered, all, null);
+		assertThat(filtered, is(asList(
+			all.get(0),
+			all.get(1),
+			all.get(3),
+			all.get(5),
+			all.get(6)
+		)));
+
+		RegExJobFilter excludeNonNightly = new RegExJobFilter(".*@midnight.*", excludeUnmatched.name(), SCHEDULE.name());
+		filtered = excludeNonNightly.filter(filtered, all, null);
+		assertThat(filtered, is(asList(
+			all.get(1),
+			all.get(5)
+		)));
 	}
 
 	private void testConfigRoundtrip(String viewName, RegExJobFilter... filters) throws Exception {
