@@ -21,6 +21,11 @@ public class BuildMocker<T extends Build> {
         return new BuildMocker(Build.class);
     }
 
+    public BuildMocker<T> desc(String desc) {
+        when(build.getDescription()).thenReturn(desc);
+        return this;
+    }
+
     public BuildMocker<T> startTime(String startTime) throws ParseException {
         Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
         Calendar timestamp = GregorianCalendar.getInstance();
