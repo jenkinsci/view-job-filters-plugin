@@ -22,7 +22,7 @@ public class BuildMocker<T extends Build> {
     }
 
     public BuildMocker<T> startTime(String startTime) throws ParseException {
-        Date time = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").parse(startTime);
+        Date time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(startTime);
         Calendar timestamp = GregorianCalendar.getInstance();
         timestamp.setTime(time);
 
