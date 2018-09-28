@@ -43,6 +43,16 @@ public class BuildMocker<T extends Build> {
         return this;
     }
 
+    public BuildMocker<T> durationInSeconds(long seconds)  {
+        when(build.getDuration()).thenReturn(seconds * 1000);
+        return this;
+    }
+
+    public BuildMocker<T> durationInMillis(long millis)  {
+        when(build.getDuration()).thenReturn(millis);
+        return this;
+    }
+
     public BuildMocker<T> building(boolean building)  {
         when(build.isBuilding()).thenReturn(building);
         return this;

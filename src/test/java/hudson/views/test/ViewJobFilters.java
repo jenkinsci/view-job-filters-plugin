@@ -5,6 +5,8 @@ import hudson.model.TopLevelItemDescriptor;
 import hudson.scm.SCMDescriptor;
 import hudson.views.*;
 
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 
 public class ViewJobFilters {
@@ -12,49 +14,49 @@ public class ViewJobFilters {
     public static RegExJobFilter nameRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.NAME.name());
     }
 
     public static RegExJobFilter descRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.DESCRIPTION.name());
     }
 
     public static RegExJobFilter emailRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.EMAIL.name());
     }
 
     public static RegExJobFilter scheduleRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.SCHEDULE.name());
     }
 
     public static RegExJobFilter scmRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.SCM.name());
     }
 
     public static RegExJobFilter mavenRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.MAVEN.name());
     }
 
     public static RegExJobFilter nodeRegex(String regex) {
         return new RegExJobFilter(
                 regex,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name(),
+                includeMatched.name(),
                 RegExJobFilter.ValueType.NODE.name());
     }
 
@@ -67,7 +69,7 @@ public class ViewJobFilters {
                 neverBuild,
                 building,
                 inBuildQueue,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+                includeMatched.name());
     }
 
     public static JobStatusFilter jobStatus(
@@ -82,7 +84,7 @@ public class ViewJobFilters {
                 aborted,
                 disabled,
                 stable,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+                includeMatched.name());
     }
 
     public static JobTypeFilter jobType(TopLevelItemDescriptor descriptor) {
@@ -92,11 +94,11 @@ public class ViewJobFilters {
     public static JobTypeFilter jobType(String type) {
         return new JobTypeFilter(
                 type,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+                includeMatched.name());
     }
 
     public static ScmTypeFilter scmType(String type) {
-        return new ScmTypeFilter(type, AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+        return new ScmTypeFilter(type, includeMatched.name());
     }
 
     public static SecurityFilter security(
@@ -109,16 +111,19 @@ public class ViewJobFilters {
                 configure,
                 build,
                 workspace,
-                AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+                includeMatched.name());
     }
 
-
     public static SecuredJobsFilter secured() {
-        return new SecuredJobsFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.name());
+        return new SecuredJobsFilter(includeMatched.name());
     }
 
     public static ScmTypeFilter scmType(SCMDescriptor<?> descriptor) {
         return scmType(descriptor.clazz.getName());
     }
 
+    public static BuildDurationFilter buildDuration(float minutes, String lessThan) {
+        return new BuildDurationFilter(minutes, "<".equals(lessThan),
+            All.name(), 0, Builds.name(), includeMatched.name());
+    }
 }
