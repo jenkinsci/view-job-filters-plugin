@@ -85,7 +85,7 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 		TriggeredByUpstream(true) {
 			@Override
 			protected boolean matchesCause(Cause cause) {
-				return (cause instanceof UpstreamCause);
+				return (cause instanceof UpstreamCause || cause instanceof UpstreamCause.DeeplyNestedUpstreamCause);
 			}
 		},
 		TriggeredByCli(true) {
