@@ -126,4 +126,8 @@ public class ViewJobFilters {
         return new BuildDurationFilter(minutes, "<".equals(lessThan),
             All.name(), 0, Builds.name(), includeMatched.name());
     }
+
+    public static BuildTrendFilter buildTrend(BuildTrendFilter.StatusType statusType) {
+        return new BuildTrendFilter(All.name(), statusType.name(), 0, Builds.name(), includeMatched.name());
+    }
 }

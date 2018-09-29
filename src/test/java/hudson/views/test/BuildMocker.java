@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 public class BuildMocker<T extends Build> {
@@ -23,6 +24,21 @@ public class BuildMocker<T extends Build> {
 
     public BuildMocker<T> desc(String desc) {
         when(build.getDescription()).thenReturn(desc);
+        return this;
+    }
+
+    public BuildMocker<T> started(boolean started) {
+        when(build.hasntStartedYet()).thenReturn(!started);
+        return this;
+    }
+
+    public BuildMocker<T> result(Result result) {
+        when(build.getResult()).thenReturn(result);
+        return this;
+    }
+
+    public BuildMocker causes(Cause... causes) {
+        when(build.getCauses()).thenReturn(asList(causes));
         return this;
     }
 
@@ -66,4 +82,6 @@ public class BuildMocker<T extends Build> {
     public T create() {
         return build;
     }
+
+
 }
