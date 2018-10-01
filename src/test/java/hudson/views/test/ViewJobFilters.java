@@ -137,7 +137,7 @@ public class ViewJobFilters {
 
     public enum UserRelevanceOption {
         MATCH_USER_ID, MATCH_USER_FULL_NAME,
-        IGNORE_CASE, IGNORE_WHITESPACE, IGNORE_ALPHA_NUM,
+        IGNORE_CASE, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM,
         MATCH_BUILDER, MATCH_EMAIL, MATCH_SCM_LOG
     }
 
@@ -148,7 +148,7 @@ public class ViewJobFilters {
             optionsList.contains(MATCH_USER_FULL_NAME),
             optionsList.contains(IGNORE_CASE),
             optionsList.contains(IGNORE_WHITESPACE),
-            optionsList.contains(IGNORE_ALPHA_NUM),
+            optionsList.contains(IGNORE_NON_ALPHA_NUM),
             optionsList.contains(MATCH_BUILDER),
             optionsList.contains(MATCH_EMAIL),
             optionsList.contains(MATCH_SCM_LOG),
