@@ -1,19 +1,46 @@
 package hudson.views;
 
 import hudson.model.Cause;
+import hudson.model.User;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import jenkins.model.Jenkins;
 import junit.framework.TestCase;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.TestingAuthenticationToken;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
+import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
+import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
+import static hudson.views.test.ViewJobFilters.userRelevance;
 import static org.junit.Assert.*;
 
 public class UserRelevanceFilterTest extends AbstractHudsonTest {
+
+	@Before
+	public void before() {
+		j.getInstance().setSecurityRealm(j.createDummySecurityRealm());
+	}
+
+	private void setCurrentUser(String id, String fullName) {
+		User xyz = j.getInstance().getUser(id);
+		xyz.setFullName(fullName);
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(id, ""));
+	}
+
+	@Test
+	public void testMatchUserIdEmail() throws Exception {
+		setCurrentUser("fred.foobar", "Fred Foobar");
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
+	}
 
 	@Test
 	public void testCauses() {

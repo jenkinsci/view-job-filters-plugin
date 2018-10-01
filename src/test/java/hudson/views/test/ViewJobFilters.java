@@ -5,9 +5,13 @@ import hudson.model.TopLevelItemDescriptor;
 import hudson.scm.SCMDescriptor;
 import hudson.views.*;
 
+import java.util.List;
+
 import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
+import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
+import static java.util.Arrays.asList;
 
 public class ViewJobFilters {
 
@@ -129,5 +133,25 @@ public class ViewJobFilters {
 
     public static BuildTrendFilter buildTrend(BuildTrendFilter.StatusType statusType) {
         return new BuildTrendFilter(All.name(), statusType.name(), 0, Builds.name(), includeMatched.name());
+    }
+
+    public enum UserRelevanceOption {
+        MATCH_USER_ID, MATCH_USER_FULL_NAME,
+        IGNORE_CASE, IGNORE_WHITESPACE, IGNORE_ALPHA_NUM,
+        MATCH_BUILDER, MATCH_EMAIL, MATCH_SCM_LOG
+    }
+
+    public static UserRelevanceFilter userRelevance(UserRelevanceOption... options) {
+        List<UserRelevanceOption> optionsList = asList(options);
+        return new UserRelevanceFilter(
+            optionsList.contains(MATCH_USER_ID),
+            optionsList.contains(MATCH_USER_FULL_NAME),
+            optionsList.contains(IGNORE_CASE),
+            optionsList.contains(IGNORE_WHITESPACE),
+            optionsList.contains(IGNORE_ALPHA_NUM),
+            optionsList.contains(MATCH_BUILDER),
+            optionsList.contains(MATCH_EMAIL),
+            optionsList.contains(MATCH_SCM_LOG),
+            All.name(), 0, AbstractBuildTrendFilter.AmountType.Builds.name(), includeMatched.name());
     }
 }
