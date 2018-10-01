@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
+import static hudson.views.test.JobMocker.EmailType.DEFAULT;
 import static hudson.views.test.JobMocker.jobOf;
 import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
 import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
@@ -40,60 +41,60 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 	public void testEmail() throws Exception {
 		setCurrentUser("fred.foobar", "fred foobar");
 
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_EMAIL, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc").asItem()));
-		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc").asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fred.foobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("fredfoobar@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FRED.FOOBAR@acme.inc", DEFAULT).asItem()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM, IGNORE_CASE).matches(jobOf(FREE_STYLE_PROJECT).withEmail("FREDFOOBAR@acme.inc", DEFAULT).asItem()));
 	}
 
 	@Test

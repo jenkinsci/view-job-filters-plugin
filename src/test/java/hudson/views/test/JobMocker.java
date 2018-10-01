@@ -199,7 +199,21 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withEmail(String email) {
+    public enum EmailType {
+       DEFAULT, EXTENDED
+    }
+
+    public JobMocker<T> withEmail(String email, EmailType emailType) {
+        if (emailType == EmailType.DEFAULT) {
+            return withEmail(email);
+        }
+        if (emailType == EmailType.EXTENDED) {
+            return withExtEmail(email);
+        }
+        return this;
+    }
+
+    private JobMocker<T> withEmail(String email) {
         if (job instanceof AbstractProject) {
             Mailer mailer = new Mailer(email, false, false);
 
@@ -216,7 +230,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withExtEmail(String email) {
+    private JobMocker<T> withExtEmail(String email) {
         ExtendedEmailPublisher emailPublisher = new ExtendedEmailPublisher();
         emailPublisher.recipientList = email;
 

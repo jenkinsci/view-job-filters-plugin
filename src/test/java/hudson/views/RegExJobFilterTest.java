@@ -9,6 +9,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hudson.views.test.JobMocker.EmailType.DEFAULT;
+import static hudson.views.test.JobMocker.EmailType.EXTENDED;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -125,23 +127,23 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(emailRegex(".*").matches(jobOf(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(emailRegex(".*").matches(jobOf(type).withEmail(null).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("").asItem()));
-			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("foo@bar.com, quux@baz.net").asItem()));
-			assertTrue(emailRegex("foo@bar.com").matches(jobOf(type).withEmail("foo@bar.com").asItem()));
-			assertFalse(emailRegex("foo").matches(jobOf(type).withEmail("foo@bar.com").asItem()));
-			assertFalse(emailRegex("@bar.com").matches(jobOf(type).withEmail("foo@bar.com").asItem()));
-			assertTrue(emailRegex("foo@.*").matches(jobOf(type).withEmail("foo@bar.com").asItem()));
-			assertTrue(emailRegex(".*@bar.com").matches(jobOf(type).withEmail("foo@bar.com").asItem()));
+			assertFalse(emailRegex(".*").matches(jobOf(type).withEmail(null, DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("foo@bar.com, quux@baz.net", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOf(type).withEmail("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOf(type).withEmail("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOf(type).withEmail("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOf(type).withEmail("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOf(type).withEmail("foo@bar.com", DEFAULT).asItem()));
 
-			assertFalse(emailRegex(".*").matches(jobOf(type).withExtEmail(null).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOf(type).withExtEmail("").asItem()));
-			assertTrue(emailRegex(".*").matches(jobOf(type).withExtEmail("foo@bar.com, quux@baz.net").asItem()));
-			assertTrue(emailRegex("foo@bar.com").matches(jobOf(type).withExtEmail("foo@bar.com").asItem()));
-			assertFalse(emailRegex("foo").matches(jobOf(type).withExtEmail("foo@bar.com").asItem()));
-			assertFalse(emailRegex("@bar.com").matches(jobOf(type).withExtEmail("foo@bar.com").asItem()));
-			assertTrue(emailRegex("foo@.*").matches(jobOf(type).withExtEmail("foo@bar.com").asItem()));
-			assertTrue(emailRegex(".*@bar.com").matches(jobOf(type).withExtEmail("foo@bar.com").asItem()));
+			assertFalse(emailRegex(".*").matches(jobOf(type).withEmail(null, EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOf(type).withEmail("foo@bar.com, quux@baz.net", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOf(type).withEmail("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOf(type).withEmail("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOf(type).withEmail("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOf(type).withEmail("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOf(type).withEmail("foo@bar.com", EXTENDED).asItem()));
 		}
 	}
 
