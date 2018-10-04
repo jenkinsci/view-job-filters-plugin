@@ -5,8 +5,6 @@ import static hudson.views.AbstractBuildTrendFilter.BuildCountType.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
-import static hudson.views.test.JobMocker.jobOfType;
-import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
 import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -53,15 +51,15 @@ public class AbstractBuildTrendFilterTest {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+            assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+            assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create()
             ).asItem()));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+            assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create(),
                 build().desc("match").create()
             ).asItem()));
-            assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+            assertTrue(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("match").create(),
                 build().desc("no-match").create()
             ).asItem()));
@@ -73,11 +71,11 @@ public class AbstractBuildTrendFilterTest {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+            assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+            assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create()
             ).asItem()));
-            assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+            assertTrue(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create(),
                 build().desc("match").create(),
                 build().desc("no-match").create()
@@ -90,16 +88,16 @@ public class AbstractBuildTrendFilterTest {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+            assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+            assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create()
             ).asItem()));
-            assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+            assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("match").create(),
                 build().desc("no-match").create(),
                 build().desc("match").create()
             ).asItem()));
-            assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+            assertTrue(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("match").create(),
                 build().desc("match").create(),
                 build().desc("match").create()
@@ -111,15 +109,15 @@ public class AbstractBuildTrendFilterTest {
     public void testMatchesLatestBuildOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("no-match").create(),
                 build().desc("match").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
                 build().desc("match").create(),
                 build().desc("no-match").create()
         ).asItem()));
@@ -129,15 +127,15 @@ public class AbstractBuildTrendFilterTest {
     public void testMatchesAtLeastOneOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create(),
@@ -145,7 +143,7 @@ public class AbstractBuildTrendFilterTest {
             build().desc("no-match").create(),
             build().desc("match").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("match").create(),
@@ -159,37 +157,37 @@ public class AbstractBuildTrendFilterTest {
     public void testMatchesAllOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").create(),
             build().desc("no-match").create(),
             build().desc("match").create(),
             build().desc("no-match").create(),
             build().desc("no-match").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").create(),
             build().desc("no-match").create(),
             build().desc("match").create(),
             build().desc("match").create(),
             build().desc("match").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").create(),
             build().desc("match").create(),
             build().desc("match").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").create(),
             build().desc("match").create(),
             build().desc("match").create(),
@@ -204,19 +202,19 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 10:00:00").create(),
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 11:00:00").create(),
             build().desc("match").startTime("2018-01-01 10:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 11:00:00").create(),
             build().desc("no-match").startTime("2018-01-01 10:00:00").create()
         ).asItem()));
@@ -227,15 +225,15 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 10:00:00").create(),
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 11:00:00").create(),
             build().desc("match").startTime("2018-01-01 10:00:00").create(),
             build().desc("no-match").startTime("2018-01-01 09:00:00").create()
@@ -248,25 +246,25 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 10:00:00").create(),
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 11:00:00").create(),
             build().desc("no-match").startTime("2018-01-01 10:00:00").create(),
             build().desc("match").startTime("2018-01-01 05:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-01 11:00:00").create(),
             build().desc("match").startTime("2018-01-01 10:00:00").create(),
             build().desc("no-match").startTime("2018-01-01 09:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-01 11:00:00").create(),
             build().desc("match").startTime("2018-01-01 10:00:00").create(),
             build().desc("no-match").startTime("2018-01-01 05:00:00").create()
@@ -279,19 +277,19 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-10 00:00:00").create(),
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-11 00:00:00").create(),
             build().desc("match").startTime("2018-01-10 00:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-11 00:00:00").create(),
              build().desc("no-match").startTime("2018-01-10 00:00:00").create()
         ).asItem()));
@@ -302,15 +300,15 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-10 00:00:00").create(),
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-11 00:00:00").create(),
             build().desc("match").startTime("2018-01-10 00:00:00").create(),
             build().desc("no-match").startTime("2018-01-09 00:00:00").create()
@@ -322,25 +320,25 @@ public class AbstractBuildTrendFilterTest {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds().asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-10 00:00:00").create(),
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-11 00:00:00").create(),
             build().desc("no-match").startTime("2018-01-10 00:00:00").create(),
             build().desc("match").startTime("2018-01-05 00:00:00").create()
         ).asItem()));
-        assertFalse(filter.matches(freeStyleProject().withLastBuilds(
+        assertFalse(filter.matches(freeStyleProject().lastBuilds(
             build().desc("no-match").startTime("2018-01-11 00:00:00").create(),
             build().desc("match").startTime("2018-01-10 00:00:00").create(),
             build().desc("no-match").startTime("2018-01-09 00:00:00").create()
         ).asItem()));
-        assertTrue(filter.matches(freeStyleProject().withLastBuilds(
+        assertTrue(filter.matches(freeStyleProject().lastBuilds(
             build().desc("match").startTime("2018-01-11 00:00:00").create(),
             build().desc("match").startTime("2018-01-10 00:00:00").create(),
             build().desc("no-match").startTime("2018-01-05 00:00:00").create()

@@ -31,21 +31,21 @@ public class ScmTypeFilterTest extends AbstractHudsonTest {
 		SCMDescriptor git = new GitSCM.DescriptorImpl();
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM, SCM_TRIGGER_ITEM)) {
-			TopLevelItem cvsJob = jobOfType(type).withCVS("root", "modules", "branch").asItem();
+			TopLevelItem cvsJob = jobOfType(type).cvs("root", "modules", "branch").asItem();
 			assertTrue(scmType(cvs).matches(cvsJob));
 			assertFalse(scmType(svn).matches(cvsJob));
 			assertFalse(scmType(git).matches(cvsJob));
 			assertFalse(scmType("CVSSCM").matches(cvsJob)); // need package
 			assertTrue(scmType("CVS").matches(cvsJob)); // getDisplayName() returns "CVS"
 
-			TopLevelItem svnJob = jobOfType(type).withSVN("svn://").asItem();
+			TopLevelItem svnJob = jobOfType(type).svn("svn://").asItem();
 			assertTrue(scmType(svn).matches(svnJob));
 			assertFalse(scmType(cvs).matches(svnJob));
 			assertFalse(scmType(git).matches(svnJob));
 			assertFalse(scmType("SubversionSCM").matches(svnJob)); // need package
 			assertTrue(scmType("Subversion").matches(svnJob)); // getDisplayName() returns "Subversion"
 
-			TopLevelItem gitJob = jobOfType(type).withGitRepos("git://").asItem();
+			TopLevelItem gitJob = jobOfType(type).gitRepos("git://").asItem();
 			assertTrue(scmType(git).matches(gitJob));
 			assertFalse(scmType(cvs).matches(gitJob));
 			assertFalse(scmType(svn).matches(gitJob));

@@ -7,8 +7,6 @@ import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.JobMocker.freeStyleProject;
-import static hudson.views.test.JobMocker.jobOfType;
-import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -30,14 +28,14 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     public void testIncludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeMatched.name());
         List<TopLevelItem> all = asList(
-            freeStyleProject().withName("0-matched").asItem(),
-            freeStyleProject().withName("1-matched").asItem(),
-            freeStyleProject().withName("2-matched").asItem(),
-            freeStyleProject().withName("3-matched").asItem(),
-            freeStyleProject().withName("4-unmatched").asItem(),
-            freeStyleProject().withName("5-unmatched").asItem(),
-            freeStyleProject().withName("6-unmatched").asItem(),
-            freeStyleProject().withName("7-unmatched").asItem()
+            freeStyleProject().name("0-matched").asItem(),
+            freeStyleProject().name("1-matched").asItem(),
+            freeStyleProject().name("2-matched").asItem(),
+            freeStyleProject().name("3-matched").asItem(),
+            freeStyleProject().name("4-unmatched").asItem(),
+            freeStyleProject().name("5-unmatched").asItem(),
+            freeStyleProject().name("6-unmatched").asItem(),
+            freeStyleProject().name("7-unmatched").asItem()
         );
         List<TopLevelItem> added = asList(
             all.get(0),
@@ -60,14 +58,14 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     public void testIncludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeUnmatched.name());
         List<TopLevelItem> all = asList(
-            freeStyleProject().withName("0-matched").asItem(),
-            freeStyleProject().withName("1-matched").asItem(),
-            freeStyleProject().withName("2-matched").asItem(),
-            freeStyleProject().withName("3-matched").asItem(),
-            freeStyleProject().withName("4-unmatched").asItem(),
-            freeStyleProject().withName("5-unmatched").asItem(),
-            freeStyleProject().withName("6-unmatched").asItem(),
-            freeStyleProject().withName("7-unmatched").asItem()
+            freeStyleProject().name("0-matched").asItem(),
+            freeStyleProject().name("1-matched").asItem(),
+            freeStyleProject().name("2-matched").asItem(),
+            freeStyleProject().name("3-matched").asItem(),
+            freeStyleProject().name("4-unmatched").asItem(),
+            freeStyleProject().name("5-unmatched").asItem(),
+            freeStyleProject().name("6-unmatched").asItem(),
+            freeStyleProject().name("7-unmatched").asItem()
         );
         List<TopLevelItem> added = asList(
             all.get(0),
@@ -91,14 +89,14 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     public void testExcludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeMatched.name());
         List<TopLevelItem> all = asList(
-            freeStyleProject().withName("0-matched").asItem(),
-            freeStyleProject().withName("1-matched").asItem(),
-            freeStyleProject().withName("2-matched").asItem(),
-            freeStyleProject().withName("3-matched").asItem(),
-            freeStyleProject().withName("4-unmatched").asItem(),
-            freeStyleProject().withName("5-unmatched").asItem(),
-            freeStyleProject().withName("6-unmatched").asItem(),
-            freeStyleProject().withName("7-unmatched").asItem()
+            freeStyleProject().name("0-matched").asItem(),
+            freeStyleProject().name("1-matched").asItem(),
+            freeStyleProject().name("2-matched").asItem(),
+            freeStyleProject().name("3-matched").asItem(),
+            freeStyleProject().name("4-unmatched").asItem(),
+            freeStyleProject().name("5-unmatched").asItem(),
+            freeStyleProject().name("6-unmatched").asItem(),
+            freeStyleProject().name("7-unmatched").asItem()
         );
         List<TopLevelItem> added = asList(
             all.get(0),
@@ -122,14 +120,14 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     public void testExcludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeUnmatched.name());
         List<TopLevelItem> all = asList(
-            freeStyleProject().withName("0-matched").asItem(),
-            freeStyleProject().withName("1-matched").asItem(),
-            freeStyleProject().withName("2-matched").asItem(),
-            freeStyleProject().withName("3-matched").asItem(),
-            freeStyleProject().withName("4-unmatched").asItem(),
-            freeStyleProject().withName("5-unmatched").asItem(),
-            freeStyleProject().withName("6-unmatched").asItem(),
-            freeStyleProject().withName("7-unmatched").asItem()
+            freeStyleProject().name("0-matched").asItem(),
+            freeStyleProject().name("1-matched").asItem(),
+            freeStyleProject().name("2-matched").asItem(),
+            freeStyleProject().name("3-matched").asItem(),
+            freeStyleProject().name("4-unmatched").asItem(),
+            freeStyleProject().name("5-unmatched").asItem(),
+            freeStyleProject().name("6-unmatched").asItem(),
+            freeStyleProject().name("7-unmatched").asItem()
         );
         List<TopLevelItem> added = asList(
             all.get(0),

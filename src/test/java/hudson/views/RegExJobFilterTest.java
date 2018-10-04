@@ -29,14 +29,14 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(nameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 	    for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(nameRegex(".*").matches(jobOfType(type).withName(null).asItem()));
-			assertTrue(nameRegex(".*").matches(jobOfType(type).withName("").asItem()));
-			assertTrue(nameRegex("Foo").matches(jobOfType(type).withName("Foo").asItem()));
-			assertFalse(nameRegex("Foo").matches(jobOfType(type).withName("Foobar").asItem()));
-			assertTrue(nameRegex("Foo.*").matches(jobOfType(type).withName("Foobar").asItem()));
-			assertFalse(nameRegex("bar").matches(jobOfType(type).withName("Foobar").asItem()));
-			assertTrue(nameRegex(".*bar").matches(jobOfType(type).withName("Foobar").asItem()));
-			assertTrue(nameRegex(".ooba.").matches(jobOfType(type).withName("Foobar").asItem()));
+			assertFalse(nameRegex(".*").matches(jobOfType(type).name(null).asItem()));
+			assertTrue(nameRegex(".*").matches(jobOfType(type).name("").asItem()));
+			assertTrue(nameRegex("Foo").matches(jobOfType(type).name("Foo").asItem()));
+			assertFalse(nameRegex("Foo").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex("Foo.*").matches(jobOfType(type).name("Foobar").asItem()));
+			assertFalse(nameRegex("bar").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".*bar").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".ooba.").matches(jobOfType(type).name("Foobar").asItem()));
 		}
 	}
 
@@ -45,31 +45,31 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(descRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(descRegex(".*").matches(jobOfType(type).withDesc(null).asItem()));
-			assertTrue(descRegex(".*").matches(jobOfType(type).withDesc("").asItem()));
-			assertTrue(descRegex("Foo").matches(jobOfType(type).withDesc("Foo").asItem()));
-			assertFalse(descRegex("Foo").matches(jobOfType(type).withDesc("Foobar").asItem()));
-			assertTrue(descRegex("Foo.*").matches(jobOfType(type).withDesc("Foobar").asItem()));
-			assertFalse(descRegex("bar").matches(jobOfType(type).withDesc("Foobar").asItem()));
-			assertTrue(descRegex(".*bar").matches(jobOfType(type).withDesc("Foobar").asItem()));
-			assertTrue(descRegex(".ooba.").matches(jobOfType(type).withDesc("Foobar").asItem()));
+			assertFalse(descRegex(".*").matches(jobOfType(type).desc(null).asItem()));
+			assertTrue(descRegex(".*").matches(jobOfType(type).desc("").asItem()));
+			assertTrue(descRegex("Foo").matches(jobOfType(type).desc("Foo").asItem()));
+			assertFalse(descRegex("Foo").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex("Foo.*").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertFalse(descRegex("bar").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex(".*bar").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex(".ooba.").matches(jobOfType(type).desc("Foobar").asItem()));
 
-			assertTrue(descRegex(".*").matches(jobOfType(type).withDesc("\n").asItem()));
-			assertTrue(descRegex("Foo").matches(jobOfType(type).withDesc("Quux\nFoo").asItem()));
-			assertFalse(descRegex("Foo").matches(jobOfType(type).withDesc("Quux\nFoobar").asItem()));
-			assertTrue(descRegex("Foo.*").matches(jobOfType(type).withDesc("Quux\nFoobar").asItem()));
-			assertFalse(descRegex("bar").matches(jobOfType(type).withDesc("Quux\nFoobar").asItem()));
-			assertTrue(descRegex(".*bar").matches(jobOfType(type).withDesc("Quux\nFoobar").asItem()));
-			assertTrue(descRegex(".ooba.").matches(jobOfType(type).withDesc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex(".*").matches(jobOfType(type).desc("\n").asItem()));
+			assertTrue(descRegex("Foo").matches(jobOfType(type).desc("Quux\nFoo").asItem()));
+			assertFalse(descRegex("Foo").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex("Foo.*").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertFalse(descRegex("bar").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex(".*bar").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex(".ooba.").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
 
-			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("").asItem()));
-			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc(null).asItem()));
-			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("nothing").asItem()));
-			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("desc=test").asItem()));
-			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("mydesc=test2").asItem()));
-			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("thisis\nmydesc=testn2\nforyou").asItem()));
-			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("1&#xd;\ndesc=test&#xd;\n2").asItem()));
-			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).withDesc("1 desc=test 2").asItem()));
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc("").asItem()));
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc(null).asItem()));
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc("nothing").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("desc=test").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("mydesc=test2").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("thisis\nmydesc=testn2\nforyou").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1&#xd;\ndesc=test&#xd;\n2").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1 desc=test 2").asItem()));
 		}
 	}
 
@@ -78,48 +78,48 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(scmRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM, SCM_TRIGGER_ITEM)) {
-			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS("root", "modules", "branch").asItem()));
-			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS(null, "modules", "branch").asItem()));
-			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS("root", "modules", null).asItem()));
-			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS("root/my-office", "modules", "branch").asItem()));
-			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS("root", "modules/my-office", "branch").asItem()));
-			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).withCVS("root", "modules", "branch/my-office").asItem()));
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", "branch").asItem()));
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs(null, "modules", "branch").asItem()));
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", null).asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root/my-office", "modules", "branch").asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules/my-office", "branch").asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", "branch/my-office").asItem()));
 
-			assertFalse(scmRegex(".*").matches(jobOfType(type).withSVN().asItem()));
-			assertTrue(scmRegex(".*").matches(jobOfType(type).withSVN("").asItem()));
-			assertTrue(scmRegex("Foo").matches(jobOfType(type).withSVN("Foo").asItem()));
-			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).withSVN("Foobar").asItem()));
-			assertFalse(scmRegex("bar").matches(jobOfType(type).withSVN("Foobar").asItem()));
-			assertTrue(scmRegex(".*bar").matches(jobOfType(type).withSVN("Foobar").asItem()));
-			assertTrue(scmRegex("Bar").matches(jobOfType(type).withSVN("Foo", "Bar").asItem()));
-			assertTrue(scmRegex("B.*").matches(jobOfType(type).withSVN("Foo", "Bar").asItem()));
+			assertFalse(scmRegex(".*").matches(jobOfType(type).svn().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).svn("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).svn("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).svn("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).svn("Foo", "Bar").asItem()));
 
-			assertFalse(scmRegex(".*").matches(jobOfType(type).withGitBranches().asItem()));
-			assertTrue(scmRegex(".*").matches(jobOfType(type).withGitBranches("").asItem()));
-			assertTrue(scmRegex("Foo").matches(jobOfType(type).withGitBranches("Foo").asItem()));
-			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).withGitBranches("Foobar").asItem()));
-			assertFalse(scmRegex("bar").matches(jobOfType(type).withGitBranches("Foobar").asItem()));
-			assertTrue(scmRegex(".*bar").matches(jobOfType(type).withGitBranches("Foobar").asItem()));
-			assertTrue(scmRegex("Bar").matches(jobOfType(type).withGitBranches("Foo", "Bar").asItem()));
-			assertTrue(scmRegex("B.*").matches(jobOfType(type).withGitBranches("Foo", "Bar").asItem()));
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitBranches().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitBranches("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitBranches("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitBranches("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitBranches("Foo", "Bar").asItem()));
 
-			assertFalse(scmRegex(".*").matches(jobOfType(type).withGitRepos().asItem()));
-			assertTrue(scmRegex(".*").matches(jobOfType(type).withGitRepos("").asItem()));
-			assertTrue(scmRegex("Foo").matches(jobOfType(type).withGitRepos("Foo").asItem()));
-			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).withGitRepos("Foobar").asItem()));
-			assertFalse(scmRegex("bar").matches(jobOfType(type).withGitRepos("Foobar").asItem()));
-			assertTrue(scmRegex(".*bar").matches(jobOfType(type).withGitRepos("Foobar").asItem()));
-			assertTrue(scmRegex("Bar").matches(jobOfType(type).withGitRepos("Foo", "Bar").asItem()));
-			assertTrue(scmRegex("B.*").matches(jobOfType(type).withGitRepos("Foo", "Bar").asItem()));
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitRepos().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitRepos("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitRepos("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
 
-			assertFalse(scmRegex(".*").matches(jobOfType(type).withLegacyGitRepos().asItem()));
-			assertTrue(scmRegex(".*").matches(jobOfType(type).withLegacyGitRepos("").asItem()));
-			assertTrue(scmRegex("Foo").matches(jobOfType(type).withLegacyGitRepos("Foo").asItem()));
-			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).withLegacyGitRepos("Foobar").asItem()));
-			assertFalse(scmRegex("bar").matches(jobOfType(type).withLegacyGitRepos("Foobar").asItem()));
-			assertTrue(scmRegex(".*bar").matches(jobOfType(type).withLegacyGitRepos("Foobar").asItem()));
-			assertTrue(scmRegex("Bar").matches(jobOfType(type).withLegacyGitRepos("Foo", "Bar").asItem()));
-			assertTrue(scmRegex("B.*").matches(jobOfType(type).withLegacyGitRepos("Foo", "Bar").asItem()));
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitReposLegacy().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitReposLegacy("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitReposLegacy("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
 		}
 	}
 
@@ -128,23 +128,23 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(emailRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(emailRegex(".*").matches(jobOfType(type).withEmail(null, DEFAULT).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOfType(type).withEmail("", DEFAULT).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOfType(type).withEmail("foo@bar.com, quux@baz.net", DEFAULT).asItem()));
-			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", DEFAULT).asItem()));
-			assertFalse(emailRegex("foo").matches(jobOfType(type).withEmail("foo@bar.com", DEFAULT).asItem()));
-			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", DEFAULT).asItem()));
-			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).withEmail("foo@bar.com", DEFAULT).asItem()));
-			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex(".*").matches(jobOfType(type).email(null, DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("foo@bar.com, quux@baz.net", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
 
-			assertFalse(emailRegex(".*").matches(jobOfType(type).withEmail(null, EXTENDED).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOfType(type).withEmail("", EXTENDED).asItem()));
-			assertTrue(emailRegex(".*").matches(jobOfType(type).withEmail("foo@bar.com, quux@baz.net", EXTENDED).asItem()));
-			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", EXTENDED).asItem()));
-			assertFalse(emailRegex("foo").matches(jobOfType(type).withEmail("foo@bar.com", EXTENDED).asItem()));
-			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", EXTENDED).asItem()));
-			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).withEmail("foo@bar.com", EXTENDED).asItem()));
-			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).withEmail("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex(".*").matches(jobOfType(type).email(null, EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("foo@bar.com, quux@baz.net", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
 		}
 	}
 
@@ -153,14 +153,14 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(scheduleRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(scheduleRegex(".*").matches(jobOfType(type).withTrigger(null).asItem()));
-			assertTrue(scheduleRegex(".*").matches(jobOfType(type).withTrigger("").asItem()));
-			assertTrue(scheduleRegex(".*").matches(jobOfType(type).withTrigger("\n").asItem()));
-			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).withTrigger("# monday").asItem()));
-			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).withTrigger("# tuesday").asItem()));
-			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).withTrigger("* * * * *").asItem()));
-			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).withTrigger("* * * * *\n#").asItem()));
-			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).withTrigger("#monday\n* * * * *").asItem()));
+			assertFalse(scheduleRegex(".*").matches(jobOfType(type).trigger(null).asItem()));
+			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("").asItem()));
+			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("\n").asItem()));
+			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("# monday").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("# tuesday").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("* * * * *").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("* * * * *\n#").asItem()));
+			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("#monday\n* * * * *").asItem()));
 		}
 	}
 
@@ -169,76 +169,76 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(mavenRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuilder("", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuilder("Foo", "", "", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("Foo", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuilder("Foobar", "", "", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("Foobar", "", "", "").asItem()));
-			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuilder("Foobar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("Foo", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foo", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
 
-			assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
-			assertFalse(mavenRegex("Foo").matches(jobOfType(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
-			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
 
-			assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuilder("", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuilder("", "Foo", "", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "Foo", "", "").asItem()));
-			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuilder("", "Foobar", "", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "Foobar", "", "").asItem()));
-			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuilder("", "Foobar", "", "").asItem()));
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "Foo", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "Foo", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
 
-			assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuilder("", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuilder("", "", "Foo", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "", "Foo", "").asItem()));
-			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuilder("", "", "Foobar", "").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "", "Foobar", "").asItem()));
-			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuilder("", "", "Foobar", "").asItem()));
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "", "Foo", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "Foo", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
 
-			assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuilder("", "", "", "").asItem()));
-			assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuilder("", "", "", "Foo").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "", "", "Foo").asItem()));
-			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuilder("", "", "", "Foobar").asItem()));
-			assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuilder("", "", "", "Foobar").asItem()));
-			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuilder("", "", "", "Foobar").asItem()));
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "", "", "Foo").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foo").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
 		}
 
 		for (JobType<? extends Job> type: availableJobTypes(MAVEN_MODULE_SET)) {
 			for (JobMocker.MavenBuildStep step : JobMocker.MavenBuildStep.values()) {
-				assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuildStep(step, "Foo", "", "", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "Foo", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
-				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
 
-				assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
-				assertFalse(mavenRegex("Foo").matches(jobOfType(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
-				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
 
-				assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuildStep(step, "", "Foo", "", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "Foo", "", "").asItem()));
-				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
-				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
 
-				assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuildStep(step, "", "", "Foo", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "Foo", "").asItem()));
-				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
-				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
 
-				assertTrue(mavenRegex(".*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "").asItem()));
-				assertTrue(mavenRegex("Foo").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "Foo").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "Foo").asItem()));
-				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
-				assertFalse(mavenRegex("bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
-				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).withMavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
 			}
 		}
 	}
@@ -248,12 +248,12 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 		assertFalse(nodeRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertTrue(nodeRegex(".*").matches(jobOfType(type).withAssignedLabel("").asItem()));
-			assertTrue(nodeRegex("Foo").matches(jobOfType(type).withAssignedLabel("Foo").asItem()));
-			assertFalse(nodeRegex("bar").matches(jobOfType(type).withAssignedLabel("Foo").asItem()));
-			assertTrue(nodeRegex("Foo.*").matches(jobOfType(type).withAssignedLabel("Foobar").asItem()));
-			assertFalse(nodeRegex("bar").matches(jobOfType(type).withAssignedLabel("Foobar").asItem()));
-			assertTrue(nodeRegex(".*bar").matches(jobOfType(type).withAssignedLabel("Foobar").asItem()));
+			assertTrue(nodeRegex(".*").matches(jobOfType(type).assignedLabel("").asItem()));
+			assertTrue(nodeRegex("Foo").matches(jobOfType(type).assignedLabel("Foo").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOfType(type).assignedLabel("Foo").asItem()));
+			assertTrue(nodeRegex("Foo.*").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
+			assertTrue(nodeRegex(".*bar").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
 		}
 	}
 
@@ -286,13 +286,13 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testHelpExample() {
 		List<TopLevelItem> all = asList(
-			freeStyleProject().withName("0-Test_Job").asItem(),
-			freeStyleProject().withName("1-Test_Job").withTrigger("@midnight").asItem(),
-			freeStyleProject().withName("2-Job").asItem(),
-			freeStyleProject().withName("3-Test_Job").withTrigger("@daily").asItem(),
-			freeStyleProject().withName("4-Job").withTrigger("@midnight").asItem(),
-			freeStyleProject().withName("5-Test_Job").withTrigger("@midnight").asItem(),
-			freeStyleProject().withName("6-Test_Job").asItem()
+			freeStyleProject().name("0-Test_Job").asItem(),
+			freeStyleProject().name("1-Test_Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("2-Job").asItem(),
+			freeStyleProject().name("3-Test_Job").trigger("@daily").asItem(),
+			freeStyleProject().name("4-Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("5-Test_Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("6-Test_Job").asItem()
 		);
 
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();

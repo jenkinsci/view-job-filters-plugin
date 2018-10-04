@@ -24,8 +24,8 @@ public class SecuredJobsFilterTest extends AbstractHudsonTest {
 		assertFalse(secured().matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(secured().matches(jobOfType(type).withProperty(AuthorizationMatrixProperty.class, null).asItem()));
-			assertTrue(secured().matches(jobOfType(type).withProperty(AuthorizationMatrixProperty.class, mock(JobProperty.class)).asItem()));
+			assertFalse(secured().matches(jobOfType(type).property(AuthorizationMatrixProperty.class, null).asItem()));
+			assertTrue(secured().matches(jobOfType(type).property(AuthorizationMatrixProperty.class, mock(JobProperty.class)).asItem()));
 		}
 	}
 

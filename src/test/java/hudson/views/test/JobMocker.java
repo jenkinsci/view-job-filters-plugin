@@ -61,49 +61,49 @@ public class JobMocker<T extends Job> {
         return jobOfType(FREE_STYLE_PROJECT);
     }
 
-    public JobMocker<T> withName(String name) {
+    public JobMocker<T> name(String name) {
         when(job.getName()).thenReturn(name);
         when(job.toString()).thenReturn(name);
         return this;
     }
 
-    public JobMocker<T> withDesc(String name) {
+    public JobMocker<T> desc(String name) {
         when(job.getDescription()).thenReturn(name);
         return this;
     }
 
-    public JobMocker<T> withResult(Result result) {
+    public JobMocker<T> result(Result result) {
         Build lastBuild = mock(Build.class);
         when(lastBuild.getResult()).thenReturn(result);
         when(job.getLastCompletedBuild()).thenReturn(lastBuild);
         return this;
     }
 
-    public JobMocker<T> isDisabled(boolean disabled) {
+    public JobMocker<T> disabled(boolean disabled) {
         if (job instanceof AbstractProject) {
             when(((AbstractProject) job).isDisabled()).thenReturn(disabled);
         }
         return this;
     }
 
-    public JobMocker<T> isBuilding(boolean building) {
+    public JobMocker<T> building(boolean building) {
         when(job.isBuilding()).thenReturn(building);
         return this;
     }
 
-    public JobMocker<T> isInQueue(boolean inQueue) {
+    public JobMocker<T> inQueue(boolean inQueue) {
         when(job.isInQueue()).thenReturn(inQueue);
         return this;
     }
 
-    public JobMocker<T> withLastBuild(Build build) {
+    public JobMocker<T> lastBuild(Build build) {
         when(job.getLastBuild()).thenReturn(build);
         return this;
     }
 
-    public JobMocker<T> withLastBuilds(Build... builds) {
+    public JobMocker<T> lastBuilds(Build... builds) {
         if (builds.length > 0) {
-            withLastBuild(builds[0]);
+            lastBuild(builds[0]);
             for (int i = 0; i < builds.length - 1; i++) {
                 when(builds[i].getPreviousBuild()).thenReturn(builds[i + 1]);
             }
@@ -111,7 +111,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withPermissions(Permission... permissions) {
+    public JobMocker<T> permissions(Permission... permissions) {
         ACL acl = mock(ACL.class);
         for (Permission permission: permissions) {
             when(acl.hasPermission(permission)).thenReturn(true);
@@ -120,17 +120,17 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withCVS(String root, String modules, String branch) {
+    public JobMocker<T> cvs(String root, String modules, String branch) {
         List<CvsRepository> cvsRepositories = LegacyConvertor.getInstance().convertLegacyConfigToRepositoryStructure(
                 root, modules, branch,
                 false, "excludedRegions",
                 false, null);
 
         CVSSCM scm = new CVSSCM(cvsRepositories, false, false, true,  true, false, false, true);
-        return withSCM(scm);
+        return scm(scm);
     }
 
-    public JobMocker<T> withSVN(String... moduleLocations) {
+    public JobMocker<T> svn(String... moduleLocations) {
         SubversionSCM.ModuleLocation[] locations = new SubversionSCM.ModuleLocation[moduleLocations.length];
         for (int i = 0; i < moduleLocations.length; i++) {
             locations[i] = mock(SubversionSCM.ModuleLocation.class);
@@ -140,10 +140,10 @@ public class JobMocker<T extends Job> {
         SubversionSCM scm = mock(SubversionSCM.class);
         when(scm.getLocations()).thenReturn(locations);
         when(scm.getDescriptor()).thenReturn(new SubversionSCM.DescriptorImpl());
-        return withSCM(scm);
+        return scm(scm);
     }
 
-    public JobMocker<T> withGitBranches(String... branches) {
+    public JobMocker<T> gitBranches(String... branches) {
         List<BranchSpec> branchSpecs = new ArrayList<BranchSpec>();
         for (String branch: branches) {
             BranchSpec branchSpec = mock(BranchSpec.class);
@@ -154,10 +154,10 @@ public class JobMocker<T extends Job> {
         GitSCM scm = mock(GitSCM.class);
         when(scm.getBranches()).thenReturn(branchSpecs);
         when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
-        return withSCM(scm);
+        return scm(scm);
     }
 
-    public JobMocker<T> withGitRepos(String... repos) {
+    public JobMocker<T> gitRepos(String... repos) {
         List<RemoteConfig> remotes = new ArrayList<RemoteConfig>();
         for (String repo: repos) {
             URIish uri = mock(URIish.class);
@@ -171,10 +171,10 @@ public class JobMocker<T extends Job> {
         GitSCM scm = mock(GitSCM.class);
         when(scm.getRepositories()).thenReturn(remotes);
         when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
-        return withSCM(scm);
+        return scm(scm);
     }
 
-    public JobMocker<T> withLegacyGitRepos(String... repos) {
+    public JobMocker<T> gitReposLegacy(String... repos) {
         List<org.spearce.jgit.transport.RemoteConfig> remotes = new ArrayList<org.spearce.jgit.transport.RemoteConfig>();
         for (String repo: repos) {
             org.spearce.jgit.transport.URIish uri = mock(org.spearce.jgit.transport.URIish.class);
@@ -187,10 +187,10 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getRepositories()).thenReturn((List)remotes);
-        return withSCM(scm);
+        return scm(scm);
     }
 
-    public JobMocker withSCM(SCM scm) {
+    public JobMocker scm(SCM scm) {
         if (job instanceof AbstractProject) {
             when(((AbstractProject) job).getScm()).thenReturn(scm);
         }
@@ -207,17 +207,17 @@ public class JobMocker<T extends Job> {
        DEFAULT, EXTENDED
     }
 
-    public JobMocker<T> withEmail(String email, EmailType emailType) {
+    public JobMocker<T> email(String email, EmailType emailType) {
         if (emailType == EmailType.DEFAULT) {
-            return withEmail(email);
+            return email(email);
         }
         if (emailType == EmailType.EXTENDED) {
-            return withExtEmail(email);
+            return extEmail(email);
         }
         return this;
     }
 
-    private JobMocker<T> withEmail(String email) {
+    private JobMocker<T> email(String email) {
         if (job instanceof AbstractProject) {
             Mailer mailer = new Mailer(email, false, false);
 
@@ -234,7 +234,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    private JobMocker<T> withExtEmail(String email) {
+    private JobMocker<T> extEmail(String email) {
         ExtendedEmailPublisher emailPublisher = new ExtendedEmailPublisher();
         emailPublisher.recipientList = email;
 
@@ -250,7 +250,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withTrigger(String spec) {
+    public JobMocker<T> trigger(String spec) {
         Trigger trigger = mock(Trigger.class);
         when(trigger.getSpec()).thenReturn(spec);
 
@@ -263,7 +263,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withMavenBuilder(String targets, final String name, String properties, String opts) {
+    public JobMocker<T> mavenBuilder(String targets, final String name, String properties, String opts) {
         Maven maven = mockMaven(targets, name, properties, opts);
         if (job instanceof Project) {
             when(((Project)job).getBuilders()).thenReturn(asList(maven));
@@ -281,7 +281,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withMavenBuildStep(MavenBuildStep step, String targets, final String name, String properties, String opts) {
+    public JobMocker<T> mavenBuildStep(MavenBuildStep step, String targets, final String name, String properties, String opts) {
         if (instanceOf(job, MAVEN_MODULE_SET)) {
             Maven maven = mockMaven(targets, name, properties, opts);
             M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
@@ -293,7 +293,7 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> withMavenPostBuildStep(String targets, final String name, String properties, String opts) {
+    public JobMocker<T> mavenPostBuildStep(String targets, final String name, String properties, String opts) {
         if (instanceOf(job, MAVEN_MODULE_SET)) {
             Maven maven = mockMaven(targets, name, properties, opts);
             M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
@@ -316,14 +316,14 @@ public class JobMocker<T extends Job> {
         };
     }
 
-    public JobMocker<T> withAssignedLabel(String label) {
+    public JobMocker<T> assignedLabel(String label) {
         if (job instanceof AbstractProject) {
             when(((AbstractProject)job).getAssignedLabelString()).thenReturn(label);
         }
         return this;
     }
 
-    public JobMocker<T> withProperty(Class<?> clazz, JobProperty property) {
+    public JobMocker<T> property(Class<?> clazz, JobProperty property) {
         when(job.getProperty(clazz)).thenReturn(property);
         return this;
     }

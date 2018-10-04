@@ -82,52 +82,52 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testMatch() {
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
 
-			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).withPermissions().asItem()));
-			assertTrue(security(ONE, true, false, false).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
+			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).permissions().asItem()));
+			assertTrue(security(ONE, true, false, false).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertFalse(security(ONE, true, false, false).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
 
-			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertTrue(security(ONE, false, true, false).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
+			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertTrue(security(ONE, false, true, false).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertFalse(security(ONE, false, true, false).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
 
-			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertTrue(security(ONE, false, false, true).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
+			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ONE, false, false, true).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertTrue(security(ONE, false, false, true).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
 
-			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertTrue(security(ALL, true, true, false).matches(jobOfType(type).withPermissions(CONFIGURE, BUILD).asItem()));
-			assertTrue(security(ALL, true, true, false).matches(jobOfType(type).withPermissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, true, false).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertTrue(security(ALL, true, true, false).matches(jobOfType(type).permissions(CONFIGURE, BUILD).asItem()));
+			assertTrue(security(ALL, true, true, false).matches(jobOfType(type).permissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
 
-			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
-			assertTrue(security(ALL, true, false, true).matches(jobOfType(type).withPermissions(CONFIGURE, WORKSPACE).asItem()));
-			assertTrue(security(ALL, true, false, true).matches(jobOfType(type).withPermissions(CONFIGURE, WORKSPACE, BUILD).asItem()));
+			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, false, true).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, false, true).matches(jobOfType(type).permissions(CONFIGURE, WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, false, true).matches(jobOfType(type).permissions(CONFIGURE, WORKSPACE, BUILD).asItem()));
 
-			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
-			assertTrue(security(ALL, false, true, true).matches(jobOfType(type).withPermissions(BUILD, WORKSPACE).asItem()));
-			assertTrue(security(ALL, false, true, true).matches(jobOfType(type).withPermissions(BUILD, WORKSPACE, CONFIGURE).asItem()));
+			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertFalse(security(ALL, false, true, true).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
+			assertTrue(security(ALL, false, true, true).matches(jobOfType(type).permissions(BUILD, WORKSPACE).asItem()));
+			assertTrue(security(ALL, false, true, true).matches(jobOfType(type).permissions(BUILD, WORKSPACE, CONFIGURE).asItem()));
 
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions().asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(CONFIGURE).asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(BUILD).asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(WORKSPACE).asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(CONFIGURE, BUILD).asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(CONFIGURE, WORKSPACE).asItem()));
-			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(BUILD, WORKSPACE).asItem()));
-			assertTrue(security(ALL, true, true, true).matches(jobOfType(type).withPermissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions().asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(BUILD).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(CONFIGURE, BUILD).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(CONFIGURE, WORKSPACE).asItem()));
+			assertFalse(security(ALL, true, true, true).matches(jobOfType(type).permissions(BUILD, WORKSPACE).asItem()));
+			assertTrue(security(ALL, true, true, true).matches(jobOfType(type).permissions(CONFIGURE, BUILD, WORKSPACE).asItem()));
 		}
 	}
 
