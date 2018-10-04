@@ -144,7 +144,7 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		
 		setCurrentUser("fred.foobar", "fred foobar");
 
-		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matches(freeStyleProject().asItem()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().create()));
 
         assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(userCause("fred foobar")).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
@@ -214,6 +214,96 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		assertTrue(userRelevance(MATCH_USER_ID, MATCH_BUILDER, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
 		assertTrue(userRelevance(MATCH_USER_ID, MATCH_BUILDER, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
 		assertTrue(userRelevance(MATCH_USER_ID, MATCH_BUILDER, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+	}
+
+
+	@Test
+	public void testUserFullNameMatchesBuilder() throws Exception {
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		setCurrentUser("fred.foobar", "fred foobar");
+
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_NON_ALPHA_NUM).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userCause("fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("fredfoobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(userIdCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("fred.foobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
 	}
 
 	@Test
