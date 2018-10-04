@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.jobType;
@@ -22,8 +23,8 @@ public class JobTypeFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testMatch() {
 
-		assertTrue(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOfType(FREE_STYLE_PROJECT).asItem()));
-		assertFalse(jobType("freestyleproject").matches(jobOfType(FREE_STYLE_PROJECT).asItem()));
+		assertTrue(jobType(new FreeStyleProject.DescriptorImpl()).matches(freeStyleProject().asItem()));
+		assertFalse(jobType("freestyleproject").matches(freeStyleProject().asItem()));
 
 		if (MATRIX_PROJECT.isAvailable()) {
 			assertTrue(jobType(new MatrixProject.DescriptorImpl()).matches(jobOfType(MATRIX_PROJECT).asItem()));

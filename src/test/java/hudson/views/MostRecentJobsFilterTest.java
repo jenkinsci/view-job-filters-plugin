@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.views.test.BuildMocker.build;
+import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static java.util.Arrays.asList;
@@ -21,11 +22,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithStartTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
+			freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
+			freeStyleProject().withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
+			freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
+			freeStyleProject().withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").create()).asItem(),
+			freeStyleProject().withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
 		);
 
 		List<TopLevelItem> addedJobs = asList(
@@ -49,11 +50,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithMaxTooLarge() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
+			freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
+			freeStyleProject().withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
+			freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
+			freeStyleProject().withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").create()).asItem(),
+			freeStyleProject().withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
 		);
 
 		List<TopLevelItem> addedJobs = asList(
@@ -79,11 +80,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithEndTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(90).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").durationInMinutes(90).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").durationInMinutes(10).create()).asItem()
+			freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(90).create()).asItem(),
+			freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").durationInMinutes(90).create()).asItem(),
+			freeStyleProject().withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").durationInMinutes(10).create()).asItem()
 		);
 
 		List<TopLevelItem> addedJobs = asList(
@@ -107,11 +108,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithRunningBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").durationInMinutes(10).create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuilds(
+			freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-3").withLastBuild(build().startTime("2018-01-01 03:00:00").durationInMinutes(10).create()).asItem(),
+			freeStyleProject().withName("job-4").withLastBuilds(
 					build().startTime("2018-01-01 04:00:00").durationInMinutes(10).building(true).create(),
 					build().startTime("2018-01-01 01:30:00").durationInMinutes(10).create()
 				).asItem()
@@ -139,11 +140,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithNoLastBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-3").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
+			freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
+			freeStyleProject().withName("job-1").withLastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
+			freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
+			freeStyleProject().withName("job-3").asItem(),
+			freeStyleProject().withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem()
 		);
 
 		List<TopLevelItem> addedJobs = asList(
@@ -168,11 +169,11 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testWithNotAJob() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
-				jobOfType(FREE_STYLE_PROJECT).withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
+				freeStyleProject().withName("job-0").withLastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
 				mock(TopLevelItem.class),
-				jobOfType(FREE_STYLE_PROJECT).withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
+				freeStyleProject().withName("job-2").withLastBuild(build().startTime("2018-01-01 02:00:00").create()).asItem(),
 				mock(TopLevelItem.class),
-				jobOfType(FREE_STYLE_PROJECT).withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem(),
+				freeStyleProject().withName("job-4").withLastBuild(build().startTime("2018-01-01 04:00:00").create()).asItem(),
 				mock(TopLevelItem.class)
 		);
 

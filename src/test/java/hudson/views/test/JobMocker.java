@@ -57,6 +57,10 @@ public class JobMocker<T extends Job> {
         return new JobMocker(jobType.getJobClass(), jobType.getInterfaces());
     }
 
+    public static JobMocker<FreeStyleProject> freeStyleProject() {
+        return jobOfType(FREE_STYLE_PROJECT);
+    }
+
     public JobMocker<T> withName(String name) {
         when(job.getName()).thenReturn(name);
         when(job.toString()).thenReturn(name);

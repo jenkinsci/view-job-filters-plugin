@@ -11,6 +11,7 @@ import java.util.List;
 
 import static hudson.views.test.JobMocker.EmailType.DEFAULT;
 import static hudson.views.test.JobMocker.EmailType.EXTENDED;
+import static hudson.views.test.JobMocker.freeStyleProject;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -285,13 +286,13 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testHelpExample() {
 		List<TopLevelItem> all = asList(
-			jobOfType(FREE_STYLE_PROJECT).withName("0-Test_Job").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("1-Test_Job").withTrigger("@midnight").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("2-Job").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("3-Test_Job").withTrigger("@daily").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("4-Job").withTrigger("@midnight").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("5-Test_Job").withTrigger("@midnight").asItem(),
-			jobOfType(FREE_STYLE_PROJECT).withName("6-Test_Job").asItem()
+			freeStyleProject().withName("0-Test_Job").asItem(),
+			freeStyleProject().withName("1-Test_Job").withTrigger("@midnight").asItem(),
+			freeStyleProject().withName("2-Job").asItem(),
+			freeStyleProject().withName("3-Test_Job").withTrigger("@daily").asItem(),
+			freeStyleProject().withName("4-Job").withTrigger("@midnight").asItem(),
+			freeStyleProject().withName("5-Test_Job").withTrigger("@midnight").asItem(),
+			freeStyleProject().withName("6-Test_Job").asItem()
 		);
 
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
