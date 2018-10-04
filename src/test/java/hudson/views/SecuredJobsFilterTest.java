@@ -1,7 +1,6 @@
 package hudson.views;
 
 import hudson.model.*;
-import hudson.security.ACL;
 import hudson.security.AuthorizationMatrixProperty;
 import hudson.views.test.JobType;
 import org.junit.Test;
@@ -9,18 +8,14 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hudson.model.Item.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
-import static hudson.views.SecurityFilter.*;
-import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.secured;
-import static hudson.views.test.ViewJobFilters.security;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class SecuredJobsFilterTest extends AbstractHudsonTest {
 
@@ -29,8 +24,8 @@ public class SecuredJobsFilterTest extends AbstractHudsonTest {
 		assertFalse(secured().matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(secured().matches(jobOf(type).withProperty(AuthorizationMatrixProperty.class, null).asItem()));
-			assertTrue(secured().matches(jobOf(type).withProperty(AuthorizationMatrixProperty.class, mock(JobProperty.class)).asItem()));
+			assertFalse(secured().matches(jobOfType(type).withProperty(AuthorizationMatrixProperty.class, null).asItem()));
+			assertTrue(secured().matches(jobOfType(type).withProperty(AuthorizationMatrixProperty.class, mock(JobProperty.class)).asItem()));
 		}
 	}
 

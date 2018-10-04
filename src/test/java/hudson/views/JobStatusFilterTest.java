@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
-import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.jobStatus;
 import static org.hamcrest.Matchers.instanceOf;
@@ -26,39 +26,39 @@ public class JobStatusFilterTest extends AbstractHudsonTest {
 		assertFalse(jobStatus(true, true, true, true, true).matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(jobStatus(true, true, true, true, true).matches(jobOf(type).asItem()));
+			assertFalse(jobStatus(true, true, true, true, true).matches(jobOfType(type).asItem()));
 
-			assertTrue(jobStatus(true, false, false, false, false).matches(jobOf(type).withResult(Result.UNSTABLE).asItem()));
-			assertFalse(jobStatus(true, false, false, false, false).matches(jobOf(type).withResult(Result.FAILURE).asItem()));
-			assertFalse(jobStatus(true, false, false, false, false).matches(jobOf(type).withResult(Result.ABORTED).asItem()));
-			assertFalse(jobStatus(true, false, false, false, false).matches(jobOf(type).withResult(Result.SUCCESS).asItem()));
-			assertFalse(jobStatus(true, false, false, false, false).matches(jobOf(type).isDisabled(true).asItem()));
+			assertTrue(jobStatus(true, false, false, false, false).matches(jobOfType(type).withResult(Result.UNSTABLE).asItem()));
+			assertFalse(jobStatus(true, false, false, false, false).matches(jobOfType(type).withResult(Result.FAILURE).asItem()));
+			assertFalse(jobStatus(true, false, false, false, false).matches(jobOfType(type).withResult(Result.ABORTED).asItem()));
+			assertFalse(jobStatus(true, false, false, false, false).matches(jobOfType(type).withResult(Result.SUCCESS).asItem()));
+			assertFalse(jobStatus(true, false, false, false, false).matches(jobOfType(type).isDisabled(true).asItem()));
 
-			assertFalse(jobStatus(false, true, false, false, false).matches(jobOf(type).withResult(Result.UNSTABLE).asItem()));
-			assertTrue(jobStatus(false, true, false, false, false).matches(jobOf(type).withResult(Result.FAILURE).asItem()));
-			assertFalse(jobStatus(false, true, false, false, false).matches(jobOf(type).withResult(Result.ABORTED).asItem()));
-			assertFalse(jobStatus(false, true, false, false, false).matches(jobOf(type).withResult(Result.SUCCESS).asItem()));
-			assertFalse(jobStatus(false, true, false, false, false).matches(jobOf(type).isDisabled(true).asItem()));
+			assertFalse(jobStatus(false, true, false, false, false).matches(jobOfType(type).withResult(Result.UNSTABLE).asItem()));
+			assertTrue(jobStatus(false, true, false, false, false).matches(jobOfType(type).withResult(Result.FAILURE).asItem()));
+			assertFalse(jobStatus(false, true, false, false, false).matches(jobOfType(type).withResult(Result.ABORTED).asItem()));
+			assertFalse(jobStatus(false, true, false, false, false).matches(jobOfType(type).withResult(Result.SUCCESS).asItem()));
+			assertFalse(jobStatus(false, true, false, false, false).matches(jobOfType(type).isDisabled(true).asItem()));
 
-			assertFalse(jobStatus(false, false, true, false, false).matches(jobOf(type).withResult(Result.UNSTABLE).asItem()));
-			assertFalse(jobStatus(false, false, true, false, false).matches(jobOf(type).withResult(Result.FAILURE).asItem()));
-			assertTrue(jobStatus(false, false, true, false, false).matches(jobOf(type).withResult(Result.ABORTED).asItem()));
-			assertFalse(jobStatus(false, false, true, false, false).matches(jobOf(type).withResult(Result.SUCCESS).asItem()));
-			assertFalse(jobStatus(false, false, true, false, false).matches(jobOf(type).isDisabled(true).asItem()));
+			assertFalse(jobStatus(false, false, true, false, false).matches(jobOfType(type).withResult(Result.UNSTABLE).asItem()));
+			assertFalse(jobStatus(false, false, true, false, false).matches(jobOfType(type).withResult(Result.FAILURE).asItem()));
+			assertTrue(jobStatus(false, false, true, false, false).matches(jobOfType(type).withResult(Result.ABORTED).asItem()));
+			assertFalse(jobStatus(false, false, true, false, false).matches(jobOfType(type).withResult(Result.SUCCESS).asItem()));
+			assertFalse(jobStatus(false, false, true, false, false).matches(jobOfType(type).isDisabled(true).asItem()));
 
-			assertFalse(jobStatus(false, false, false, false, true).matches(jobOf(type).withResult(Result.UNSTABLE).asItem()));
-			assertFalse(jobStatus(false, false, false, false, true).matches(jobOf(type).withResult(Result.FAILURE).asItem()));
-			assertFalse(jobStatus(false, false, false, false, true).matches(jobOf(type).withResult(Result.ABORTED).asItem()));
-			assertTrue(jobStatus(false, false, false, false, true).matches(jobOf(type).withResult(Result.SUCCESS).asItem()));
-			assertFalse(jobStatus(false, false, false, false, true).matches(jobOf(type).isDisabled(true).asItem()));
+			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).withResult(Result.UNSTABLE).asItem()));
+			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).withResult(Result.FAILURE).asItem()));
+			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).withResult(Result.ABORTED).asItem()));
+			assertTrue(jobStatus(false, false, false, false, true).matches(jobOfType(type).withResult(Result.SUCCESS).asItem()));
+			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).isDisabled(true).asItem()));
 
-			assertTrue(jobStatus(false, false, false, true, false).matches(jobOf(type).isDisabled(true).asItem()));
-			assertFalse(jobStatus(false, false, false, true, false).matches(jobOf(type).isDisabled(false).asItem()));
+			assertTrue(jobStatus(false, false, false, true, false).matches(jobOfType(type).isDisabled(true).asItem()));
+			assertFalse(jobStatus(false, false, false, true, false).matches(jobOfType(type).isDisabled(false).asItem()));
 
-			assertTrue(jobStatus(true, true, false, false, false).matches(jobOf(type).withResult(Result.UNSTABLE).asItem()));
-			assertTrue(jobStatus(true, true, false, false, false).matches(jobOf(type).withResult(Result.FAILURE).asItem()));
-			assertFalse(jobStatus(true, true, false, false, false).matches(jobOf(type).withResult(Result.ABORTED).asItem()));
-			assertFalse(jobStatus(true, true, false, false, false).matches(jobOf(type).withResult(Result.SUCCESS).asItem()));
+			assertTrue(jobStatus(true, true, false, false, false).matches(jobOfType(type).withResult(Result.UNSTABLE).asItem()));
+			assertTrue(jobStatus(true, true, false, false, false).matches(jobOfType(type).withResult(Result.FAILURE).asItem()));
+			assertFalse(jobStatus(true, true, false, false, false).matches(jobOfType(type).withResult(Result.ABORTED).asItem()));
+			assertFalse(jobStatus(true, true, false, false, false).matches(jobOfType(type).withResult(Result.SUCCESS).asItem()));
 		}
 	}
 

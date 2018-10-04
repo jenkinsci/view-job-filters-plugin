@@ -1,34 +1,16 @@
 package hudson.views;
 
-import hudson.matrix.MatrixProject;
-import hudson.maven.MavenModuleSet;
 import hudson.model.*;
-import hudson.views.AbstractBuildTrendFilter.AmountType;
-import hudson.views.test.FixedClock;
-import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.FailureBuilder;
-import org.jvnet.hudson.test.Issue;
-import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.RunLoadCounter;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import static hudson.views.AbstractBuildTrendFilter.AmountType.*;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.BuildMocker.build;
-import static hudson.views.test.JobMocker.jobOf;
-import static hudson.views.test.JobType.FREE_STYLE_PROJECT;
-import static hudson.views.test.JobType.MATRIX_PROJECT;
-import static hudson.views.test.JobType.MAVEN_MODULE_SET;
 import static hudson.views.test.ViewJobFilters.buildDuration;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;

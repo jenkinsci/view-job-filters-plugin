@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
-import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.jobType;
 import static org.hamcrest.Matchers.instanceOf;
@@ -22,17 +22,17 @@ public class JobTypeFilterTest extends AbstractHudsonTest {
 	@Test
 	public void testMatch() {
 
-		assertTrue(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOf(FREE_STYLE_PROJECT).asItem()));
-		assertFalse(jobType("freestyleproject").matches(jobOf(FREE_STYLE_PROJECT).asItem()));
+		assertTrue(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOfType(FREE_STYLE_PROJECT).asItem()));
+		assertFalse(jobType("freestyleproject").matches(jobOfType(FREE_STYLE_PROJECT).asItem()));
 
 		if (MATRIX_PROJECT.isAvailable()) {
-			assertTrue(jobType(new MatrixProject.DescriptorImpl()).matches(jobOf(MATRIX_PROJECT).asItem()));
-			assertFalse(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOf(MATRIX_PROJECT).asItem()));
+			assertTrue(jobType(new MatrixProject.DescriptorImpl()).matches(jobOfType(MATRIX_PROJECT).asItem()));
+			assertFalse(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOfType(MATRIX_PROJECT).asItem()));
 		}
 
 		if (MAVEN_MODULE_SET.isAvailable()) {
-			assertTrue(jobType(new MavenModuleSet.DescriptorImpl()).matches(jobOf(MAVEN_MODULE_SET).asItem()));
-			assertFalse(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOf(MAVEN_MODULE_SET).asItem()));
+			assertTrue(jobType(new MavenModuleSet.DescriptorImpl()).matches(jobOfType(MAVEN_MODULE_SET).asItem()));
+			assertFalse(jobType(new FreeStyleProject.DescriptorImpl()).matches(jobOfType(MAVEN_MODULE_SET).asItem()));
 		}
 	}
 

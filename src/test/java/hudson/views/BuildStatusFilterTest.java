@@ -9,10 +9,9 @@ import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
-import static hudson.views.test.JobMocker.jobOf;
+import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.buildStatus;
-import static hudson.views.test.ViewJobFilters.jobStatus;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -27,21 +26,21 @@ public class BuildStatusFilterTest extends AbstractHudsonTest {
 		assertFalse(buildStatus(true, true, true).matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertTrue(buildStatus(true, false, false).matches(jobOf(type).withLastBuild(null).asItem()));
-			assertTrue(buildStatus(true, true, false).matches(jobOf(type).withLastBuild(null).asItem()));
-			assertTrue(buildStatus(true, false, true).matches(jobOf(type).withLastBuild(null).asItem()));
-			assertFalse(buildStatus(true, false, false).matches(jobOf(type).withLastBuild(build).asItem()));
-			assertFalse(buildStatus(false, false, false).matches(jobOf(type).withLastBuild(null).asItem()));
+			assertTrue(buildStatus(true, false, false).matches(jobOfType(type).withLastBuild(null).asItem()));
+			assertTrue(buildStatus(true, true, false).matches(jobOfType(type).withLastBuild(null).asItem()));
+			assertTrue(buildStatus(true, false, true).matches(jobOfType(type).withLastBuild(null).asItem()));
+			assertFalse(buildStatus(true, false, false).matches(jobOfType(type).withLastBuild(build).asItem()));
+			assertFalse(buildStatus(false, false, false).matches(jobOfType(type).withLastBuild(null).asItem()));
 
-			assertTrue(buildStatus(false, true, false).matches(jobOf(type).isBuilding(true).withLastBuild(build).asItem()));
-			assertTrue(buildStatus(true, true, false).matches(jobOf(type).isBuilding(true).withLastBuild(build).asItem()));
-			assertTrue(buildStatus(false, true, true).matches(jobOf(type).isBuilding(true).withLastBuild(build).asItem()));
-			assertFalse(buildStatus(false, true, false).matches(jobOf(type).isBuilding(false).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, false).matches(jobOfType(type).isBuilding(true).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(true, true, false).matches(jobOfType(type).isBuilding(true).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, true).matches(jobOfType(type).isBuilding(true).withLastBuild(build).asItem()));
+			assertFalse(buildStatus(false, true, false).matches(jobOfType(type).isBuilding(false).withLastBuild(build).asItem()));
 
-			assertTrue(buildStatus(false, false, true).matches(jobOf(type).isInQueue(true).withLastBuild(build).asItem()));
-			assertTrue(buildStatus(true, false, true).matches(jobOf(type).isInQueue(true).withLastBuild(build).asItem()));
-			assertTrue(buildStatus(false, true, true).matches(jobOf(type).isInQueue(true).withLastBuild(build).asItem()));
-			assertFalse(buildStatus(false, false, true).matches(jobOf(type).isInQueue(false).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(false, false, true).matches(jobOfType(type).isInQueue(true).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(true, false, true).matches(jobOfType(type).isInQueue(true).withLastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, true).matches(jobOfType(type).isInQueue(true).withLastBuild(build).asItem()));
+			assertFalse(buildStatus(false, false, true).matches(jobOfType(type).isInQueue(false).withLastBuild(build).asItem()));
 		}
 	}
 

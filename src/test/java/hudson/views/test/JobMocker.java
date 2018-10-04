@@ -53,7 +53,7 @@ public class JobMocker<T extends Job> {
         }));
     }
 
-    public static <C extends Job> JobMocker<C> jobOf(JobType<C> jobType) {
+    public static <C extends Job> JobMocker<C> jobOfType(JobType<C> jobType) {
         return new JobMocker(jobType.getJobClass(), jobType.getInterfaces());
     }
 
