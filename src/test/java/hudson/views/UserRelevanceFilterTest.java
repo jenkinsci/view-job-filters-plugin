@@ -22,6 +22,8 @@ import static hudson.views.test.CauseMocker.userIdCause;
 import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
 import static hudson.views.test.ViewJobFilters.userRelevance;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
@@ -33,8 +35,8 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 	}
 
 	private void setCurrentUser(String id, String fullName) {
-		User xyz = j.getInstance().getUser(id);
-		xyz.setFullName(fullName);
+		User user = j.getInstance().getUser(id);
+		user.setFullName(fullName);
 		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(id, ""));
 	}
 
@@ -307,105 +309,67 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
-	public void testCauses() {
-		doTestCause(new TestCause() {
-			@SuppressWarnings("unused")
-			public String getUserBad() { return "bad";}
-		}, "ANONYMOUS", "ANONYMOUS");
-		doTestCause(new TestCause() {
-			@SuppressWarnings("unused")
-			public String getUserId() { return "user-id";}
-		}, "USERID", "ANONYMOUS");
-		doTestCause(new TestCause() {
-			@SuppressWarnings("unused")
-			public String getUserName() { return "User Name";}
-		}, "ANONYMOUS", "USERNAME");
-		doTestCause(new TestCause() {
-			@SuppressWarnings("unused")
-			public String getUserId() { return "user-id";}
-			@SuppressWarnings("unused")
-			public String getUserName() { return "User Name";}
-		}, "USERID", "USERNAME");
-	}
+	public void testGetUserValue() {
+		UserRelevanceFilter filter = userRelevance(
+			IGNORE_WHITESPACE, IGNORE_CASE, IGNORE_NON_ALPHA_NUM
+		);
 
-	private class TestCause extends Cause {
-		@Override
-		public String getShortDescription() {
-			return null;
-		}
-	}
+		assertThat(filter.getUserValue(mock(Cause.class), false), is("ANONYMOUS"));
+		assertThat(filter.getUserValue(mock(Cause.class), true), is("ANONYMOUS"));
 
-	private void doTestCause(Cause cause, String expectedId, String expectedName) {
-		doTestCause(cause, false, expectedId);
-		doTestCause(cause, true, expectedName);
-	}
+		assertThat(filter.getUserValue(userCause("User Name"), false), is("ANONYMOUS"));
+		assertThat(filter.getUserValue(userCause("User Name"), true), is("USERNAME"));
 
-	private void doTestCause(Cause cause, boolean matchAgainstFullName, String expected) {
-		UserRelevanceFilter filter = new UserRelevanceFilter(
-				true, true, true, true, true,
-				true, true, true,
-				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
-				);
-		String value = filter.getUserValue(cause, matchAgainstFullName);
-		if (expected == null) {
-			assertNull(value);
-		} else {
-			assertEquals(expected, value);
-		}
+		assertThat(filter.getUserValue(userIdCause("user.id", "User Name"), false), is("USERID"));
+		assertThat(filter.getUserValue(userIdCause("user.id", "User Name"), true), is("USERNAME"));
+
+		assertThat(filter.getUserValue(cliCause("user.id", "User Name"), false), is("USERID"));
+		assertThat(filter.getUserValue(cliCause("user.id", "User Name"), true), is("USERNAME"));
 	}
 
 	@Test
-	public void testEmailFilter() {
-		List<String> emails = new ArrayList<String>();
-		emails.add("user1@gmail.com, user.2@gmail.com");
-		emails.add("_user_3@gmail.gov;user4a@gmail.com");
-		UserRelevanceFilter filter = new UserRelevanceFilter(
-				true, true, true, true, true,
-				true, true, true,
-				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
-				);
-		assertEquals(true, filter.matchesEmail(emails, "USER1"));
-		assertEquals(true, filter.matchesEmail(emails, "USER2"));
-		assertEquals(true, filter.matchesEmail(emails, "USER3"));
-		assertEquals(false, filter.matchesEmail(emails, "USER4"));
+	public void testMatchesEmail() {
+		List<String> emails = asList("user1@gmail.com, user.2@gmail.com  @us.er3", "_user_4@gmail.gov;user5a@gmail.com ; us-er6");
+	    UserRelevanceFilter filter = userRelevance(
+			MATCH_USER_ID, MATCH_USER_FULL_NAME,
+			MATCH_EMAIL, MATCH_BUILDER, MATCH_SCM_LOG,
+			IGNORE_WHITESPACE, IGNORE_CASE, IGNORE_NON_ALPHA_NUM
+		);
+
+		assertTrue(filter.matchesEmail(emails, "USER1"));
+		assertFalse(filter.matchesEmail(emails, "user1@gmail.com"));
+		assertTrue(filter.matchesEmail(emails, "USER2"));
+		assertTrue(filter.matchesEmail(emails, "USER3"));
+		assertTrue(filter.matchesEmail(emails, "USER4"));
+		assertFalse(filter.matchesEmail(emails, "USER5"));
+		assertTrue(filter.matchesEmail(emails, "USER6"));
 	}
 
 	@Test
 	public void testNormalize() {
-		doTestNormalize("u se-r", "USER", true, true, true);
-		doTestNormalize("u se-r", "user", false, true, true);
-		// will still normalize the whitespace because that is non-alphanumeric
-		doTestNormalize("u se-r", "USER", true, false, true);
-		doTestNormalize("u se-r", "use-r", false, true, false);
-		doTestNormalize("u se-r", "U SE-R", true, false, false);
-	}
+		assertThat(userRelevance().normalize("u se-r"), is("u se-r"));
 
-	private void doTestNormalize(String input, String output,
-			boolean ignoreCase, boolean ignoreWhitespace, boolean ignoreNonAlphanumeric) {
-		UserRelevanceFilter filter = new UserRelevanceFilter(
-				true, true, ignoreCase, ignoreWhitespace, ignoreNonAlphanumeric,
-				true, true, true,
-				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
-				);
-		String normalized = filter.normalize(input);
-		assertEquals(output, normalized);
+		assertThat(userRelevance(IGNORE_CASE).normalize("u se-r"), is("U SE-R"));
+		assertThat(userRelevance(IGNORE_WHITESPACE).normalize("u se-r"), is("use-r"));
+		assertThat(userRelevance(IGNORE_NON_ALPHA_NUM).normalize("u se-r"), is("user"));
+
+		assertThat(userRelevance(IGNORE_CASE, IGNORE_WHITESPACE).normalize("u se-r"), is("USE-R"));
+		assertThat(userRelevance(IGNORE_CASE, IGNORE_NON_ALPHA_NUM).normalize("u se-r"), is("USER"));
+		assertThat(userRelevance(IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).normalize("u se-r"), is("user"));
+
+	    assertThat(userRelevance(IGNORE_CASE, IGNORE_WHITESPACE, IGNORE_NON_ALPHA_NUM).normalize("u se-r"), is("USER"));
 	}
 
 	@Issue("JENKINS-13781")
 	@Test
-	public void testMatchesEmail() {
-		UserRelevanceFilter filter = new UserRelevanceFilter(
-				true, true, true, true, true,
-				true, true, true,
-				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
-				);
+	public void testNullDoesntMatchEmail() {
 		// FIXED: would throw null-pointer
-		boolean matched = filter.matchesEmail(null);
-		assertFalse(matched);
+	    UserRelevanceFilter filter = userRelevance(
+    		MATCH_USER_ID, MATCH_USER_FULL_NAME,
+			MATCH_EMAIL, MATCH_BUILDER, MATCH_SCM_LOG,
+			IGNORE_WHITESPACE, IGNORE_CASE, IGNORE_NON_ALPHA_NUM
+		);
+		assertFalse(filter.matchesEmail(null));
 	}
 	
 }
