@@ -1,6 +1,7 @@
 package hudson.views;
 
 import hudson.model.Cause;
+import hudson.model.ListView;
 import hudson.model.User;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
@@ -15,6 +16,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Days;
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Hours;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.BuildTrendFilter.StatusType.Completed;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.CauseMocker.cliCause;
 import static hudson.views.test.CauseMocker.userCause;
@@ -23,6 +32,7 @@ import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
 import static hudson.views.test.ViewJobFilters.userRelevance;
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -371,5 +381,72 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		);
 		assertFalse(filter.matchesEmail(null));
 	}
-	
+
+	@Test
+	public void testConfigRoundtrip() throws Exception {
+		testConfigRoundtrip(
+			"view-1",
+			new UserRelevanceFilter(true, false,
+				true, false, true,
+				false, true, false,
+				All.name(), 10, Builds.name(), includeUnmatched.name())
+		);
+
+		testConfigRoundtrip(
+			"view-2",
+			new UserRelevanceFilter(false, true,
+				false, true, false,
+				true, false, true,
+				AtLeastOne.name(), 5, Days.name(), excludeMatched.name()),
+			new UserRelevanceFilter(true, true,
+				false, false, false,
+				true, true, true,
+				Latest.name(), 1, Hours.name(), includeMatched.name())
+		);
+
+	}
+
+	private void testConfigRoundtrip(String viewName, UserRelevanceFilter... filters) throws Exception {
+		List<UserRelevanceFilter> expectedFilters = new ArrayList<UserRelevanceFilter>();
+		for (UserRelevanceFilter filter : filters) {
+			expectedFilters.add(new UserRelevanceFilter(filter.isMatchUserId(), filter.isMatchUserFullName(),
+					filter.isIgnoreCase(), filter.isIgnoreWhitespace(), filter.isIgnoreNonAlphaNumeric(),
+					filter.isMatchBuilder(), filter.isMatchEmail(), filter.isMatchScmChanges(),
+					filter.getBuildCountTypeString(), filter.getAmount(), filter.getAmountTypeString(), filter.getIncludeExcludeTypeString()));
+		}
+
+		ListView view = createFilteredView(viewName, filters);
+		j.configRoundtrip(view);
+
+		ListView viewAfterRoundtrip = (ListView) j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterRoundtrip.getJobFilters());
+
+		viewAfterRoundtrip.save();
+		j.getInstance().reload();
+
+		ListView viewAfterReload = (ListView) j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
+	}
+
+	private void assertFilterEquals(List<UserRelevanceFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+		assertThat(actualFilters.size(), is(expectedFilters.size()));
+		for (int i = 0; i < actualFilters.size(); i++) {
+			ViewJobFilter actualFilter = actualFilters.get(i);
+			UserRelevanceFilter expectedFilter = expectedFilters.get(i);
+			assertThat(actualFilter, instanceOf(UserRelevanceFilter.class));
+			assertThat(((UserRelevanceFilter)actualFilter).isMatchUserId(), is(expectedFilter.isMatchUserId()));
+			assertThat(((UserRelevanceFilter)actualFilter).isMatchUserFullName(), is(expectedFilter.isMatchUserFullName()));
+			assertThat(((UserRelevanceFilter)actualFilter).isIgnoreCase(), is(expectedFilter.isIgnoreCase()));
+			assertThat(((UserRelevanceFilter)actualFilter).isIgnoreWhitespace(), is(expectedFilter.isIgnoreWhitespace()));
+			assertThat(((UserRelevanceFilter)actualFilter).isIgnoreNonAlphaNumeric(), is(expectedFilter.isIgnoreNonAlphaNumeric()));
+			assertThat(((UserRelevanceFilter)actualFilter).isMatchBuilder(), is(expectedFilter.isMatchBuilder()));
+			assertThat(((UserRelevanceFilter)actualFilter).isMatchEmail(), is(expectedFilter.isMatchEmail()));
+			assertThat(((UserRelevanceFilter)actualFilter).isMatchScmChanges(), is(expectedFilter.isMatchScmChanges()));
+			assertThat(((UserRelevanceFilter)actualFilter).getBuildCountTypeString(), is(expectedFilter.getBuildCountTypeString()));
+			assertThat(((UserRelevanceFilter)actualFilter).getAmount(), is(expectedFilter.getAmount()));
+			assertThat(((UserRelevanceFilter)actualFilter).getAmountTypeString(), is(expectedFilter.getAmountTypeString()));
+			assertThat(((UserRelevanceFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
+		}
+	}
+
 }
