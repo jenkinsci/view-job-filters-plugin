@@ -141,6 +141,14 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		}
 	}
 
+	@Test
+	public void testMatchRunWhenNotMatchingEmail() {
+		setCurrentUser("fred.foobar", "fred foobar");
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matches(freeStyleProject().lastBuilds(build().causes(userCause("fred foobar")).create()).asItem()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matches(freeStyleProject().lastBuilds(build().changes(entry(user("fred.foobar", "fred foobar"))).create()).asItem()));
+	}
+
 
 	@Test
 	public void testUserIdMatchesBuilder() throws Exception {

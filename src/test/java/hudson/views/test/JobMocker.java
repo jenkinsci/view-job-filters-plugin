@@ -96,12 +96,12 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> lastBuild(Build build) {
+    public JobMocker<T> lastBuild(AbstractBuild build) {
         when(job.getLastBuild()).thenReturn(build);
         return this;
     }
 
-    public JobMocker<T> lastBuilds(Build... builds) {
+    public JobMocker<T> lastBuilds(AbstractBuild... builds) {
         if (builds.length > 0) {
             lastBuild(builds[0]);
             for (int i = 0; i < builds.length - 1; i++) {
