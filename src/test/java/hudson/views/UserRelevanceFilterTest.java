@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.Cause;
 import hudson.model.ListView;
+import hudson.model.Run;
 import hudson.model.User;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
@@ -28,7 +29,9 @@ import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.CauseMocker.cliCause;
 import static hudson.views.test.CauseMocker.userCause;
 import static hudson.views.test.CauseMocker.userIdCause;
+import static hudson.views.test.ChangeLogEntryMocker.entry;
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static hudson.views.test.UserMocker.user;
 import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
 import static hudson.views.test.ViewJobFilters.userRelevance;
 import static java.util.Arrays.asList;
@@ -316,6 +319,82 @@ public class UserRelevanceFilterTest extends AbstractHudsonTest {
 		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
 		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
 		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
+	}
+
+	@Test
+	public void testUserIdMatchesScmChanges() {
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "Fred Foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "Fred Foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		setCurrentUser("fred.foobar", "fred foobar");
+
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(mock(Run.class)));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes().create()));
+
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertTrue(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+	}
+
+	@Test
+	public void testUserFullNameMatchesScmChanges() {
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		setCurrentUser("fred.foobar", "fred foobar");
+
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(mock(Run.class)));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes().create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_NON_ALPHA_NUM).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
+
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
+		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG, IGNORE_CASE, IGNORE_WHITESPACE).matchesRun(build().changes(entry(user("FREDFOOBAR", "FRED FOOBAR"))).create()));
 	}
 
 	@Test

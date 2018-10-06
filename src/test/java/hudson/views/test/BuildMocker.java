@@ -1,7 +1,10 @@
 package hudson.views.test;
 
 import hudson.model.*;
+import hudson.scm.ChangeLogSet;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +13,7 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
-public class BuildMocker<T extends Build> {
+public class BuildMocker<T extends AbstractBuild> {
 
     T build;
 
@@ -20,6 +23,10 @@ public class BuildMocker<T extends Build> {
 
     public static BuildMocker<Build> build() {
         return new BuildMocker(Build.class);
+    }
+
+    public T getBuild() {
+        return build;
     }
 
     public BuildMocker<T> desc(String desc) {
@@ -76,6 +83,18 @@ public class BuildMocker<T extends Build> {
 
     public BuildMocker<T> previousBuild(Build previousBuild) {
         when(build.getPreviousBuild()).thenReturn(previousBuild);
+        return this;
+    }
+
+    public BuildMocker<T> changes(final ChangeLogSet.Entry... entries) {
+        ChangeLogSet<ChangeLogSet.Entry> changes = mock(ChangeLogSet.class);
+        when(changes.iterator()).thenAnswer(new Answer<Iterator<ChangeLogSet.Entry>>() {
+            @Override
+            public Iterator<ChangeLogSet.Entry> answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return asList(entries).iterator();
+            }
+        });
+        when(build.getChangeSet()).thenReturn(changes);
         return this;
     }
 
