@@ -1,16 +1,8 @@
 package hudson.views;
 
-import hudson.model.Action;
-import hudson.model.FreeStyleBuild;
-import hudson.model.ParameterValue;
-import hudson.model.Cause;
-import hudson.model.ChoiceParameterDefinition;
-import hudson.model.FreeStyleProject;
-import hudson.model.ParameterDefinition;
-import hudson.model.ParametersAction;
-import hudson.model.ParametersDefinitionProperty;
-import hudson.model.StringParameterValue;
+import hudson.model.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -20,9 +12,69 @@ import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import static hudson.views.test.JobMocker.freeStyleProject;
+import static hudson.views.test.ViewJobFilters.parameter;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ParameterFilterTest extends AbstractHudsonTest {
+
+	@Test
+	public void testDoesntMatchTopLevelItem() {
+		assertFalse(parameter(".*", ".*", ".*").matches(mock(TopLevelItem.class)));
+	}
+
+	@Test
+	public void testMatchesDefaultValue() {
+		assertFalse(parameter(".*", ".*", ".*").matches(freeStyleProject().asItem()));
+
+		testMatchesDefaultValue(new StringParameterDefinition("name", "test", "multi-line\ndesc"));
+		testMatchesDefaultValue(new BooleanParameterDefinition("name", true, "multi-line\ndesc"));
+		testMatchesDefaultValue(new ChoiceParameterDefinition("name", "multi-line\ntest", "multi-line\ndesc"));
+		testMatchesDefaultValue(newFileParameterDefinition("name", "test.txt", "multi-line\ndesc"));
+		testMatchesDefaultValue(newSimpleParameterDefinition("name", "test", "multi-line\ndesc"));
+	}
+
+	private ParameterDefinition newFileParameterDefinition(String name, String file, String desc) {
+		FileParameterValue parameterValue = new FileParameterValue(name, new File(file), file);
+		parameterValue.setDescription(desc);
+
+		FileParameterDefinition parameter = mock(FileParameterDefinition.class);
+		when(parameter.getName()).thenReturn(name);
+		when(parameter.getDefaultParameterValue()).thenReturn(parameterValue);
+		when(parameter.getDescription()).thenReturn(desc);
+		return parameter;
+	}
+
+	private ParameterDefinition newSimpleParameterDefinition(String name, String value, String desc) {
+		ParameterValue parameterValue = mock(ParameterValue.class);
+		when(parameterValue.toString()).thenReturn(value);
+
+		ParameterDefinition parameter = mock(SimpleParameterDefinition.class);
+		when(parameter.getName()).thenReturn(name);
+		when(parameter.getDefaultParameterValue()).thenReturn(parameterValue);
+		when(parameter.getDescription()).thenReturn(desc);
+		return parameter;
+	}
+
+	public void testMatchesDefaultValue(ParameterDefinition parameter) {
+		assertTrue(parameter("n.me", null, null).matches(freeStyleProject().parameters(parameter).asItem()));
+	 	assertTrue(parameter("n.me", "", "").matches(freeStyleProject().parameters(parameter).asItem()));
+
+	 	assertTrue(parameter(null,"t.*", null).matches(freeStyleProject().parameters(parameter).asItem()));
+	 	assertTrue(parameter("","t.*", "").matches(freeStyleProject().parameters(parameter).asItem()));
+
+	 	assertTrue(parameter(null,null, "desc(ription)?").matches(freeStyleProject().parameters(parameter).asItem()));
+	 	assertTrue(parameter("","", "desc(ription)?").matches(freeStyleProject().parameters(parameter).asItem()));
+
+		assertFalse(parameter("nameRegex", ".*", ".*").matches(freeStyleProject().parameters(parameter).asItem()));
+		assertFalse(parameter(".*", "valueRegex", ".*").matches(freeStyleProject().parameters(parameter).asItem()));
+		assertFalse(parameter(".*", ".*", "descriptionRegex").matches(freeStyleProject().parameters(parameter).asItem()));
+
+		assertTrue(parameter(".*", ".*", ".*").matches(freeStyleProject().parameters(parameter).asItem()));
+		assertTrue(parameter("n.me", "t.*", "desc(ription)?").matches(freeStyleProject().parameters(parameter).asItem()));
+	}
 
 	@Test
 	public void testMatchesParameter() {

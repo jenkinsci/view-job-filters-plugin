@@ -154,4 +154,11 @@ public class ViewJobFilters {
             optionsList.contains(MATCH_SCM_LOG),
             All.name(), 0, AbstractBuildTrendFilter.AmountType.Builds.name(), includeMatched.name());
     }
+
+    public static ParameterFilter parameter(String nameRegex,
+                                            String valueRegex,
+                                            String descriptionRegex) {
+        return new ParameterFilter(includeMatched.name(), nameRegex, valueRegex, descriptionRegex,
+           true, false, 0, false);
+    }
 }

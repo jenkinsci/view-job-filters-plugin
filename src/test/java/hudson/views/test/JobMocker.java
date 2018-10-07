@@ -17,6 +17,7 @@ import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
+import hudson.views.BuildTrendFilter;
 import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 public class JobMocker<T extends Job> {
+
 
 
     public enum MavenBuildStep {
@@ -325,6 +327,12 @@ public class JobMocker<T extends Job> {
 
     public JobMocker<T> property(Class<?> clazz, JobProperty property) {
         when(job.getProperty(clazz)).thenReturn(property);
+        return this;
+    }
+
+    public JobMocker<T> parameters(ParameterDefinition... definitions) {
+        ParametersDefinitionProperty prop = new ParametersDefinitionProperty(definitions);
+        when(job.getProperty(ParametersDefinitionProperty.class)).thenReturn(prop);
         return this;
     }
 
