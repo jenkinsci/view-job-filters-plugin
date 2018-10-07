@@ -161,4 +161,15 @@ public class ViewJobFilters {
         return new ParameterFilter(includeMatched.name(), nameRegex, valueRegex, descriptionRegex,
            true, false, 0, false);
     }
+
+
+    public static ParameterFilter parameter(String nameRegex,
+                                            String valueRegex,
+                                            String descriptionRegex,
+                                            boolean matchAllBuilds,
+                                            int maxBuildsToMatch,
+                                            boolean matchBuildsInProgress) {
+        return new ParameterFilter(includeMatched.name(), nameRegex, valueRegex, descriptionRegex,
+                false, matchAllBuilds, maxBuildsToMatch, matchBuildsInProgress);
+    }
 }

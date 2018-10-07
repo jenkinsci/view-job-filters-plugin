@@ -98,6 +98,11 @@ public class BuildMocker<T extends AbstractBuild> {
         return this;
     }
 
+    public BuildMocker<T> parameters(ParameterValue... values) {
+        when(build.getAction(ParametersAction.class)).thenReturn(new ParametersAction(values));
+        return this;
+    }
+
     public T create() {
         return build;
     }

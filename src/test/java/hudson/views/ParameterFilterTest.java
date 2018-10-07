@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.ViewJobFilters.parameter;
 import static org.junit.Assert.*;
@@ -74,6 +75,118 @@ public class ParameterFilterTest extends AbstractHudsonTest {
 
 		assertTrue(parameter(".*", ".*", ".*").matches(freeStyleProject().parameters(parameter).asItem()));
 		assertTrue(parameter("n.me", "t.*", "desc(ription)?").matches(freeStyleProject().parameters(parameter).asItem()));
+	}
+
+	@Test
+	public void testMatchLastBuild() {
+		assertFalse(parameter(".*", ".*", ".*", false, 0, false).matches(
+			freeStyleProject().lastBuilds(build().create()).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", ".*", false, 0, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", ".*", false, 0, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", ".*", false, 0, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", ".*", false, 0, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("name2", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", ".*", false, 0, true).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+    }
+
+	@Test
+	public void testMatchAllBuilds() {
+		assertFalse(parameter(".*", ".*", ".*", true, 2, false).matches(
+			freeStyleProject().lastBuilds(build().create()).asItem()
+		));
+
+		assertTrue(parameter("name\\d", ".*", ".*", true, 2, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", "desc", true, 2, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("nameB", "test", "multi-line\ndesc")).create(),
+				build().parameters(new BooleanParameterValue("name1", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", "desc", true, 5, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("nameB", "test", "multi-line\ndesc")).create(),
+				build().parameters(new BooleanParameterValue("nameC", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", "desc", true, 5, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("nameB", "test", "multi-line\ndesc")).create(),
+				build().parameters(new BooleanParameterValue("name1", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", "desc", true, 0, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("nameA", "test", "multi-line\ndesc")).create(),
+				build().parameters(new StringParameterValue("nameB", "test", "multi-line\ndesc")).create(),
+				build().parameters(new BooleanParameterValue("name1", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", "desc", true, 2, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("name2", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new BooleanParameterValue("nameC", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertFalse(parameter("name\\d", "t.*", "desc", true, 2, false).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("name2", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new BooleanParameterValue("nameC", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
+
+		assertTrue(parameter("name\\d", "t.*", "desc", true, 2, true).matches(
+			freeStyleProject().lastBuilds(
+				build().parameters(new StringParameterValue("name1", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new StringParameterValue("name2", "test", "multi-line\ndesc")).building(true).create(),
+				build().parameters(new BooleanParameterValue("nameC", true, "multi-line\ndesc")).create()
+			).asItem()
+		));
 	}
 
 	@Test
