@@ -12,9 +12,22 @@ import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
 
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Days;
+import static hudson.views.AbstractBuildTrendFilter.AmountType.Hours;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
+import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched;
+import static hudson.views.BuildTrendFilter.StatusType.*;
+import static hudson.views.BuildTrendFilter.StatusType.NotStable;
+import static hudson.views.BuildTrendFilter.StatusType.TriggeredByUpstream;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.ViewJobFilters.parameter;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -190,21 +203,6 @@ public class ParameterFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
-	public void testMatchesParameter() {
-		doTestMatchesParameter("N1", null, null, "N2", null, null, false);
-		doTestMatchesParameter("N.*", null, null,"N2", null, null, true);
-		doTestMatchesParameter("N.*", null, null, "AN2", null, null, false);
-	}
-
-	private void doTestMatchesParameter(String nameRegex, String valueRegex, String descRegex, 
-			String name, String value, String desc, boolean expectMatched) {
-		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
-				nameRegex, valueRegex, descRegex, false, false, 0, false);
-		boolean matched = filter.matchesParameter(name, value, false, desc);
-		assertEquals(expectMatched, matched);
-	}
-
-	@Test
 	public void testBuildValue() throws Exception {
 		ParameterFilter filter = new ParameterFilter(AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString(),
 				"N", "V1", "", true, false, 0, false);
@@ -255,5 +253,67 @@ public class ParameterFilterTest extends AbstractHudsonTest {
 		matches = filter2.matches(proj);
 		assertFalse(matches);
 	}
+
+	@Test
+	public void testConfigRoundtrip() throws Exception {
+		testConfigRoundtrip(
+			"view-1",
+			new ParameterFilter(includeUnmatched.name(),"a", "b", "c",
+				false, true, 5, true)
+		);
+
+		testConfigRoundtrip(
+			"view-2",
+			new ParameterFilter(excludeMatched.name(),"x", "y", "z",
+				true, false, 0, false),
+			new ParameterFilter(includeMatched.name(),"", ".*", ".?",
+				false, true, 10, false)
+		);
+	}
+
+	private void testConfigRoundtrip(String viewName, ParameterFilter... filters) throws Exception {
+		List<ParameterFilter> expectedFilters = new ArrayList<ParameterFilter>();
+		for (ParameterFilter filter: filters) {
+			expectedFilters.add(new ParameterFilter(
+					filter.getIncludeExcludeTypeString(),
+					filter.getNameRegex(),
+					filter.getValueRegex(),
+					filter.getDescriptionRegex(),
+					filter.isUseDefaultValue(),
+					filter.isMatchAllBuilds(),
+					filter.getMaxBuildsToMatch(),
+					filter.isMatchBuildsInProgress()));
+		}
+
+		ListView view = createFilteredView(viewName, filters);
+		j.configRoundtrip(view);
+
+		ListView viewAfterRoundtrip = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterRoundtrip.getJobFilters());
+
+		viewAfterRoundtrip.save();
+		j.getInstance().reload();
+
+		ListView viewAfterReload = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
+	}
+
+	private void assertFilterEquals(List<ParameterFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+		assertThat(actualFilters.size(), is(expectedFilters.size()));
+		for (int i = 0; i < actualFilters.size(); i++) {
+			ViewJobFilter actualFilter = actualFilters.get(i);
+			ParameterFilter expectedFilter = expectedFilters.get(i);
+			assertThat(actualFilter, instanceOf(ParameterFilter.class));
+			assertThat(((ParameterFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
+			assertThat(((ParameterFilter)actualFilter).getNameRegex(), is(expectedFilter.getNameRegex()));
+			assertThat(((ParameterFilter)actualFilter).getValueRegex(), is(expectedFilter.getValueRegex()));
+			assertThat(((ParameterFilter)actualFilter).getDescriptionRegex(), is(expectedFilter.getDescriptionRegex()));
+			assertThat(((ParameterFilter)actualFilter).isUseDefaultValue(), is(expectedFilter.isUseDefaultValue()));
+			assertThat(((ParameterFilter)actualFilter).isMatchAllBuilds(), is(expectedFilter.isMatchAllBuilds()));
+			assertThat(((ParameterFilter)actualFilter).getMaxBuildsToMatch(), is(expectedFilter.getMaxBuildsToMatch()));
+			assertThat(((ParameterFilter)actualFilter).isMatchBuildsInProgress(), is(expectedFilter.isMatchBuildsInProgress()));
+		}
+	}
+
 	
 }
