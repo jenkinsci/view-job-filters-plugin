@@ -172,4 +172,10 @@ public class ViewJobFilters {
         return new ParameterFilter(includeMatched.name(), nameRegex, valueRegex, descriptionRegex,
                 false, matchAllBuilds, maxBuildsToMatch, matchBuildsInProgress);
     }
+
+    public static UpstreamDownstreamJobsFilter upstreamDownstream(
+            boolean includeDownstream, boolean includeUpstream,
+            boolean recursive, boolean excludeOriginals) {
+        return new UpstreamDownstreamJobsFilter(includeDownstream, includeUpstream, recursive, excludeOriginals);
+    }
 }
