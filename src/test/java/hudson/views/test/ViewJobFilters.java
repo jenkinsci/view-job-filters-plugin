@@ -178,4 +178,9 @@ public class ViewJobFilters {
             boolean recursive, boolean excludeOriginals) {
         return new UpstreamDownstreamJobsFilter(includeDownstream, includeUpstream, recursive, excludeOriginals);
     }
+
+    public static UpstreamDownstreamJobsFilter upstream(
+            boolean recursive, boolean excludeOriginals) {
+        return new UpstreamDownstreamJobsFilter(false, true, recursive, excludeOriginals);
+    }
 }

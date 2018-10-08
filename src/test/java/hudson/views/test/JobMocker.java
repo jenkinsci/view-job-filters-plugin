@@ -336,6 +336,20 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> upstream(AbstractProject... upstreamProjects) {
+        if (job instanceof AbstractProject) {
+            when(((AbstractProject)job).getUpstreamProjects()).thenReturn(asList(upstreamProjects));
+        }
+        return this;
+    }
+
+    public JobMocker<T> downstream(AbstractProject... downstreamProjects) {
+        if (job instanceof AbstractProject) {
+            when(((AbstractProject)job).getDownstreamProjects()).thenReturn(asList(downstreamProjects));
+        }
+        return this;
+    }
+
     public T asJob() {
         return job;
     }
