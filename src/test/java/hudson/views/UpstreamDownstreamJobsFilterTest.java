@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static hudson.views.test.ViewJobFilters.downstream;
 import static hudson.views.test.ViewJobFilters.upstream;
 import static hudson.views.test.ViewJobFilters.upstreamDownstream;
 import static java.util.Arrays.asList;
@@ -51,41 +52,7 @@ public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
 
     @Test
     public void testUpstream() {
-        /*
-        job0
-          |
-        job1----+
-          |     |
-        job2-+ job5
-          |  |  |
-        job4 +-job6
-        */
-
-        JobMocker<FreeStyleProject> job0 = freeStyleProject().name("job-0");
-        JobMocker<FreeStyleProject> job1 = freeStyleProject().name("job-1");
-        JobMocker<FreeStyleProject> job2 = freeStyleProject().name("job-2");
-        JobMocker<FreeStyleProject> job3 = freeStyleProject().name("job-3");
-        JobMocker<FreeStyleProject> job4 = freeStyleProject().name("job-4");
-        JobMocker<FreeStyleProject> job5 = freeStyleProject().name("job-5");
-        JobMocker<FreeStyleProject> job6 = freeStyleProject().name("job-6");
-
-        job0.upstream();
-        job1.upstream(job0.asJob());
-        job2.upstream(job1.asJob());
-        job3.upstream();
-        job4.upstream(job2.asJob());
-        job5.upstream(job1.asJob());
-        job6.upstream(job2.asJob(), job5.asJob());
-
-        List<TopLevelItem> all = asList(
-            job0.asItem(),
-            job1.asItem(),
-            job2.asItem(),
-            job3.asItem(),
-            job4.asItem(),
-            job5.asItem(),
-            job6.asItem()
-        );
+        List<TopLevelItem> all = getUpstreamDownstreamGraph();
 
         View view = null;
 
@@ -251,6 +218,211 @@ public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
             all.get(2),
             all.get(5)
         )));
+    }
+
+    @Test
+    public void testDownstream() {
+        List<TopLevelItem> all = getUpstreamDownstreamGraph();
+
+        View view = null;
+
+        assertThat(downstream(false, false).filter(list(all.get(0)), all, view), is(list(
+                all.get(0),
+                all.get(1)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(0)), all, view), is(list(
+                all.get(1)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(0)), all, view), is(list(
+                all.get(0),
+                all.get(1),
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(0)), all, view), is(list(
+                all.get(1),
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(1)), all, view), is(list(
+                all.get(1),
+                all.get(2),
+                all.get(5)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(1)), all, view), is(list(
+                all.get(2),
+                all.get(5)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(1)), all, view), is(list(
+                all.get(1),
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(1)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(2)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(6)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(2)), all, view), is(list(
+                all.get(4),
+                all.get(6)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(2)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(2)), all, view), is(list(
+                all.get(4),
+                all.get(6)
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(3)), all, view), is(list(
+                all.get(3)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(3)), all, view), is(list(
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(3)), all, view), is(list(
+                all.get(3)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(3)), all, view), is(list(
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(4)), all, view), is(list(
+                all.get(4)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(4)), all, view), is(list(
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(4)), all, view), is(list(
+                all.get(4)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(4)), all, view), is(list(
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(5)), all, view), is(list(
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(5)), all, view), is(list(
+                all.get(6)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(5)), all, view), is(list(
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(5)), all, view), is(list(
+                all.get(6)
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(6)), all, view), is(list(
+                all.get(6)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(6)), all, view), is(list(
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(6)), all, view), is(list(
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(6)), all, view), is(list(
+        )));
+
+        assertThat(downstream(false, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                all.get(1),
+                all.get(2),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                all.get(2),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                all.get(1),
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+
+
+        assertThat(downstream(false, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(false, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                all.get(4),
+                all.get(6)
+        )));
+        assertThat(downstream(true, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                all.get(2),
+                all.get(4),
+                all.get(5),
+                all.get(6)
+        )));
+        assertThat(downstream(true, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                all.get(4),
+                all.get(6)
+        )));
+    }
+
+    private List<TopLevelItem> getUpstreamDownstreamGraph() {
+        /*
+        job0
+          |
+        job1----+
+          |     |
+        job2-+ job5
+          |  |  |
+        job4 +-job6
+        */
+
+        JobMocker<FreeStyleProject> job0 = freeStyleProject().name("job-0");
+        JobMocker<FreeStyleProject> job1 = freeStyleProject().name("job-1");
+        JobMocker<FreeStyleProject> job2 = freeStyleProject().name("job-2");
+        JobMocker<FreeStyleProject> job3 = freeStyleProject().name("job-3");
+        JobMocker<FreeStyleProject> job4 = freeStyleProject().name("job-4");
+        JobMocker<FreeStyleProject> job5 = freeStyleProject().name("job-5");
+        JobMocker<FreeStyleProject> job6 = freeStyleProject().name("job-6");
+
+        job0.upstream();
+        job1.upstream(job0.asJob());
+        job2.upstream(job1.asJob());
+        job3.upstream();
+        job4.upstream(job2.asJob());
+        job5.upstream(job1.asJob());
+        job6.upstream(job2.asJob(), job5.asJob());
+
+        return asList(
+            job0.asItem(),
+            job1.asItem(),
+            job2.asItem(),
+            job3.asItem(),
+            job4.asItem(),
+            job5.asItem(),
+            job6.asItem()
+        );
     }
 
     private List<TopLevelItem> list(TopLevelItem... items) {
