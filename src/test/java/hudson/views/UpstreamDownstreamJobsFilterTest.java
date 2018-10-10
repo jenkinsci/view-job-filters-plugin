@@ -5,6 +5,7 @@ import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
 import hudson.views.test.JobMocker;
+import hudson.views.test.JobType;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.ex
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched;
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static hudson.views.test.JobMocker.jobOfType;
+import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.downstream;
 import static hudson.views.test.ViewJobFilters.upstream;
 import static hudson.views.test.ViewJobFilters.upstreamDownstream;
@@ -34,371 +37,377 @@ import static org.junit.Assert.assertTrue;
 public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
     @Test
     public void testDontIncludeUpstreamOrDownstream() {
-        List<TopLevelItem> all = asList(
-          freeStyleProject().name("job-0").asItem(),
-          freeStyleProject().name("job-1").asItem(),
-          freeStyleProject().name("job-2").asItem(),
-          freeStyleProject().name("job-3").asItem(),
-          freeStyleProject().name("job-4").asItem(),
-          freeStyleProject().name("job-5").asItem()
-        );
-        List<TopLevelItem> jobs = asList(
-          all.get(0),
-          all.get(2),
-          all.get(4)
-        );
-        assertThat(upstreamDownstream(false, false, false, false).filter(jobs, all, null), is(asList(
-          all.get(0),
-          all.get(2),
-          all.get(4)
-        )));
-        assertThat(upstreamDownstream(false, false, true, false).filter(jobs, all, null), is(asList(
-          all.get(0),
-          all.get(2),
-          all.get(4)
-        )));
-        assertThat(upstreamDownstream(false, false, false, true).filter(jobs, all, null), hasSize(0));
-        assertThat(upstreamDownstream(false, false, true, true).filter(jobs, all, null), hasSize(0));
+        for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
+            List<TopLevelItem> all = asList(
+                    jobOfType(jobType).name("job-0").asItem(),
+                    jobOfType(jobType).name("job-1").asItem(),
+                    jobOfType(jobType).name("job-2").asItem(),
+                    jobOfType(jobType).name("job-3").asItem(),
+                    jobOfType(jobType).name("job-4").asItem(),
+                    jobOfType(jobType).name("job-5").asItem()
+            );
+            List<TopLevelItem> jobs = asList(
+                    all.get(0),
+                    all.get(2),
+                    all.get(4)
+            );
+            assertThat(upstreamDownstream(false, false, false, false).filter(jobs, all, null), is(asList(
+                    all.get(0),
+                    all.get(2),
+                    all.get(4)
+            )));
+            assertThat(upstreamDownstream(false, false, true, false).filter(jobs, all, null), is(asList(
+                    all.get(0),
+                    all.get(2),
+                    all.get(4)
+            )));
+            assertThat(upstreamDownstream(false, false, false, true).filter(jobs, all, null), hasSize(0));
+            assertThat(upstreamDownstream(false, false, true, true).filter(jobs, all, null), hasSize(0));
+        }
     }
 
     @Test
     public void testUpstream() {
-        List<TopLevelItem> all = getUpstreamDownstreamGraph();
+        for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
+            List<TopLevelItem> all = getUpstreamDownstreamGraph(jobType);
 
-        View view = null;
+            View view = null;
 
-        assertThat(upstream(false, false).filter(list(all.get(0)), all, view), is(list(
-            all.get(0)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(0)), all, view), is(list(
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(0)), all, view), is(list(
-            all.get(0)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(0)), all, view), is(list(
-        )));
+            assertThat(upstream(false, false).filter(list(all.get(0)), all, view), is(list(
+                    all.get(0)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(0)), all, view), is(list(
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(0)), all, view), is(list(
+                    all.get(0)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(0)), all, view), is(list(
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(1)), all, view), is(list(
-            all.get(0),
-            all.get(1)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(1)), all, view), is(list(
-            all.get(0)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(1)), all, view), is(list(
-            all.get(0),
-            all.get(1)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(1)), all, view), is(list(
-            all.get(0)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(0),
+                    all.get(1)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(0)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(0),
+                    all.get(1)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(0)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(2)), all, view), is(list(
-            all.get(1),
-            all.get(2)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(2)), all, view), is(list(
-            all.get(1)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(2)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(2)), all, view), is(list(
-            all.get(0),
-            all.get(1)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(1),
+                    all.get(2)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(1)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(0),
+                    all.get(1)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(3)), all, view), is(list(
-            all.get(3)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(3)), all, view), is(list(
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(3)), all, view), is(list(
-            all.get(3)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(3)), all, view), is(list(
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(3)), all, view), is(list(
+                    all.get(3)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(3)), all, view), is(list(
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(3)), all, view), is(list(
+                    all.get(3)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(3)), all, view), is(list(
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(4)), all, view), is(list(
-            all.get(2),
-            all.get(4)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(4)), all, view), is(list(
-            all.get(2)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(4)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(4)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(4)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(2),
+                    all.get(4)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(2)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(4)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(5)), all, view), is(list(
-            all.get(1),
-            all.get(5)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(5)), all, view), is(list(
-            all.get(1)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(5)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(5)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(5)), all, view), is(list(
-            all.get(0),
-            all.get(1)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(1),
+                    all.get(5)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(1)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(5)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(0),
+                    all.get(1)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(6)), all, view), is(list(
-            all.get(2),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(6)), all, view), is(list(
-            all.get(2),
-            all.get(5)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(5)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(2),
+                    all.get(5)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(5)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(2), all.get(6)), all, view), is(list(
-            all.get(1),
-            all.get(2),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(2), all.get(6)), all, view), is(list(
-            all.get(1),
-            all.get(2),
-            all.get(5)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(2), all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(2), all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(5)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(2), all.get(6)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(2), all.get(6)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(5)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(2), all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(2), all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(5)
+            )));
 
-        assertThat(upstream(false, false).filter(asList(all.get(4), all.get(6)), all, view), is(list(
-            all.get(2),
-            all.get(4),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(false, true).filter(asList(all.get(4), all.get(6)), all, view), is(list(
-            all.get(2),
-            all.get(5)
-        )));
-        assertThat(upstream(true, false).filter(asList(all.get(4), all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(4),
-            all.get(5),
-            all.get(6)
-        )));
-        assertThat(upstream(true, true).filter(asList(all.get(4), all.get(6)), all, view), is(list(
-            all.get(0),
-            all.get(1),
-            all.get(2),
-            all.get(5)
-        )));
+            assertThat(upstream(false, false).filter(asList(all.get(4), all.get(6)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(false, true).filter(asList(all.get(4), all.get(6)), all, view), is(list(
+                    all.get(2),
+                    all.get(5)
+            )));
+            assertThat(upstream(true, false).filter(asList(all.get(4), all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(upstream(true, true).filter(asList(all.get(4), all.get(6)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(5)
+            )));
+        }
     }
 
     @Test
     public void testDownstream() {
-        List<TopLevelItem> all = getUpstreamDownstreamGraph();
+        for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
+            List<TopLevelItem> all = getUpstreamDownstreamGraph(jobType);
 
-        View view = null;
+            View view = null;
 
-        assertThat(downstream(false, false).filter(list(all.get(0)), all, view), is(list(
-                all.get(0),
-                all.get(1)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(0)), all, view), is(list(
-                all.get(1)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(0)), all, view), is(list(
-                all.get(0),
-                all.get(1),
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(0)), all, view), is(list(
-                all.get(1),
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(list(all.get(0)), all, view), is(list(
+                    all.get(0),
+                    all.get(1)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(0)), all, view), is(list(
+                    all.get(1)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(0)), all, view), is(list(
+                    all.get(0),
+                    all.get(1),
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(0)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(1)), all, view), is(list(
-                all.get(1),
-                all.get(2),
-                all.get(5)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(1)), all, view), is(list(
-                all.get(2),
-                all.get(5)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(1)), all, view), is(list(
-                all.get(1),
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(1)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(5)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(2),
+                    all.get(5)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(1)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(2)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(6)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(2)), all, view), is(list(
-                all.get(4),
-                all.get(6)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(2)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(2)), all, view), is(list(
-                all.get(4),
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(6)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(4),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(2)), all, view), is(list(
+                    all.get(4),
+                    all.get(6)
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(3)), all, view), is(list(
-                all.get(3)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(3)), all, view), is(list(
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(3)), all, view), is(list(
-                all.get(3)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(3)), all, view), is(list(
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(3)), all, view), is(list(
+                    all.get(3)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(3)), all, view), is(list(
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(3)), all, view), is(list(
+                    all.get(3)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(3)), all, view), is(list(
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(4)), all, view), is(list(
-                all.get(4)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(4)), all, view), is(list(
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(4)), all, view), is(list(
-                all.get(4)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(4)), all, view), is(list(
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(4)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(4)), all, view), is(list(
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(4)), all, view), is(list(
+                    all.get(4)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(4)), all, view), is(list(
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(5)), all, view), is(list(
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(5)), all, view), is(list(
-                all.get(6)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(5)), all, view), is(list(
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(5)), all, view), is(list(
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(6)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(5)), all, view), is(list(
+                    all.get(6)
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(6)), all, view), is(list(
-                all.get(6)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(6)), all, view), is(list(
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(6)), all, view), is(list(
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(6)), all, view), is(list(
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(6)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(6)), all, view), is(list(
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(6)), all, view), is(list(
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(6)), all, view), is(list(
+            )));
 
-        assertThat(downstream(false, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
-                all.get(1),
-                all.get(2),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
-                all.get(2),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
-                all.get(1),
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                    all.get(2),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                    all.get(1),
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(1), all.get(5)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
 
 
-        assertThat(downstream(false, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(false, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
-                all.get(4),
-                all.get(6)
-        )));
-        assertThat(downstream(true, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
-                all.get(2),
-                all.get(4),
-                all.get(5),
-                all.get(6)
-        )));
-        assertThat(downstream(true, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
-                all.get(4),
-                all.get(6)
-        )));
+            assertThat(downstream(false, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(false, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                    all.get(4),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, false).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                    all.get(2),
+                    all.get(4),
+                    all.get(5),
+                    all.get(6)
+            )));
+            assertThat(downstream(true, true).filter(asList(all.get(2), all.get(5)), all, view), is(list(
+                    all.get(4),
+                    all.get(6)
+            )));
+        }
     }
 
-    private List<TopLevelItem> getUpstreamDownstreamGraph() {
+    private List<TopLevelItem> getUpstreamDownstreamGraph(JobType jobType) {
         /*
         job0
           |
@@ -409,13 +418,13 @@ public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
         job4 +-job6
         */
 
-        JobMocker<FreeStyleProject> job0 = freeStyleProject().name("job-0");
-        JobMocker<FreeStyleProject> job1 = freeStyleProject().name("job-1");
-        JobMocker<FreeStyleProject> job2 = freeStyleProject().name("job-2");
-        JobMocker<FreeStyleProject> job3 = freeStyleProject().name("job-3");
-        JobMocker<FreeStyleProject> job4 = freeStyleProject().name("job-4");
-        JobMocker<FreeStyleProject> job5 = freeStyleProject().name("job-5");
-        JobMocker<FreeStyleProject> job6 = freeStyleProject().name("job-6");
+        JobMocker<FreeStyleProject> job0 = jobOfType(jobType).name("job-0");
+        JobMocker<FreeStyleProject> job1 = jobOfType(jobType).name("job-1");
+        JobMocker<FreeStyleProject> job2 = jobOfType(jobType).name("job-2");
+        JobMocker<FreeStyleProject> job3 = jobOfType(jobType).name("job-3");
+        JobMocker<FreeStyleProject> job4 = jobOfType(jobType).name("job-4");
+        JobMocker<FreeStyleProject> job5 = jobOfType(jobType).name("job-5");
+        JobMocker<FreeStyleProject> job6 = jobOfType(jobType).name("job-6");
 
         job0.upstream();
         job1.upstream(job0.asJob());
