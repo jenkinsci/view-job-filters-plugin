@@ -1,9 +1,6 @@
 package hudson.views;
 
-import hudson.model.Descriptor;
-import hudson.model.FreeStyleProject;
-import hudson.model.ListView;
-import hudson.model.TopLevelItem;
+import hudson.model.*;
 import hudson.util.DescribableList;
 
 import java.io.IOException;
@@ -66,4 +63,9 @@ public abstract class AbstractHudsonTest {
 	protected TopLevelItem getItem(String name) {
 		return j.getInstance().getItem(name);
 	}
+
+	protected View getView(String name) {
+		return j.getInstance().getView(name);
+	}
+
 }
