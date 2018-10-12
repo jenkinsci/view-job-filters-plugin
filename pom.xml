@@ -113,10 +113,11 @@
             <scope>provided</scope>
         </dependency>
 
+	<!-- graph library to detect cycles in views -->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.2.0</version>
+            <version>0.9.2</version>
         </dependency>
 
     </dependencies>
