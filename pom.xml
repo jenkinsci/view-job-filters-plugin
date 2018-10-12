@@ -85,6 +85,14 @@
             <version>1.21</version>
         </dependency>
 
+	<!-- plugins necessary for tests -->
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>nested-view</artifactId>
+            <version>1.14</version>
+            <scope>test</scope>
+        </dependency>
+
 	<!-- libs necessary for tests -->
         <dependency>
             <groupId>com.google.guava</groupId>

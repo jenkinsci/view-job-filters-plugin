@@ -4,6 +4,7 @@ import hudson.model.*;
 import hudson.util.DescribableList;
 
 import java.io.IOException;
+import java.util.List;
 
 import jenkins.model.Jenkins;
 import org.junit.Before;
@@ -46,6 +47,18 @@ public abstract class AbstractHudsonTest {
         j.getInstance().addView(view);
         return view;
     }
+
+	protected ListView createFilteredView(String name, List<TopLevelItem> items, ViewJobFilter... filters) throws IOException {
+		ListView view = new ListView(name, j.getInstance());
+		for (TopLevelItem item: items) {
+			view.add(item);
+		}
+		for (ViewJobFilter filter: filters) {
+			view.getJobFilters().add(filter);
+		}
+		j.getInstance().addView(view);
+		return view;
+	}
 
 	protected ListView createListView(String name, TopLevelItem... items) throws IOException {
 		ListView view = new ListView(name, j.getInstance().getItemGroup());
