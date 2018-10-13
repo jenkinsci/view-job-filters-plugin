@@ -11,9 +11,16 @@ import java.util.*;
 public class ViewGraph {
     private final Collection<View> views;
     private DefaultDirectedGraph<View, DefaultEdge> graph;
-    private List<List<View>> cycles;
+    private Set<List<View>> cycles;
     private Set<View> viewsInCycles;
     private Set<View> viewsNotInCycles;
+
+    private static final Comparator<List<View>> SORT_BY_SIZE_DESC = new Comparator<List<View>>() {
+        @Override
+        public int compare(List<View> o1, List<View> o2) {
+            return  new Integer(o2.size()).compareTo(o1.size());
+        }
+    };
 
     public ViewGraph(Collection<View> views) {
         this.views = views;
@@ -52,11 +59,29 @@ public class ViewGraph {
     }
 
 
-    public List<List<View>> getCycles() {
+    public Set<List<View>> getCycles() {
         if (this.cycles == null) {
-            this.cycles = new TarjanSimpleCycles<View, DefaultEdge>(getGraph()).findSimpleCycles();
+            List<List<View>> cycles = new TarjanSimpleCycles<View, DefaultEdge>(getGraph()).findSimpleCycles();
+            Collections.sort(cycles, SORT_BY_SIZE_DESC);
+
+            Set<List<View>> uniqueCycles = new HashSet<List<View>>();
+            for (List<View> cycle : cycles) {
+                if (!cycleIsSubsetOfOtherCycle(cycle, uniqueCycles)) {
+                    uniqueCycles.add(cycle);
+                }
+            }
+            this.cycles = uniqueCycles;
         }
         return this.cycles;
+    }
+
+    private boolean cycleIsSubsetOfOtherCycle(List<View> cycle, Set<List<View>> otherCycles) {
+        for (List<View> otherCycle : otherCycles) {
+            if (otherCycle.containsAll(cycle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Set<View> getViewsInCycles() {
