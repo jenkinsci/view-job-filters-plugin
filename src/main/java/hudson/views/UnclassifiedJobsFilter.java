@@ -9,6 +9,7 @@ import hudson.model.View;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -26,16 +27,8 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 	
     @Override
     protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
-    	List<View> allViews = OtherViewsFilter.getAllViews();
-    	List<View> allClassifyingViews = new ArrayList<View>(allViews.size());
-    	for (View view : allViews) {
-    		if (view != filteringView && !containsUnclassifiedJobsFilter(view)) {
-				allClassifyingViews.add(view);
-			}
-		}
-
-		int allJobsCount = all.size();
-		List<TopLevelItem> classified = getAllClassifiedItems(allClassifyingViews, allJobsCount);
+    	ViewGraph viewGraph = new ViewGraph(OtherViewsFilter.getAllViews());
+		List<TopLevelItem> classified = getAllClassifiedItems(viewGraph.getViewsNotInCycles(), all.size(), filteringView);
 		
         for (TopLevelItem item: all) {
         	boolean matched = !classified.contains(item);
@@ -55,17 +48,19 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 		return false;
 	}
 
-	private List<TopLevelItem> getAllClassifiedItems(List<View> allViews, int allJobsCount) {
+	private List<TopLevelItem> getAllClassifiedItems(Set<View> allViews, int allJobsCount, View filteringView) {
     	List<TopLevelItem> classified = new ArrayList<TopLevelItem>();
 		for (View otherView: allViews) {
-			Collection<TopLevelItem> items = otherView.getItems();
-			// Do not bother looking at views that already contain all items.
-			// The advantage of using this strategy is that it covers any type of "All Jobs" views.
-			// I care about this, because I have an AllJobsFilter, but anyone could have set up an ".*" regex, etc.
-			// The disadvantage is that if some view just happens to cover all views (perhaps it happens over time)
-			// then suddenly this filter stops accounting for that view
-			if (items.size() < allJobsCount) {
-				classified.addAll(items);
+		    if (otherView != filteringView) {
+				Collection<TopLevelItem> items = otherView.getItems();
+				// Do not bother looking at views that already contain all items.
+				// The advantage of using this strategy is that it covers any type of "All Jobs" views.
+				// I care about this, because I have an AllJobsFilter, but anyone could have set up an ".*" regex, etc.
+				// The disadvantage is that if some view just happens to cover all views (perhaps it happens over time)
+				// then suddenly this filter stops accounting for that view
+				if (items.size() < allJobsCount) {
+					classified.addAll(items);
+				}
 			}
 		}
     	return classified;

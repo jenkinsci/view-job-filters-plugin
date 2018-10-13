@@ -50,16 +50,18 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
     	if (getOtherView() == null) {
     		// happens when a view is deleted and this filter doesn't know about it (known issue)
     		return;
-    	} else if (getOtherView() == filteringView) {
-    		// happens when you select the view recursively
-        	return;
-    	} else {
-	    	Collection<TopLevelItem> otherViewItems = getOtherView().getItems();
-	        for (TopLevelItem item: all) {
-	        	boolean matched = otherViewItems.contains(item);
-	        	filterItem(filtered, item, matched);
-	        }
     	}
+
+    	ViewGraph viewGraph = new ViewGraph(getAllViews());
+    	if (viewGraph.getViewsInCycles().contains(getOtherView())) {
+			return;
+		}
+
+        Collection<TopLevelItem> otherViewItems = getOtherView().getItems();
+        for (TopLevelItem item: all) {
+            boolean matched = otherViewItems.contains(item);
+            filterItem(filtered, item, matched);
+        }
     }
 	
 	Object writeReplace() {
