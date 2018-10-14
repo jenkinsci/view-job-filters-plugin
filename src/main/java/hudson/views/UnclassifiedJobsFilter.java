@@ -6,12 +6,16 @@ import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
+import hudson.util.FormValidation;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+
+import javax.servlet.ServletException;
+
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 
 /**
  * Returns all jobs that don't show up in other jobs, not counting any "all jobs" views
@@ -76,6 +80,31 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
         public String getHelpFile() {
             return "/plugin/view-job-filters/unclassified-jobs-help.html";
         }
+
+		/*
+		 * Checks if the chosen view is valid.
+		 */
+		public FormValidation doCheck(@QueryParameter String viewName) throws IOException, ServletException, InterruptedException  {
+			View thisView = ViewGraph.getView(viewName);
+			if (thisView == null) {
+				return FormValidation.warning("Unable to validate filter");
+			}
+
+			ListView thisViewNew = new ListView(thisView.getViewName());
+			thisViewNew.getJobFilters().add(new UnclassifiedJobsFilter(includeMatched.name()));
+
+			Map<String, View> views = ViewGraph.getAllViewsByName();
+			views.put(ViewGraph.toName(thisView), thisViewNew);
+
+			ViewGraph viewGraph = new ViewGraph(views);
+			if (viewGraph.getViewsInCycles().contains(thisViewNew)) {
+				List<View> cycle = viewGraph.getFirstCycleWithView(thisViewNew);
+				cycle.set(cycle.indexOf(thisViewNew), thisView);
+				return FormValidation.error("Circular view definition: " + ViewGraph.toName(cycle));
+			}
+			return FormValidation.ok();
+		}
+
 	}
 
 }

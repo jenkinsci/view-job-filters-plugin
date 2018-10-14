@@ -1,14 +1,23 @@
 package hudson.views;
 
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
+import hudson.model.View;
+import hudson.model.ViewJob;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -146,6 +155,50 @@ public class UnclassifiedJobsFilterTest extends AbstractHudsonTest {
 		assertThat(items2.get(1).getName(), is("job-6"));
 	}
 
+
+	@Test
+	public void testValidationNoCycle() throws IOException, SAXException, InterruptedException {
+		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "All"));
+		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
+
+		testValidation(view1, OtherViewsFilter.class, null);
+		testValidation(view2, UnclassifiedJobsFilter.class, null);
+	}
+
+	@Test
+	public void testValidationWithCycle() throws IOException, SAXException, InterruptedException {
+		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "view-2"));
+		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
+
+		testValidation(view1, OtherViewsFilter.class, ".*view-\\d -> view-\\d -> view-\\d.*");
+		testValidation(view2, UnclassifiedJobsFilter.class, ".*view-\\d -> view-\\d -> view-\\d.*");
+	}
+
+	@Test
+	public void testValidationWithUnclassifiedJobsCycle() throws IOException, SAXException, InterruptedException {
+		View view1 = createFilteredView("view-1", new UnclassifiedJobsFilter(includeMatched.name()));
+		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
+
+		testValidation(view1, UnclassifiedJobsFilter.class, ".*view-\\d -> view-\\d -> view-\\d.*");
+		testValidation(view2, UnclassifiedJobsFilter.class, ".*view-\\d -> view-\\d -> view-\\d.*");
+	}
+
+	private <T extends ViewJobFilter> void testValidation(View view, Class<T> filterClass, String expectedError) throws IOException, SAXException {
+		JenkinsRule.WebClient webClient = j.createWebClient();
+		webClient.addRequestHeader("Accept-Language", "en");
+
+		HtmlPage page = webClient.getPage(view, "configure");
+		HtmlDivision filter = page.querySelector("div[descriptorid='" + filterClass.getCanonicalName() + "']");
+
+		HtmlDivision error = (HtmlDivision) filter.querySelector("div[class='error']");
+
+		if (expectedError != null) {
+			assertThat(error, is(not(nullValue())));
+			assertTrue(error.getTextContent().matches(expectedError));
+		} else {
+			assertThat(error, is(nullValue()));
+		}
+	}
 
 	@Test
 	public void testConfigRoundtrip() throws Exception {
