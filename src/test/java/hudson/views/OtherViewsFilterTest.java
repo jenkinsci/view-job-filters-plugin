@@ -1,36 +1,23 @@
 package hudson.views;
 
+import com.gargoylesoftware.htmlunit.html.*;
 import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import hudson.security.Permission;
-import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.MockAuthorizationStrategy;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertTrue;
 
 public class OtherViewsFilterTest extends AbstractHudsonTest {
 
@@ -85,72 +72,46 @@ public class OtherViewsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
-	public void testGetAllViews() throws IOException, SAXException, ServletException, Descriptor.FormException {
-		View listView1 = createListView("list-view-1");
-		View listView2 = createListView("list-view-2");
+	public void testValidation() throws IOException, SAXException, InterruptedException {
+		TopLevelItem job1 = createFreeStyleProject("job-1");
+		TopLevelItem job2 = createFreeStyleProject("job-2");
+		TopLevelItem job3 = createFreeStyleProject("job-3");
 
-		NestedView nestedView1 = new NestedView("nested-view-1");
-		j.getInstance().addView(nestedView1);
+		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "view-2"));
+		View view2 = createFilteredView("view-2", new OtherViewsFilter(includeMatched.name(), "view-3"));
+		View view3 = createFilteredView("view-3", new OtherViewsFilter(includeMatched.name(), "All"));
+		View view4 = createFilteredView("view-4", new OtherViewsFilter(includeMatched.name(), "non-existent-view"));
 
-		View listView3 = addToNestedView(nestedView1, new ListView("list-view-3"));
-		View listView4 = addToNestedView(nestedView1, new ListView("list-view-4"));
-
-		NestedView nestedView2 = addToNestedView(nestedView1, new NestedView("nested-view-2"));
-
-		View listView5 = addToNestedView(nestedView2, new ListView("list-view-5"));
-		View listView6 = addToNestedView(nestedView2, new ListView("list-view-6"));
-
-		assertThat(OtherViewsFilter.getAllViews(), is(asList(
-			getView("All"),
-			listView1,
-			listView2,
-			listView3,
-			listView4,
-			listView5,
-			listView6
-		)));
+		testValidation(view1, null, null);
+		testValidation(view1, "", "You must select a view");
+		testValidation(view1, "All", null);
+		testValidation(view1, "view-1", ".*view-1 -> view-1.*");
+		testValidation(view2, "view-1", ".*view-\\d -> view-\\d -> view-\\d.*");
+		testValidation(view3, "view-1", ".*view-\\d -> view-\\d -> view-\\d -> view-\\d.*");
 	}
 
-	private <T extends View> T addToNestedView(NestedView nestedView, T view) throws IOException, ServletException, Descriptor.FormException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    view.writeXml(out);
+	private void testValidation(View view, String otherViewName, String expectedError) throws IOException, SAXException {
+		JenkinsRule.WebClient webClient = j.createWebClient();
+		webClient.addRequestHeader("Accept-Language", "en");
 
-	    final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+		HtmlPage page = webClient.getPage(view, "configure");
+		HtmlDivision filter = page.querySelector("div[descriptorid='hudson.views.OtherViewsFilter']");
 
-		StaplerRequest request = mock(StaplerRequest.class);
-		when(request.getContentType()).thenReturn("application/xml");
-		when(request.getParameter("name")).thenReturn(view.getViewName());
-		when(request.getInputStream()).thenReturn(new ServletInputStream() {
+		if (otherViewName != null){
+			HtmlSelect select = filter.querySelector("select");
+			HtmlOption option = select.getOptionByValue(otherViewName);
+			select.setSelectedAttribute(option, true);
+			webClient.waitForBackgroundJavaScript(2000);
+		}
+		HtmlDivision error = (HtmlDivision) filter.querySelector("div[class='error']");
 
-			@Override
-			public int read() throws IOException {
-				return in.read();
-			}
-
-			@Override
-			public boolean isFinished() {
-				return false;
-			}
-
-			@Override
-			public boolean isReady() {
-			    return true;
-			}
-
-			@Override
-			public void setReadListener(ReadListener readListener) {
-			}
-
-			@Override
-			public void close() throws IOException {
-				in.close();
-			}
-		});
-
-		nestedView.doCreateView(request, mock(StaplerResponse.class));
-		return (T)nestedView.getView(view.getViewName());
+		if (expectedError != null) {
+			assertThat(error, is(not(nullValue())));
+			assertTrue(error.getTextContent().matches(expectedError));
+		} else {
+			assertThat(error, is(nullValue()));
+		}
 	}
-
 
 	@Test
 	public void testConfigRoundtrip() throws Exception {

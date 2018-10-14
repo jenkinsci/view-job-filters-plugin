@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.ListView;
 import hudson.model.View;
+import hudson.model.ViewGroup;
 import org.jgrapht.alg.cycle.TarjanSimpleCycles;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -9,42 +10,50 @@ import org.jgrapht.graph.DefaultEdge;
 import java.util.*;
 
 public class ViewGraph {
-    private final Collection<View> views;
-    private DefaultDirectedGraph<View, DefaultEdge> graph;
+    private final Map<String, View> views;
+    private DefaultDirectedGraph<String, DefaultEdge> graph;
     private Set<List<View>> cycles;
     private Set<View> viewsInCycles;
     private Set<View> viewsNotInCycles;
 
-    private static final Comparator<List<View>> SORT_BY_SIZE_DESC = new Comparator<List<View>>() {
+    private static final Comparator<List<String>> SORT_BY_SIZE_DESC = new Comparator<List<String>>() {
         @Override
-        public int compare(List<View> o1, List<View> o2) {
-            return  new Integer(o2.size()).compareTo(o1.size());
+        public int compare(List<String> o1, List<String> o2) {
+            return Integer.valueOf(o2.size()).compareTo(o1.size());
         }
     };
 
-    public ViewGraph(Collection<View> views) {
+    public ViewGraph() {
+        this(getAllViewsByName());
+    }
+
+    public ViewGraph(Map<String, View> views) {
         this.views = views;
     }
 
-    private DefaultDirectedGraph<View, DefaultEdge> getGraph() {
+    private DefaultDirectedGraph<String, DefaultEdge> getGraph() {
         if (this.graph != null) {
             return this.graph;
         }
-        this.graph = new DefaultDirectedGraph<View, DefaultEdge>(DefaultEdge.class);
-        for (View view: views) {
-            this.graph.addVertex(view);
+        this.graph = new DefaultDirectedGraph<String, DefaultEdge>(DefaultEdge.class);
+        for (String viewName: views.keySet()) {
+            this.graph.addVertex(viewName);
         }
-        for (View view: views) {
+        for (Map.Entry<String, View> entry: views.entrySet()) {
+            String viewName = entry.getKey();
+            View view = entry.getValue();
             for (ViewJobFilter filter: getViewJobFilters(view)) {
                 if (filter instanceof UnclassifiedJobsFilter) {
-                    for (View otherView : views) {
-                        if (otherView != view) {
-                            this.graph.addEdge(view, otherView);
+                    for (String otherViewName : views.keySet()) {
+                        if (!otherViewName.equals(viewName)) {
+                            this.graph.addEdge(viewName, otherViewName);
                         }
                     }
                 } else if (filter instanceof OtherViewsFilter) {
-                    View otherView = ((OtherViewsFilter) filter).getOtherView();
-                    this.graph.addEdge(view, otherView);
+                    String otherViewName = ((OtherViewsFilter) filter).getOtherViewName();
+                    if (otherViewName != null) {
+                        this.graph.addEdge(viewName, otherViewName);
+                    }
                 }
             }
         }
@@ -61,22 +70,44 @@ public class ViewGraph {
 
     public Set<List<View>> getCycles() {
         if (this.cycles == null) {
-            List<List<View>> cycles = new TarjanSimpleCycles<View, DefaultEdge>(getGraph()).findSimpleCycles();
+            List<List<String>> cycles = new TarjanSimpleCycles<String, DefaultEdge>(getGraph()).findSimpleCycles();
             Collections.sort(cycles, SORT_BY_SIZE_DESC);
 
-            Set<List<View>> uniqueCycles = new HashSet<List<View>>();
-            for (List<View> cycle : cycles) {
+            Set<List<String>> uniqueCycles = new HashSet<List<String>>();
+            for (List<String> cycle : cycles) {
                 if (!cycleIsSubsetOfOtherCycle(cycle, uniqueCycles)) {
                     uniqueCycles.add(cycle);
                 }
             }
-            this.cycles = uniqueCycles;
+            this.cycles = toViewCyles(uniqueCycles);
         }
         return this.cycles;
     }
 
-    private boolean cycleIsSubsetOfOtherCycle(List<View> cycle, Set<List<View>> otherCycles) {
-        for (List<View> otherCycle : otherCycles) {
+    private Set<List<View>> toViewCyles(Set<List<String>> cycles) {
+        Set<List<View>> viewCyles = new HashSet<List<View>>();
+        for (List<String> cycle: cycles) {
+            List<View> viewCycle = new ArrayList<View>();
+            for (String viewName : cycle) {
+                viewCycle.add(this.views.get(viewName));
+            }
+            viewCyles.add(viewCycle);
+        }
+        return viewCyles;
+    }
+
+    public List<View> getFirstCycleWithView(View view) {
+        Set<List<View>> cycles = getCycles();
+        for (List<View> cycle: cycles) {
+            if (cycle.contains(view)) {
+               return cycle;
+            }
+        }
+        return null;
+    }
+
+    private boolean cycleIsSubsetOfOtherCycle(List<String> cycle, Set<List<String>> otherCycles) {
+        for (List<String> otherCycle : otherCycles) {
             if (otherCycle.containsAll(cycle)) {
                 return true;
             }
@@ -100,7 +131,7 @@ public class ViewGraph {
     public Set<View> getViewsNotInCycles() {
         if (viewsNotInCycles == null) {
             Set<View> viewsNotInCycles = new HashSet<View>();
-            for (View view: views) {
+            for (View view: views.values()) {
                 if (!getViewsInCycles().contains(view)) {
                     viewsNotInCycles.add(view);
                 }
@@ -108,5 +139,80 @@ public class ViewGraph {
             this.viewsNotInCycles = viewsNotInCycles;
         }
         return this.viewsNotInCycles;
+    }
+
+    private static void addViews(View view, List<View> views) {
+        if (view instanceof ViewGroup) {
+            ViewGroup group = (ViewGroup) view;
+            Collection<View> subViews = group.getViews();
+            for (View sub: subViews) {
+                addViews(sub, views);
+            }
+        } else {
+            views.add(view);
+        }
+    }
+
+    public static List<View> getAllViews() {
+        // TODO this line seems to be what I would have to fix for JENKINS 21738
+        // the problem here is that I don't want to upgrade to a newer version of Jenkins, because that would make me maintain for Hudson
+        // and there is no fix for this in the 1.395 API.
+        // also, it appears that this problem will most likely only occur with the sectioned-view plugin
+        Collection<View> baseViews = JenkinsUtil.getInstance().getViews();
+
+        // build comprehensive list
+        List<View> views = new ArrayList<View>();
+        for (View view: baseViews) {
+            addViews(view, views);
+        }
+        return views;
+    }
+
+    public static Map<String, View> getAllViewsByName() {
+        Map<String, View> views = new HashMap<String, View>();
+        for (View view: getAllViews()) {
+            views.put(toName(view), view);
+        }
+        return views;
+    }
+
+    /*
+     * Takes into account nested names.
+     */
+    public static View getView(String name) {
+        Collection<View> views = getAllViews();
+        for (View view: views) {
+            String otherName = toName(view);
+            if (otherName.equals(name)) {
+                return view;
+            }
+        }
+        return null;
+    }
+
+    /*
+     * Alternate strategy for getting name, to handle nested views.
+     */
+    public static String toName(View view) {
+        String name = view.getViewName();
+        ViewGroup owner = view.getOwner();
+        if (owner instanceof View) {
+            View ownerView = (View)owner;
+            if (!ownerView.equals(view)) {
+                String parentName = toName((View) owner);
+                name = parentName + " / " + name;
+            }
+        }
+        return name;
+    }
+
+    public static String toName(List<View> cycle) {
+        StringBuilder builder = new StringBuilder();
+        for (View view: cycle) {
+            builder.append(toName(view));
+            builder.append(" -> ");
+        }
+        builder.append(toName(cycle.get(0)));
+        return builder.toString();
     }
 }

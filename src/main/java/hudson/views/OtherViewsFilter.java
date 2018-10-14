@@ -1,31 +1,25 @@
 package hudson.views;
 
 import hudson.Extension;
-import hudson.model.Descriptor;
-import hudson.model.Hudson;
-import hudson.model.TopLevelItem;
-import hudson.model.View;
-import hudson.model.ViewGroup;
+import hudson.model.*;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import javax.servlet.ServletException;
 
-import jenkins.model.Jenkins;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 
 /**
  * TODO bug - deleting a view doesn't work - for now, this view just doesn't do any filtering
  * TODO bug - renaming a view only works some of the time because if this filter isn't used between
  * 				the time the view was renamed and a save takes place, this filter won't know about
  * 				the rename.
- * TODO bug - you can select a view "recursively" - need a way to avoid this completely rather than just
- * 				do damage control when they do select it.
- * TODO limitation - cannot perform validations in hetero list?
- * 					
  * @author jacob.robertson
  */
 public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
@@ -41,10 +35,10 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		super(includeExcludeTypeString);
 		this.otherViewName = otherViewName;
 		if (otherViewName != null){
-			this.otherView = getView(otherViewName);
+			this.otherView = ViewGraph.getView(otherViewName);
 		}
 	}
-	
+
     @Override
     protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
     	if (getOtherView() == null) {
@@ -52,7 +46,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
     		return;
     	}
 
-    	ViewGraph viewGraph = new ViewGraph(getAllViews());
+    	ViewGraph viewGraph = new ViewGraph();
     	if (viewGraph.getViewsInCycles().contains(getOtherView())) {
 			return;
 		}
@@ -67,20 +61,22 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	Object writeReplace() {
 		// Right before persisting, try to account for any view name changes 
 		if (otherView != null) {
-			otherViewName = toName(otherView);
+			otherViewName = ViewGraph.toName(otherView);
 		}
 		return this;
 	}
+
 	public View getOtherView() {
 		if (otherView == null && otherViewName != null) {
-			otherView = getView(otherViewName);
+			otherView = ViewGraph.getView(otherViewName);
 		}
 		return otherView;
 	}
+
 	public String getOtherViewName() {
 		View got = getOtherView();
 		if (got != null) {
-			return toName(got);
+			return ViewGraph.toName(got);
 		} else {
 			return null;
 		}
@@ -89,8 +85,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 	@Extension
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		
-		// TODO messages
-		private static final String NO_VIEW_SELECTED = "<select a view other than this one>";
+		private static final String NO_VIEW_SELECTED = "";
 		
 		@Override
 		public String getDisplayName() {
@@ -107,11 +102,11 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
          */
         public ListBoxModel doFillOtherViewNameItems() throws ServletException {
             ListBoxModel m = new ListBoxModel();
-			List<View> views = getAllViews();
+			List<View> views = ViewGraph.getAllViews();
 			
 			m.add(NO_VIEW_SELECTED);
 			for (View view: views) {
-				String viewName = toName(view);
+				String viewName = ViewGraph.toName(view);
 				m.add(viewName);
 			}
             return m;
@@ -119,76 +114,36 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
         
         /*
          * Checks if the chosen view is valid.
-         *
-         * Does not work in hetero-list?
-         *
-        public FormValidation doCheckOtherViewName(@QueryParameter String otherViewName) throws IOException, ServletException, InterruptedException  {
+         */
+        public FormValidation doCheckOtherViewName(@QueryParameter String otherViewName, @QueryParameter String viewName) throws IOException, ServletException, InterruptedException  {
         	if (NO_VIEW_SELECTED.equals(otherViewName)) {
         		return FormValidation.error("You must select a view");
         	}
-            View view = Hudson.getInstance().getView(otherViewName);
-            if (view == null) {
+
+			View otherView = ViewGraph.getView(otherViewName);
+            if (otherView == null) {
                 return FormValidation.error("The view you selected (\"" + otherViewName + "\") has been deleted or renamed");
             }
+
+            View thisView = ViewGraph.getView(viewName);
+            if (thisView == null) {
+				return FormValidation.warning("Unable to validate filter");
+			}
+
+			ListView thisViewNew = new ListView(thisView.getViewName());
+			thisViewNew.getJobFilters().add(new OtherViewsFilter(includeMatched.name(), otherViewName));
+
+			Map<String, View> views = ViewGraph.getAllViewsByName();
+			views.put(ViewGraph.toName(thisView), thisViewNew);
+
+			ViewGraph viewGraph = new ViewGraph(views);
+			if (viewGraph.getViewsInCycles().contains(thisViewNew)) {
+				List<View> cycle = viewGraph.getFirstCycleWithView(thisViewNew);
+				cycle.set(cycle.indexOf(thisViewNew), thisView);
+				return FormValidation.error("Circular view definition: " + ViewGraph.toName(cycle));
+			}
             return FormValidation.ok();
         }
-        */
-        
-	}
-	private static void addViews(View view, List<View> views) {
-		if (view instanceof ViewGroup) {
-			ViewGroup group = (ViewGroup) view;
-			Collection<View> subViews = group.getViews();
-			for (View sub: subViews) {
-				addViews(sub, views);
-			}
-		} else {
-			views.add(view);
-		}
-	}
-	
-	public static List<View> getAllViews() {
-		// TODO this line seems to be what I would have to fix for JENKINS 21738
-		// the problem here is that I don't want to upgrade to a newer version of Jenkins, because that would make me maintain for Hudson
-		// and there is no fix for this in the 1.395 API.
-		// also, it appears that this problem will most likely only occur with the sectioned-view plugin
-		Collection<View> baseViews = JenkinsUtil.getInstance().getViews();
-		
-		// build comprehensive list
-		List<View> views = new ArrayList<View>();
-		for (View view: baseViews) {
-			addViews(view, views);
-		}
-		return views;
-	}
-	
-	/*
-	 * Takes into account nested names.
-	 */
-	private View getView(String name) {
-		Collection<View> views = getAllViews();
-		for (View view: views) {
-			String otherName = toName(view);
-			if (otherName.equals(name)) {
-				return view;
-			}
-		}
-		return null;
-	}
-	/*
-	 * Alternate strategy for getting name, to handle nested views.
-	 */
-	private static String toName(View view) {
-		String name = view.getViewName();
-		ViewGroup owner = view.getOwner();
-		if (owner instanceof View) {
-			View ownerView = (View)owner;
-		    if (!ownerView.equals(view)) {
-				String parentName = toName((View) owner);
-				name = parentName + " / " + name;
-			}
-		}
-		return name;
-	}
 
+	}
 }

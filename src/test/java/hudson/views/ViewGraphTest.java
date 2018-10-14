@@ -1,10 +1,18 @@
 package hudson.views;
 
+import hudson.model.Descriptor;
+import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
+import hudson.plugins.nested_view.NestedView;
+import org.junit.Assert;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
 import static java.util.Arrays.asList;
@@ -22,7 +30,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view2 = createFilteredView("view-2", new OtherViewsFilter(includeMatched.name(), "view-3"));
         View view3 = createListView("view-3", job2, job3);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(0));
         assertThat(viewGraph.getViewsInCycles(), hasSize(0));
         assertThat(viewGraph.getViewsNotInCycles(), containsInAnyOrder(view1, view2, view3, getView("All")));
@@ -45,7 +53,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view2 = createListView("view-2", job1, job2);
         View view3 = createListView("view-3", job3, job4);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(0));
         assertThat(viewGraph.getViewsInCycles(), hasSize(0));
         assertThat(viewGraph.getViewsNotInCycles(), containsInAnyOrder(view1, view2, view3, getView("All")));
@@ -69,7 +77,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view3 = createListView("view-3", job1, job2);
         View view4 = createListView("view-4", job3, job4);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(0));
         assertThat(viewGraph.getViewsInCycles(), hasSize(0));
         assertThat(viewGraph.getViewsNotInCycles(), containsInAnyOrder(view1, view2, view3, view4, getView("All")));
@@ -91,7 +99,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view2 = createFilteredView("view-2", asList(job1), new OtherViewsFilter(includeMatched.name(), "view-3"));
         View view3 = createListView("view-3", job3, job4);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1));
@@ -113,7 +121,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view2 = createFilteredView("view-2", asList(job2), new OtherViewsFilter(includeMatched.name(), "view-1"));
         View view3 =createListView("view-3", job3, job4);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1, view2));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1, view2));
@@ -139,7 +147,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view4 = createFilteredView("view-4", asList(job4), new OtherViewsFilter(includeMatched.name(), "view-1"));
         View view5 = createListView("view-5", job5, job6);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1, view2, view3));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1, view2, view3));
@@ -171,7 +179,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view6 = createFilteredView("view-6", asList(job6), new OtherViewsFilter(includeMatched.name(), "view-1"));
         View view7 = createListView("view-7", job7, job8);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(2));
         assertThat(viewGraph.getCycles(), containsInAnyOrder(
             containsInAnyOrder(view1, view2, view3),
@@ -201,7 +209,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view2 = createFilteredView("view-2", asList(job2), new UnclassifiedJobsFilter(includeMatched.name()));
         View view3 = createListView("view-3", job3, job4);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1, view2));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1, view2));
@@ -226,8 +234,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view3 = createFilteredView("view-3", asList(job3), new UnclassifiedJobsFilter(includeMatched.name()));
         View view4 = createListView("view-4", job4, job5);
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
-        System.out.println(viewGraph.getCycles());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1, view2, view3));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1, view2, view3));
@@ -257,8 +264,7 @@ public class ViewGraphTest extends AbstractHudsonTest {
         View view3 = createListView("view-3", job4, job5);
         View view4 = createFilteredView("view-4", asList(job6), new UnclassifiedJobsFilter(includeMatched.name()));
 
-        ViewGraph viewGraph = new ViewGraph(j.getInstance().getViews());
-        System.out.println(viewGraph.getCycles());
+        ViewGraph viewGraph = new ViewGraph();
         assertThat(viewGraph.getCycles(), hasSize(1));
         assertThat(viewGraph.getCycles().iterator().next(), containsInAnyOrder(view1, view4));
         assertThat(viewGraph.getViewsInCycles(), containsInAnyOrder(view1, view4));
@@ -268,5 +274,61 @@ public class ViewGraphTest extends AbstractHudsonTest {
         assertThat(view2.getItems(), containsInAnyOrder(job2, job3));
         assertThat(view3.getItems(), containsInAnyOrder(job4, job5));
         assertThat(view4.getItems(), containsInAnyOrder(job1, job6, job7));
+    }
+
+
+    @Test
+    public void testGetAllViews() throws IOException, SAXException, ServletException, Descriptor.FormException {
+        View listView1 = createListView("list-view-1");
+        View listView2 = createListView("list-view-2");
+
+        NestedView nestedView1 = new NestedView("nested-view-1");
+        j.getInstance().addView(nestedView1);
+
+        View listView3 = addToNestedView(nestedView1, new ListView("list-view-3"));
+        View listView4 = addToNestedView(nestedView1, new ListView("list-view-4"));
+
+        NestedView nestedView2 = addToNestedView(nestedView1, new NestedView("nested-view-2"));
+
+        View listView5 = addToNestedView(nestedView2, new ListView("list-view-5"));
+        View listView6 = addToNestedView(nestedView2, new ListView("list-view-6"));
+
+        Assert.assertThat(ViewGraph.getAllViews(), is(asList(
+                getView("All"),
+                listView1,
+                listView2,
+                listView3,
+                listView4,
+                listView5,
+                listView6
+        )));
+    }
+
+    @Test
+    public void testGetAllViewsByName() throws IOException, SAXException, ServletException, Descriptor.FormException {
+        View listView1 = createListView("list-view-1");
+        View listView2 = createListView("list-view-2");
+
+        NestedView nestedView1 = new NestedView("nested-view-1");
+        j.getInstance().addView(nestedView1);
+
+        View listView3 = addToNestedView(nestedView1, new ListView("list-view-3"));
+        View listView4 = addToNestedView(nestedView1, new ListView("list-view-4"));
+
+        NestedView nestedView2 = addToNestedView(nestedView1, new NestedView("nested-view-2"));
+
+        View listView5 = addToNestedView(nestedView2, new ListView("list-view-5"));
+        View listView6 = addToNestedView(nestedView2, new ListView("list-view-6"));
+
+        Map<String, View> viewsByName = new HashMap<String, View>();
+        viewsByName.put("All", getView("All"));
+        viewsByName.put("list-view-1", listView1);
+        viewsByName.put("list-view-2", listView2);
+        viewsByName.put("nested-view-1 / list-view-3", listView3);
+        viewsByName.put("nested-view-1 / list-view-4", listView4);
+        viewsByName.put("nested-view-1 / nested-view-2 / list-view-5", listView5);
+        viewsByName.put("nested-view-1 / nested-view-2 / list-view-6", listView6);
+
+        Assert.assertThat(ViewGraph.getAllViewsByName(), is(viewsByName));
     }
 }

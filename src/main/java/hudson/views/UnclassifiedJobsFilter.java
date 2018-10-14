@@ -27,7 +27,7 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 	
     @Override
     protected void doFilter(List<TopLevelItem> filtered, List<TopLevelItem> all, View filteringView) {
-    	ViewGraph viewGraph = new ViewGraph(OtherViewsFilter.getAllViews());
+    	ViewGraph viewGraph = new ViewGraph();
 		List<TopLevelItem> classified = getAllClassifiedItems(viewGraph.getViewsNotInCycles(), all.size(), filteringView);
 		
         for (TopLevelItem item: all) {
