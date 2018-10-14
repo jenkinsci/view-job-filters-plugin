@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.TopLevelItem;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testIncludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeMatched.name());
         List<TopLevelItem> all = asList(
@@ -55,6 +57,7 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testIncludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeUnmatched.name());
         List<TopLevelItem> all = asList(
@@ -86,6 +89,7 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testExcludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeMatched.name());
         List<TopLevelItem> all = asList(
@@ -117,6 +121,7 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testExcludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeUnmatched.name());
         List<TopLevelItem> all = asList(

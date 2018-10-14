@@ -6,6 +6,7 @@ import hudson.model.Result;
 import hudson.model.TopLevelItem;
 import hudson.views.test.JobType;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.mock;
 public class JobStatusFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testMatch() {
 		assertFalse(jobStatus(true, true, true, true, true).matches(mock(TopLevelItem.class)));
 

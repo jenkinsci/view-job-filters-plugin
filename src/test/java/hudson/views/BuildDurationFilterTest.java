@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.*;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.mock;
 public class BuildDurationFilterTest extends AbstractHudsonTest {
 
     @Test
+    @WithoutJenkins
     public void testMatchRun() {
         assertTrue(buildDuration(10, "<").matchesRun(build().durationInMinutes(9).create()));
         assertTrue(buildDuration(10, "<").matchesRun(build().durationInSeconds(10 * 60 - 1).create()));

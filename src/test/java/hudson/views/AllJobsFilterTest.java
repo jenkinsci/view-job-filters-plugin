@@ -4,11 +4,13 @@ import com.google.common.collect.Lists;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static hudson.views.test.JobMocker.freeStyleProject;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -16,6 +18,7 @@ import static org.junit.Assert.assertThat;
 public class AllJobsFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testShouldReturnNoJobsWhenNoJobsPresent() throws Exception {
 	    List<TopLevelItem> all = Lists.newArrayList();
 
@@ -28,11 +31,12 @@ public class AllJobsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldReturnAllJobsWhenJobsPresent() throws Exception {
 	    List<TopLevelItem> all = Lists.<TopLevelItem>newArrayList(
-			createFreeStyleProject("job-1"),
-			createFreeStyleProject("job-2"),
-			createFreeStyleProject("job-3")
+			freeStyleProject().name("job-0").asItem(),
+			freeStyleProject().name("job-1").asItem(),
+			freeStyleProject().name("job-2").asItem()
 		);
 
 		List<TopLevelItem> added = newArrayList();
@@ -44,14 +48,15 @@ public class AllJobsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldNotReturnDuplicateJobs() throws Exception {
 		List<TopLevelItem> all = Lists.<TopLevelItem>newArrayList(
-				createFreeStyleProject("job-1"),
-				createFreeStyleProject("job-2"),
-				createFreeStyleProject("job-3")
+			freeStyleProject().name("job-0").asItem(),
+			freeStyleProject().name("job-1").asItem(),
+			freeStyleProject().name("job-2").asItem()
 		);
 
-		List<TopLevelItem> added = newArrayList(getItem("job-2"));
+		List<TopLevelItem> added = newArrayList(all.get(1));
 
 		List<TopLevelItem> expected = newArrayList(all);
 		List<TopLevelItem> filtered = new AllJobsFilter().filter(added, all, null);

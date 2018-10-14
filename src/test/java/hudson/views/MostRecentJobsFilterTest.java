@@ -2,6 +2,7 @@ package hudson.views;
 
 import hudson.model.*;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.mock;
 public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testWithStartTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
@@ -46,6 +48,7 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testWithMaxTooLarge() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
@@ -76,6 +79,7 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testWithEndTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
@@ -104,6 +108,7 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testWithRunningBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
@@ -136,6 +141,7 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 
 
 	@Test
+	@WithoutJenkins
 	public void testWithNoLastBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
@@ -165,6 +171,7 @@ public class MostRecentJobsFilterTest extends AbstractHudsonTest {
 
 
 	@Test
+	@WithoutJenkins
 	public void testWithNotAJob() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 				freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),

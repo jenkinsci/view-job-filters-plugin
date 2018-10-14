@@ -8,6 +8,7 @@ import java.util.List;
 
 import hudson.views.test.JobType;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import static hudson.model.Item.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.when;
 public class SecurityFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testWorkspace() {
 		ACL acl = mock(ACL.class);
 		TopLevelItem item = mock(TopLevelItem.class);
@@ -39,6 +41,7 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testViewJobsRestrictedInSomeWay() {
 		ACL acl = mock(ACL.class);
 		TopLevelItem item = mock(TopLevelItem.class);
@@ -80,6 +83,7 @@ public class SecurityFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testMatch() {
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions().asItem()));

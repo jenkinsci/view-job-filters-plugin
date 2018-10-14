@@ -14,6 +14,7 @@ import hudson.views.BuildTrendFilter.StatusType;
 import org.acegisecurity.context.SecurityContextHolder;
 import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class BuildTrendFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+	@WithoutJenkins
 	public void testMatchRun() {
     	assertTrue(buildTrend(StatusType.Started).matchesRun(build().started(true).create()));
 		assertFalse(buildTrend(StatusType.Started).matchesRun(build().started(false).create()));

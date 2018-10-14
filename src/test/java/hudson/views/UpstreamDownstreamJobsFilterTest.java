@@ -7,6 +7,7 @@ import hudson.model.View;
 import hudson.views.test.JobMocker;
 import hudson.views.test.JobType;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import static org.junit.Assert.assertTrue;
 
 public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
     @Test
+    @WithoutJenkins
     public void testDontIncludeUpstreamOrDownstream() {
         for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
             List<TopLevelItem> all = asList(
@@ -67,6 +69,7 @@ public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testUpstream() {
         for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
             List<TopLevelItem> all = getUpstreamDownstreamGraph(jobType);
@@ -239,6 +242,7 @@ public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testDownstream() {
         for (JobType jobType: availableJobTypes(FREE_STYLE_PROJECT, MAVEN_MODULE_SET, MATRIX_PROJECT)) {
             List<TopLevelItem> all = getUpstreamDownstreamGraph(jobType);

@@ -9,9 +9,11 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static hudson.views.AddRemoveFallbackFilter.FallbackTypes.*;
+import static hudson.views.test.JobMocker.freeStyleProject;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -23,13 +25,14 @@ public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
 	@Before
 	public void before() throws Exception {
 	    all = Lists.<TopLevelItem>newArrayList(
-			createFreeStyleProject("job-1"),
-			createFreeStyleProject("job-2"),
-			createFreeStyleProject("job-3")
+			freeStyleProject().name("job-0").asItem(),
+			freeStyleProject().name("job-1").asItem(),
+			freeStyleProject().name("job-2").asItem()
 		);
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldAddAllJobsWhenNoJobsPresent() throws Exception {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(ADD_ALL_IF_NONE_INCLUDED.name());
 
@@ -42,10 +45,11 @@ public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldNotModifyFilteredListWhenSomeJobPresent() throws Exception {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(ADD_ALL_IF_NONE_INCLUDED.name());
 
-		List<TopLevelItem> added = newArrayList(getItem("job-1"));
+		List<TopLevelItem> added = newArrayList(all.get(0));
 
 		List<TopLevelItem> expected = newArrayList(added);
 		List<TopLevelItem> filtered = filter.filter(added, all, null);
@@ -54,6 +58,7 @@ public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldRemoveAllJobsWhenAllJobsPresent() throws Exception {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(REMOVE_ALL_IF_ALL_INCLUDED.name());
 
@@ -66,10 +71,11 @@ public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testShouldNotModifyFilteredListWhenAllJobsNotPresent() throws Exception {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(REMOVE_ALL_IF_ALL_INCLUDED.name());
 
-		List<TopLevelItem> added = newArrayList(getItem("job-1"));
+		List<TopLevelItem> added = newArrayList(all.get(0));
 
 		List<TopLevelItem> expected = newArrayList(added);
 		List<TopLevelItem> filtered = filter.filter(added, all, null);

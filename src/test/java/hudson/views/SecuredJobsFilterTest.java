@@ -4,6 +4,7 @@ import hudson.model.*;
 import hudson.security.AuthorizationMatrixProperty;
 import hudson.views.test.JobType;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.mock;
 public class SecuredJobsFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testMatch() {
 		assertFalse(secured().matches(mock(TopLevelItem.class)));
 

@@ -5,6 +5,7 @@ import hudson.model.*;
 import hudson.views.test.JobMocker;
 import hudson.views.test.JobType;
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import static hudson.views.test.ViewJobFilters.*;
 public class RegExJobFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testName() {
 		assertFalse(nameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
@@ -41,6 +43,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testDescription() {
 		assertFalse(descRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
@@ -149,6 +152,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testSchedule() {
 		assertFalse(scheduleRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
@@ -244,6 +248,7 @@ public class RegExJobFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testNode() {
 		assertFalse(nodeRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 

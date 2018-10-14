@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
 import static hudson.views.AbstractBuildTrendFilter.AmountType.Days;
@@ -35,11 +36,13 @@ import static org.mockito.Mockito.when;
 public class ParameterFilterTest extends AbstractHudsonTest {
 
 	@Test
+	@WithoutJenkins
 	public void testDoesntMatchTopLevelItem() {
 		assertFalse(parameter(".*", ".*", ".*").matches(mock(TopLevelItem.class)));
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testMatchesDefaultValue() {
 		assertFalse(parameter(".*", ".*", ".*").matches(freeStyleProject().asItem()));
 
@@ -91,6 +94,7 @@ public class ParameterFilterTest extends AbstractHudsonTest {
 	}
 
 	@Test
+	@WithoutJenkins
 	public void testMatchLastBuild() {
 		assertFalse(parameter(".*", ".*", ".*", false, 0, false).matches(
 			freeStyleProject().lastBuilds(build().create()).asItem()
@@ -133,6 +137,7 @@ public class ParameterFilterTest extends AbstractHudsonTest {
     }
 
 	@Test
+	@WithoutJenkins
 	public void testMatchAllBuilds() {
 		assertFalse(parameter(".*", ".*", ".*", true, 2, false).matches(
 			freeStyleProject().lastBuilds(build().create()).asItem()

@@ -1,6 +1,7 @@
 package hudson.views;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -10,6 +11,7 @@ public class PluginHelperUtilsTest extends AbstractHudsonTest {
      * Test all the helpers to see that no exceptions are thrown.
      */
     @Test
+    @WithoutJenkins
     public void testHelpers() {
         PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
         PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
@@ -22,11 +24,13 @@ public class PluginHelperUtilsTest extends AbstractHudsonTest {
     }
 
     @Test
+    @WithoutJenkins
     public void testNull() {
         assertThat(PluginHelperUtils.validateAndThrow(null), is(nullValue()));
     }
 
     @Test(expected = RuntimeException.class)
+    @WithoutJenkins
     public void testThrow() {
         PluginHelperUtils.validateAndThrow(new PluginHelperUtils.PluginHelperTestable() {
             @Override
