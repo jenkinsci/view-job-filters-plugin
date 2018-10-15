@@ -5,7 +5,6 @@ import hudson.model.JobProperty;
 import hudson.model.TopLevelItem;
 import hudson.model.Descriptor;
 import hudson.model.Job;
-import hudson.security.AuthorizationMatrixProperty;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -15,7 +14,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author jacob
  */
 public class SecuredJobsFilter extends AbstractIncludeExcludeJobFilter {
-		
+
+	public static final MatrixAuthorizationHelper MATRIX_AUTHORIZATION_HELPER = buildMatrixAuthorizationHelper();
+
 	@DataBoundConstructor
 	public SecuredJobsFilter(String includeExcludeTypeString) {
 		super(includeExcludeTypeString);
@@ -25,8 +26,11 @@ public class SecuredJobsFilter extends AbstractIncludeExcludeJobFilter {
 	protected boolean matches(TopLevelItem item) {
 		if (item instanceof Job) {
 			Job job = (Job) item;
-			JobProperty prop = job.getProperty(AuthorizationMatrixProperty.class);
-			return (prop != null);
+			if (MATRIX_AUTHORIZATION_HELPER != null) {
+				JobProperty prop = job.getProperty(MATRIX_AUTHORIZATION_HELPER.getPluginTesterClass());
+				return (prop != null);
+			}
+			return false;
 		} else {
 			return false;
 		}
@@ -44,4 +48,12 @@ public class SecuredJobsFilter extends AbstractIncludeExcludeJobFilter {
         }
 	}
 
+
+	private static MatrixAuthorizationHelper buildMatrixAuthorizationHelper() {
+		try {
+			return PluginHelperUtils.validateAndThrow(new MatrixAuthorizationHelper());
+		} catch (Throwable t) {
+			return null;
+		}
+	}
 }
