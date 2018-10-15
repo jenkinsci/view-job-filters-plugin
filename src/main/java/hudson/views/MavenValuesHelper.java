@@ -1,6 +1,5 @@
 package hudson.views;
 
-import hudson.matrix.MatrixProject;
 import hudson.model.Project;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Builder;
@@ -17,6 +16,7 @@ public class MavenValuesHelper {
 	 */
 	public static final MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
 	public static final MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
+	public static final MatrixProjectBuildersHelper MATRIX_PROJECT_HELPER = buildMatrixProjectBuildersHelper();
 
 	@SuppressWarnings({ "unchecked" })
 	public static List<String> getValues(TopLevelItem item) {
@@ -25,9 +25,8 @@ public class MavenValuesHelper {
 			Project project = (Project) item;
 			List<Builder> builders = project.getBuilders();
 			addValues(values, builders);
-		} else if (item instanceof MatrixProject) {
-			MatrixProject project = (MatrixProject) item;
-			List<Builder> builders = project.getBuilders();
+		} else if (MATRIX_PROJECT_HELPER != null) {
+			List<Builder> builders = MATRIX_PROJECT_HELPER.getBuilders(item);
 			addValues(values, builders);
 		}
 		if (MODULESET_HELPER != null) {
@@ -91,4 +90,12 @@ public class MavenValuesHelper {
 		}
 	}
 
+	private static MatrixProjectBuildersHelper buildMatrixProjectBuildersHelper() {
+		try {
+			return PluginHelperUtils.validateAndThrow(new MatrixProjectBuildersHelper());
+		} catch (Throwable t) {
+			// necessary maven plugins not installed
+			return null;
+		}
+	}
 }
