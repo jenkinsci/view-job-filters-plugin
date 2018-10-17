@@ -1,13 +1,10 @@
 package hudson.views;
 
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
-import hudson.model.ViewJob;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.xml.sax.SAXException;
@@ -22,7 +19,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 
-public class UnclassifiedJobsFilterTest extends AbstractHudsonTest {
+public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	@Test
 	public void testWithNoJobs() throws IOException {
 		ListView filteredView = createFilteredView("unclassified-view", new UnclassifiedJobsFilter(includeMatched.name()));

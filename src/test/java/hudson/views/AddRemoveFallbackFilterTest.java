@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
-public class AddRemoveFallbackFilterTest extends AbstractHudsonTest {
+public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	private List<TopLevelItem> all;
 

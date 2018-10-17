@@ -7,9 +7,8 @@ import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.HudsonTestCase;
 
-public class UserRelevanceFilterContainerTest extends AbstractHudsonTest {
+public class UserRelevanceFilterContainerTest extends AbstractJenkinsTest {
 
 	@Test
 	public void testEmailWithNoUser() throws IOException {

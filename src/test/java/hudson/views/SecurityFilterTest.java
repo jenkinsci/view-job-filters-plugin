@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SecurityFilterTest extends AbstractHudsonTest {
+public class SecurityFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins

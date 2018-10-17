@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-public class JobTypeFilterTest extends AbstractHudsonTest {
+public class JobTypeFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	public void testMatch() {

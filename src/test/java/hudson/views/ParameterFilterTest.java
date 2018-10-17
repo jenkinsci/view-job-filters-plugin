@@ -7,23 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.jvnet.hudson.test.HudsonTestCase;
-import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.WithoutJenkins;
 
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Days;
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Hours;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched;
-import static hudson.views.BuildTrendFilter.StatusType.*;
-import static hudson.views.BuildTrendFilter.StatusType.NotStable;
-import static hudson.views.BuildTrendFilter.StatusType.TriggeredByUpstream;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.ViewJobFilters.parameter;
@@ -33,7 +21,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ParameterFilterTest extends AbstractHudsonTest {
+public class ParameterFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins

@@ -26,7 +26,7 @@ import javax.servlet.ServletInputStream;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractHudsonTest {
+public abstract class AbstractJenkinsTest {
 
 	@Rule
 	public JenkinsRule j = new JenkinsRule();

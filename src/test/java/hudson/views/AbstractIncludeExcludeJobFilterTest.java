@@ -12,7 +12,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class AbstractIncludeExcludeJobFilterTest extends AbstractHudsonTest {
+public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
 
     private class TestIncludeExcludeJobFilter extends AbstractIncludeExcludeJobFilter {
         public TestIncludeExcludeJobFilter(String includeExcludeTypeString) {

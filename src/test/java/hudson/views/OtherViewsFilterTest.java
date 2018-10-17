@@ -19,7 +19,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertTrue;
 
-public class OtherViewsFilterTest extends AbstractHudsonTest {
+public class OtherViewsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	public void testIncludeMatched() throws IOException {

@@ -6,7 +6,7 @@ import org.jvnet.hudson.test.WithoutJenkins;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class PluginHelperUtilsTest extends AbstractHudsonTest {
+public class PluginHelperUtilsTest extends AbstractJenkinsTest {
     /*
      * Test all the helpers to see that no exceptions are thrown.
      */

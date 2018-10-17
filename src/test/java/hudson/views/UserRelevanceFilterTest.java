@@ -4,8 +4,6 @@ import hudson.model.Cause;
 import hudson.model.ListView;
 import hudson.model.Run;
 import hudson.model.User;
-import hudson.views.AbstractBuildTrendFilter.AmountType;
-import hudson.views.AbstractBuildTrendFilter.BuildCountType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +22,6 @@ import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
-import static hudson.views.BuildTrendFilter.StatusType.Completed;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.CauseMocker.cliCause;
 import static hudson.views.test.CauseMocker.userCause;
@@ -40,7 +37,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class UserRelevanceFilterTest extends AbstractHudsonTest {
+public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 
 	@Before
 	public void before() {

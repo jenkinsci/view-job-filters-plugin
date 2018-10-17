@@ -21,7 +21,7 @@ import static hudson.views.test.ViewJobFilters.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
-public class ScmTypeFilterTest extends AbstractHudsonTest {
+public class ScmTypeFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@Issue({"JENKINS-29991", "JENKINS-31710"})

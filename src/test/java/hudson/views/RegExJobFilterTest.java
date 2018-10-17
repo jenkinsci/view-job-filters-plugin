@@ -23,7 +23,7 @@ import static hudson.views.test.JobType.*;
 import static org.junit.Assert.*;
 import static hudson.views.test.ViewJobFilters.*;
 
-public class RegExJobFilterTest extends AbstractHudsonTest {
+public class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins

@@ -10,19 +10,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Days;
-import static hudson.views.AbstractBuildTrendFilter.AmountType.Hours;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
-import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
-import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched;
-import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
-import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched;
-import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.downstream;
@@ -35,7 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class UpstreamDownstreamJobsFilterTest extends AbstractHudsonTest {
+public class UpstreamDownstreamJobsFilterTest extends AbstractJenkinsTest {
     @Test
     @WithoutJenkins
     public void testDontIncludeUpstreamOrDownstream() {

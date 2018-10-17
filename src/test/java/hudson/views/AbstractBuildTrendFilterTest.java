@@ -21,11 +21,10 @@ import java.util.concurrent.Callable;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.test.FixedClock;
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.*;
 
-public class AbstractBuildTrendFilterTest extends AbstractHudsonTest {
+public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
 
     @After
     public void afterEachTest() {

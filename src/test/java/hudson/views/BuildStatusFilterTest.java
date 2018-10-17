@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class BuildStatusFilterTest extends AbstractHudsonTest {
+public class BuildStatusFilterTest extends AbstractJenkinsTest {
 
 	@Test
     @WithoutJenkins
