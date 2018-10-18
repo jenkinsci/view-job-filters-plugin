@@ -9,6 +9,8 @@ import org.jgrapht.graph.DefaultEdge;
 
 import java.util.*;
 
+import static java.lang.Boolean.TRUE;
+
 public class ViewGraph {
     private final Map<String, View> views;
     private DefaultDirectedGraph<String, DefaultEdge> graph;
@@ -153,19 +155,43 @@ public class ViewGraph {
         }
     }
 
-    public static List<View> getAllViews() {
-        // TODO this line seems to be what I would have to fix for JENKINS 21738
-        // the problem here is that I don't want to upgrade to a newer version of Jenkins, because that would make me maintain for Hudson
-        // and there is no fix for this in the 1.395 API.
-        // also, it appears that this problem will most likely only occur with the sectioned-view plugin
-        Collection<View> baseViews = JenkinsUtil.getInstance().getViews();
+    /*
+     * JENKINS-13464, JENKINS-14916
+     *
+     * Both OtherViewsFilter and UnclassifiedJobsFilter need to get all views via the getAllViews()
+     * method below which relies on Jenkins.getViews(). If a user doesn't have the View.READ permission
+     * for a view then Jenkins.getViews() calls view.getItems() in order to determine if the view
+     * contains any items at all. But since view.getItems() filters the items through OtherViewsFilter
+     * or UnclassifiedJobsFilter we end up calling getAllViews() again. This leads to on endless recursive
+     * loop and eventually a StackOverflowException.
+     *
+     * We could check if the current user has global View.READ permission, but that might break down for
+     * view-specific access control.
+     *
+     * The easiest, though admittedly hackish, solution is to detect the endless recursion by setting
+     * a thread-local flag indicating that the getAllViews() method is already running and short-circuiting
+     * the recursion in case we find ourselves being called repeatedly.
+     */
+    private static final ThreadLocal<Boolean> isGetAllViewsAlreadyRunning = new ThreadLocal<Boolean>();
 
-        // build comprehensive list
+    public static List<View> getAllViews() {
         List<View> views = new ArrayList<View>();
-        for (View view: baseViews) {
-            addViews(view, views);
+
+        if (TRUE.equals(isGetAllViewsAlreadyRunning.get())) {
+            return views;
         }
-        return views;
+        isGetAllViewsAlreadyRunning.set(TRUE);
+
+        try {
+            Collection<View> baseViews = JenkinsUtil.getInstance().getViews();
+            for (View view : baseViews) {
+                addViews(view, views);
+            }
+
+            return views;
+        } finally {
+            isGetAllViewsAlreadyRunning.remove();
+        }
     }
 
     public static Map<String, View> getAllViewsByName() {

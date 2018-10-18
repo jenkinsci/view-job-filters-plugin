@@ -1,12 +1,15 @@
 package hudson.views;
 
-import hudson.model.Descriptor;
-import hudson.model.ListView;
-import hudson.model.TopLevelItem;
-import hudson.model.View;
+import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
+import hudson.security.GlobalMatrixAuthorizationStrategy;
+import org.acegisecurity.GrantedAuthority;
+import org.acegisecurity.context.SecurityContextHolder;
+import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
@@ -330,5 +333,34 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         viewsByName.put("nested-view-1 / nested-view-2 / list-view-6", listView6);
 
         Assert.assertThat(ViewGraph.getAllViewsByName(), is(viewsByName));
+    }
+
+    @Issue({"JENKINS-13464", "JENKINS-14916"})
+    @Test
+    public void testGetAllViewsWithUnclassifiedJobsFilter() throws IOException {
+        testGetAllViews(new UnclassifiedJobsFilter(includeMatched.name()));
+    }
+
+    @Issue({"JENKINS-13464", "JENKINS-14916"})
+    @Test
+    public void testGetAllViewsWithOtherViewsFilter() throws IOException {
+        testGetAllViews(new OtherViewsFilter(includeMatched.name(), "other-view"));
+    }
+
+    public void testGetAllViews(ViewJobFilter filter) throws IOException {
+        TopLevelItem job1 = createFreeStyleProject("job-1");
+        TopLevelItem job2 = createFreeStyleProject("job-2");
+        createListView("other-view", job1);
+        View view = createFilteredView("filtered-view", filter);
+
+        GlobalMatrixAuthorizationStrategy strategy = new GlobalMatrixAuthorizationStrategy();
+        j.getInstance().setAuthorizationStrategy(strategy);
+
+        User user = j.getInstance().getUser("test");
+        user.setFullName("test");
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "", new GrantedAuthority[0]);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        assertThat(view.getItems(), hasSize(0));
     }
 }
