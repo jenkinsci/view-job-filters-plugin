@@ -156,7 +156,7 @@ public class ViewGraph {
     }
 
     /*
-     * JENKINS-13464, JENKINS-14916
+     * JENKINS-13464, JENKINS-14916, JENKINS-32496
      *
      * Both OtherViewsFilter and UnclassifiedJobsFilter need to get all views via the getAllViews()
      * method below which relies on Jenkins.getViews(). If a user doesn't have the View.READ permission

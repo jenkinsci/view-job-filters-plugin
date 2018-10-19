@@ -335,13 +335,13 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         Assert.assertThat(ViewGraph.getAllViewsByName(), is(viewsByName));
     }
 
-    @Issue({"JENKINS-13464", "JENKINS-14916"})
+    @Issue({"JENKINS-13464", "JENKINS-14916", "JENKINS-32496"})
     @Test
     public void testGetAllViewsWithUnclassifiedJobsFilter() throws IOException {
         testGetAllViews(new UnclassifiedJobsFilter(includeMatched.name()));
     }
 
-    @Issue({"JENKINS-13464", "JENKINS-14916"})
+    @Issue({"JENKINS-13464", "JENKINS-14916", "JENKINS-32496"})
     @Test
     public void testGetAllViewsWithOtherViewsFilter() throws IOException {
         testGetAllViews(new OtherViewsFilter(includeMatched.name(), "other-view"));
