@@ -2,11 +2,11 @@ package hudson.views;
 
 import hudson.Extension;
 import hudson.model.Descriptor;
-import hudson.model.Item;
 import hudson.model.TopLevelItem;
-import hudson.security.Permission;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+
+import static hudson.model.Item.*;
 
 /**
  *  The purpose of this filter is to identify items that have certain privileges granted for the current user, and match those items.
@@ -40,36 +40,20 @@ public class SecurityFilter extends AbstractIncludeExcludeJobFilter {
 
 	protected boolean matches(TopLevelItem item) {
 		boolean all = permissionCheckType.equals(ALL);
-		Boolean matches = null;
-		
-		matches = matches(build, item, Item.BUILD, all, matches);
-		matches = matches(configure, item, Item.CONFIGURE, all, matches);
-		matches = matches(workspace, item, Item.WORKSPACE, all, matches);
-		
-		// this should only happen when the view is misconfigured
-		if (matches == null) {
-			matches = false;
+
+		if (all) {
+			return
+				(!configure || item.getACL().hasPermission(CONFIGURE)) &&
+				(!build || item.getACL().hasPermission(BUILD)) &&
+				(!workspace || item.getACL().hasPermission(WORKSPACE));
+		} else {
+			return
+				(configure && item.getACL().hasPermission(CONFIGURE)) ||
+				(build && item.getACL().hasPermission(BUILD)) ||
+				(workspace && item.getACL().hasPermission(WORKSPACE));
 		}
-		return matches;
 	}
-	
-	private Boolean matches(boolean isSelected, TopLevelItem item, 
-			Permission permission, boolean all, Boolean lastMatched) {
-		// if we require all, and already we know one doesn't match, no need to check further
-		if (all && lastMatched != null && !lastMatched) {
-			return false;
-		}
-		// if we require only one, and already we know one does match, no need to check further
-		if (!all && lastMatched != null && lastMatched) {
-			return true;
-		}
-		// don't bother matching against this one if it wasn't selected
-		if (!isSelected) {
-			return null;
-		}
-		boolean matches = item.getACL().hasPermission(permission);
-		return matches;
-	}
+
 	public String getPermissionCheckType() {
 		return permissionCheckType;
 	}

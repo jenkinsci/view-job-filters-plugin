@@ -1,415 +1,354 @@
 package hudson.views;
 
-import hudson.model.AbstractProject;
-import hudson.model.Cause;
-import hudson.model.DependencyGraph;
-import hudson.model.Hudson;
-import hudson.model.Item;
-import hudson.model.ItemGroup;
-import hudson.model.Job;
-import hudson.model.Label;
-import hudson.model.Node;
-import hudson.model.ResourceList;
-import hudson.model.Run;
-import hudson.model.SCMedItem;
-import hudson.model.TaskListener;
-import hudson.model.TopLevelItem;
-import hudson.model.TopLevelItemDescriptor;
-import hudson.model.Queue.Executable;
-import hudson.model.Queue.Task;
-import hudson.model.queue.CauseOfBlockage;
-import hudson.model.queue.SubTask;
-import hudson.scm.CVSSCM;
-import hudson.scm.PollingResult;
-import hudson.scm.SCM;
-import hudson.security.Permission;
-import hudson.triggers.TimerTrigger;
-import hudson.util.DescribableList;
-import hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType;
+import hudson.model.*;
 
-import java.io.File;
-import java.io.IOException;
+import hudson.views.test.JobMocker;
+import hudson.views.test.JobType;
+import org.junit.Test;
+import org.jvnet.hudson.test.WithoutJenkins;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.SortedMap;
 
-import org.jvnet.hudson.test.HudsonTestCase;
+import static hudson.views.test.JobMocker.EmailType.DEFAULT;
+import static hudson.views.test.JobMocker.EmailType.EXTENDED;
+import static hudson.views.test.JobMocker.freeStyleProject;
+import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
+import static hudson.views.RegExJobFilter.ValueType.*;
+import static hudson.views.test.JobMocker.jobOfType;
+import static hudson.views.test.JobType.*;
+import static org.junit.Assert.*;
+import static hudson.views.test.ViewJobFilters.*;
 
-public class RegExJobFilterTest extends HudsonTestCase {
+public class RegExJobFilterTest extends AbstractJenkinsTest {
 
-	/**
-	 * Test all the helpers to see that no exceptions are thrown.
-	 */
-	public void testHelpers() {
-		PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
-		PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
-		PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
-		PluginHelperUtils.validateAndThrow(new GitLegacyValuesProvider());
-		PluginHelperUtils.validateAndThrow(new GitValuesProvider());
-		PluginHelperUtils.validateAndThrow(new MavenExtraStepsValuesHelper());
-		PluginHelperUtils.validateAndThrow(new MavenProjectValuesHelper());
-		PluginHelperUtils.validateAndThrow(new SvnValuesProvider());
+	@Test
+	@WithoutJenkins
+	public void testName() {
+		assertFalse(nameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+	    for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(nameRegex(".*").matches(jobOfType(type).name(null).asItem()));
+			assertTrue(nameRegex(".*").matches(jobOfType(type).name("").asItem()));
+			assertTrue(nameRegex("Foo").matches(jobOfType(type).name("Foo").asItem()));
+			assertFalse(nameRegex("Foo").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex("Foo.*").matches(jobOfType(type).name("Foobar").asItem()));
+			assertFalse(nameRegex("bar").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".*bar").matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".ooba.").matches(jobOfType(type).name("Foobar").asItem()));
+		}
 	}
-	
-	/**
-	 * Tests that the example given in the help page works as described.
+
+	@Test
+	@WithoutJenkins
+	public void testDescription() {
+		assertFalse(descRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(descRegex(".*").matches(jobOfType(type).desc(null).asItem()));
+			assertTrue(descRegex(".*").matches(jobOfType(type).desc("").asItem()));
+			assertTrue(descRegex("Foo").matches(jobOfType(type).desc("Foo").asItem()));
+			assertFalse(descRegex("Foo").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex("Foo.*").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertFalse(descRegex("bar").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex(".*bar").matches(jobOfType(type).desc("Foobar").asItem()));
+			assertTrue(descRegex(".ooba.").matches(jobOfType(type).desc("Foobar").asItem()));
+
+			assertTrue(descRegex(".*").matches(jobOfType(type).desc("\n").asItem()));
+			assertTrue(descRegex("Foo").matches(jobOfType(type).desc("Quux\nFoo").asItem()));
+			assertFalse(descRegex("Foo").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex("Foo.*").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertFalse(descRegex("bar").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex(".*bar").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+			assertTrue(descRegex(".ooba.").matches(jobOfType(type).desc("Quux\nFoobar").asItem()));
+
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc("").asItem()));
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc(null).asItem()));
+			assertFalse(descRegex(".*desc=test.*").matches(jobOfType(type).desc("nothing").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("desc=test").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("mydesc=test2").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("thisis\nmydesc=testn2\nforyou").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1&#xd;\ndesc=test&#xd;\n2").asItem()));
+			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1 desc=test 2").asItem()));
+		}
+	}
+
+	@Test
+	public void testSCM() {
+		assertFalse(scmRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM, SCM_TRIGGER_ITEM)) {
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", "branch").asItem()));
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs(null, "modules", "branch").asItem()));
+			assertFalse(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", null).asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root/my-office", "modules", "branch").asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules/my-office", "branch").asItem()));
+			assertTrue(scmRegex(".*my-office.*").matches(jobOfType(type).cvs("root", "modules", "branch/my-office").asItem()));
+
+			assertFalse(scmRegex(".*").matches(jobOfType(type).svn().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).svn("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).svn("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).svn("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).svn("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).svn("Foo", "Bar").asItem()));
+
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitBranches().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitBranches("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitBranches("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitBranches("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitBranches("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitBranches("Foo", "Bar").asItem()));
+
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitRepos().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitRepos("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitRepos("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitRepos("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
+
+			assertFalse(scmRegex(".*").matches(jobOfType(type).gitReposLegacy().asItem()));
+			assertTrue(scmRegex(".*").matches(jobOfType(type).gitReposLegacy("").asItem()));
+			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitReposLegacy("Foo").asItem()));
+			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertFalse(scmRegex("bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
+			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
+			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
+		}
+	}
+
+	@Test
+	public void testEmail() {
+		assertFalse(emailRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(emailRegex(".*").matches(jobOfType(type).email(null, DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("foo@bar.com, quux@baz.net", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).email("foo@bar.com", DEFAULT).asItem()));
+
+			assertFalse(emailRegex(".*").matches(jobOfType(type).email(null, EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*").matches(jobOfType(type).email("foo@bar.com, quux@baz.net", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("foo").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertFalse(emailRegex("@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex("foo@.*").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+			assertTrue(emailRegex(".*@bar.com").matches(jobOfType(type).email("foo@bar.com", EXTENDED).asItem()));
+		}
+	}
+
+	@Test
+	@WithoutJenkins
+	public void testSchedule() {
+		assertFalse(scheduleRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(scheduleRegex(".*").matches(jobOfType(type).trigger(null).asItem()));
+			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("").asItem()));
+			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("\n").asItem()));
+			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("# monday").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("# tuesday").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("* * * * *").asItem()));
+			assertFalse(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("* * * * *\n#").asItem()));
+			assertTrue(scheduleRegex(".*monday.*").matches(jobOfType(type).trigger("#monday\n* * * * *").asItem()));
+		}
+	}
+
+	@Test
+	public void testMaven() {
+		assertFalse(mavenRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("Foo", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foo", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("Foobar", "", "", "").asItem()));
+
+			assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("Foo\nbar", "", "", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "Foo", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "Foo", "", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "Foobar", "", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "", "Foo", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "Foo", "").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "", "Foobar", "").asItem()));
+
+			assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuilder("", "", "", "").asItem()));
+			assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuilder("", "", "", "Foo").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foo").asItem()));
+			assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
+			assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
+			assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuilder("", "", "", "Foobar").asItem()));
+		}
+
+		for (JobType<? extends Job> type: availableJobTypes(MAVEN_MODULE_SET)) {
+			for (JobMocker.MavenBuildStep step : JobMocker.MavenBuildStep.values()) {
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foo", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "Foobar", "", "", "").asItem()));
+
+				assertTrue(mavenRegex("Foo bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "Foo\nbar", "", "", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foo", "", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "Foobar", "", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foo", "").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "Foobar", "").asItem()));
+
+				assertTrue(mavenRegex(".*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "").asItem()));
+				assertTrue(mavenRegex("Foo").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foo").asItem()));
+				assertTrue(mavenRegex("Foo.*").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertFalse(mavenRegex("bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
+				assertTrue(mavenRegex(".*bar").matches(jobOfType(type).mavenBuildStep(step, "", "", "", "Foobar").asItem()));
+			}
+		}
+	}
+
+	@Test
+	@WithoutJenkins
+	public void testNode() {
+		assertFalse(nodeRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertTrue(nodeRegex(".*").matches(jobOfType(type).assignedLabel("").asItem()));
+			assertTrue(nodeRegex("Foo").matches(jobOfType(type).assignedLabel("Foo").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOfType(type).assignedLabel("Foo").asItem()));
+			assertTrue(nodeRegex("Foo.*").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
+			assertFalse(nodeRegex("bar").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
+			assertTrue(nodeRegex(".*bar").matches(jobOfType(type).assignedLabel("Foobar").asItem()));
+		}
+	}
+
+	@Test
+	public void testConfigRoundtrip() throws Exception {
+		testConfigRoundtrip(
+			"regex-view-1",
+			new RegExJobFilter("NaMeRegEx", excludeMatched.name(), NAME.name())
+		);
+
+		testConfigRoundtrip(
+			"regex-view-2",
+			new RegExJobFilter("DeScriptionRegEx", excludeMatched.name(), DESCRIPTION.name()),
+			new RegExJobFilter("EmailRegEx", includeUnmatched.name(), EMAIL.name())
+		);
+
+		testConfigRoundtrip(
+			"regex-view-3",
+			new RegExJobFilter("MavenRegEx", excludeUnmatched.name(), MAVEN.name()),
+			new RegExJobFilter("NodeRegEx", excludeMatched.name(), NODE.name()),
+			new RegExJobFilter("ScmRegEx", excludeMatched.name(), SCM.name())
+		);
+	}
+
+	/*
+	 * Tests that the example given in the wiki works as described.
+	 *
+	 * https://wiki.jenkins.io/display/JENKINS/Using+the+View+Job+Filters+Match+Type
 	 */
+	@Test
 	public void testHelpExample() {
-		List<TopLevelItem> all = toList("Work_Job", "Work_Nightly", "A-utility-job", "My_Job", "Job2_Nightly", "Util_Nightly", "My_Util");
+		List<TopLevelItem> all = asList(
+			freeStyleProject().name("0-Test_Job").asItem(),
+			freeStyleProject().name("1-Test_Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("2-Job").asItem(),
+			freeStyleProject().name("3-Test_Job").trigger("@daily").asItem(),
+			freeStyleProject().name("4-Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("5-Test_Job").trigger("@midnight").asItem(),
+			freeStyleProject().name("6-Test_Job").asItem()
+		);
+
 		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
-		
-		RegExJobFilter includeNonNightly = new RegExJobFilter(".*_Nightly", 
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString(), // true, false, 
-				RegExJobFilter.ValueType.NAME.toString());
-		filtered = includeNonNightly.filter(filtered, all, null);
-		List<TopLevelItem> expected = toList("Work_Job", "A-utility-job", "My_Job", "My_Util");
-		assertListEquals(expected, filtered);
 
-		RegExJobFilter excludeUtil = new RegExJobFilter(".*[Uu]til.*", 
-				AbstractIncludeExcludeJobFilter.IncludeExcludeType.excludeMatched.toString(), // false, true, 
-				RegExJobFilter.ValueType.NAME.toString());
-		filtered = excludeUtil.filter(filtered, all, null);
-		expected = toList("Work_Job", "My_Job");
-		assertListEquals(expected, filtered);
-	}
-	private void assertListEquals(List<TopLevelItem> l1, List<TopLevelItem> l2) {
-		assertEquals(l1.size(), l2.size());
-		for (int i = 0; i < l1.size(); i++) {
-			TopLevelItem i1 = l1.get(i);
-			TopLevelItem i2 = l2.get(i);
-			assertEquals(i1.getName(), i2.getName());
-		}
-	}
-	private List<TopLevelItem> toList(String... names) {
-		List<TopLevelItem> items = new ArrayList<TopLevelItem>();
-		for (String name: names) {
-			TopLevelItem item = new TestItem(name);
-			items.add(item);
-		}
-		return items;
-	}
-	
-	public void testIncludeExclude() {
-		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeMatched, true, false);
-		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.includeUnmatched, false, false);
-		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.excludeMatched, false, true);
-		doTestIncludeExclude("junit", ".*u.*", IncludeExcludeType.excludeUnmatched, false, false);
-		
-		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.includeMatched, false, false);
-		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.includeUnmatched, true, false);
-		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.excludeMatched, false, false);
-		doTestIncludeExclude("test", ".*u.*", IncludeExcludeType.excludeUnmatched, false, true);
-	}
-	
-	public void doTestIncludeExclude(String jobName, 
-			String regex, IncludeExcludeType includeExcludeType, // boolean negate, boolean exclude, 
-			boolean expectInclude, boolean expectExclude) {
-		TopLevelItem item = new TestItem(jobName);
-		RegExJobFilter filter = new RegExJobFilter(regex, includeExcludeType.toString(), RegExJobFilter.ValueType.NAME.toString());
-		boolean matched = filter.matches(item);
-		assertEquals(expectExclude, filter.exclude(matched));
-		assertEquals(expectInclude, filter.include(matched));
-	}
-	
-	public void testScmRegEx() throws IOException {
-		doTestScmRegEx("root", "modules", "branch", false);
-		doTestScmRegEx(null, "modules", "branch", false);
-		doTestScmRegEx("root", "modules", null, false);
-		doTestScmRegEx("root/my-office", "modules", "branch", true);
-		doTestScmRegEx("root", "modules/my-office", "branch", true);
-		doTestScmRegEx("root", "modules", "branch/my-office", true);
-	}
-	private void doTestScmRegEx(String root, String modules, String branch, boolean expectMatch) throws IOException {
-		RegExJobFilter filter = new RegExJobFilter(".*my-office.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCM.toString());
-		CVSSCM scm = new CVSSCM(root, modules, branch, "cvsRsh", false, false, false, false, "excludedRegions", null);
-		TestItem item = new TestItem("name", scm);
-		boolean matched = filter.matches(item);
-		assertEquals(expectMatch, matched);
-	}
-	
-	public void testDescription() throws IOException {
-		doTestDescription("", false);
-		doTestDescription(null, false);
-		doTestDescription("nothing", false);
-		doTestDescription("desc=test", true);
-		doTestDescription("mydesc=test2", true);
-		doTestDescription("thisis\nmydesc=testn2\nforyou", true);
-		doTestDescription("1&#xd;\ndesc=test&#xd;\n2", true);
-		doTestDescription("1 desc=test 2", true);
-	}
-	private void doTestDescription(String desc, boolean expectMatch) throws IOException {
-		RegExJobFilter filter = new RegExJobFilter(".*desc=test.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.DESCRIPTION.toString());
-		TestItem item = new TestItem("name");
-		item.setDescription(desc);
-		boolean matched = filter.matches(item);
-		assertEquals(expectMatch, matched);
+		RegExJobFilter includeTests = new RegExJobFilter(".*Test.*", includeMatched.name(), NAME.name());
+		filtered = includeTests.filter(filtered, all, null);
+		assertThat(filtered, is(asList(
+			all.get(0),
+			all.get(1),
+			all.get(3),
+			all.get(5),
+			all.get(6)
+		)));
+
+		RegExJobFilter excludeNonNightly = new RegExJobFilter(".*@midnight.*", excludeUnmatched.name(), SCHEDULE.name());
+		filtered = excludeNonNightly.filter(filtered, all, null);
+		assertThat(filtered, is(asList(
+			all.get(1),
+			all.get(5)
+		)));
 	}
 
-	public void testFullName() throws IOException {
-		doTestFullName("", "job", false);
-		doTestFullName("otherFolder", "job", false);
-		doTestFullName("myFolder", "job", true);
-		doTestFullName("myFolder", "bob", false);
-	}
-	private void doTestFullName(String folder, String name, boolean expectMatch) throws IOException {
-		RegExJobFilter filter = new RegExJobFilter("myFolder/job.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.FULL_NAME.toString());
-		TestItem item = new TestItem(new TestItemGroup(folder), name);
-		boolean matched = filter.matches(item);
-		assertEquals(expectMatch, matched);
-	}
+	private void testConfigRoundtrip(String viewName, RegExJobFilter... filters) throws Exception {
+		List<RegExJobFilter> expectedFilters = new ArrayList<RegExJobFilter>();
+		for (RegExJobFilter filter: filters) {
+			expectedFilters.add(new RegExJobFilter(filter.getRegex(), filter.getIncludeExcludeTypeString(), filter.getValueTypeString()));
+		}
 
-	public void testFolderName() throws IOException {
-		doTestFolderName("", "job", false);
-		doTestFolderName("otherFolder", "job", false);
-		doTestFolderName("myFolder", "job", true);
-		doTestFolderName("myFolder", "bob", true);
-		doTestFolderName("myFolder-2", "bob", true);
-		doTestFolderName("2-myFolder-2", "bob", false);
-	}
-	private void doTestFolderName(String folder, String name, boolean expectMatch) throws IOException {
-		RegExJobFilter filter = new RegExJobFilter("myFolder.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.FOLDER_NAME.toString());
-		TestItem item = new TestItem(new TestItemGroup(folder), name);
-		boolean matched = filter.matches(item);
-		assertEquals(expectMatch, matched);
+		ListView view = createFilteredView(viewName, filters);
+		j.configRoundtrip(view);
+
+		ListView viewAfterRoundtrip = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterRoundtrip.getJobFilters());
+
+		viewAfterRoundtrip.save();
+		j.getInstance().reload();
+
+		ListView viewAfterReload = (ListView)j.getInstance().getView(viewName);
+		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	public void testTrigger() throws Exception {
-		doTestTrigger("# monday", true);
-		doTestTrigger("# tuesday", false);
-		doTestTrigger("* * * * *", false);
-		doTestTrigger("* * * * *\n#monday", true);
-		doTestTrigger("#monday\n* * * * *", true);
-	}
-	@SuppressWarnings("unchecked")
-	private void doTestTrigger(String spec, boolean expectMatch) throws Exception {
-		RegExJobFilter filter = new RegExJobFilter(".*monday.*", IncludeExcludeType.includeMatched.toString(), RegExJobFilter.ValueType.SCHEDULE.toString());
-		TestProject proj = new TestProject("proj");
-		proj.addTrigger(new TimerTrigger(spec));
-		boolean matched = filter.matches(proj);
-		assertEquals(expectMatch, matched);
-	}
-	@SuppressWarnings({ "unchecked" })
-	private class TestItem extends Job implements SCMedItem, TopLevelItem {
-
-		private String description;
-		private SCM scm;
-
-		public TestItem(String name) {
-			this(name, null);
-		}
-
-		public TestItem(String name, SCM scm) {
-			super(new TestItemGroup(), name);
-			this.scm = scm;
-		}
-		public TestItem(ItemGroup parent, String name) {
-			super(parent, name);
-		}
-		
-		public AbstractProject<?, ?> asProject() {
-			return null;
-		}
-
-		public SCM getScm() {
-			return scm;
-		}
-		
-		public TopLevelItemDescriptor getDescriptor() {
-			return null;
-		}
-
-		@Override
-		protected SortedMap _getRuns() {
-			return null;
-		}
-
-		@Override
-		public boolean isBuildable() {
-			return false;
-		}
-
-		@Override
-		protected void removeRun(Run arg0) {
-		}
-
-		public PollingResult poll(TaskListener tasklistener) {
-			return null;
-		}
-
-		public boolean pollSCMChanges(TaskListener tasklistener) {
-			return false;
-		}
-
-		public ResourceList getResourceList() {
-			return null;
-		}
-
-		public boolean scheduleBuild() {
-			return false;
-		}
-
-		public boolean scheduleBuild(Cause cause) {
-			return false;
-		}
-
-		public boolean scheduleBuild(int i, Cause cause) {
-			return false;
-		}
-
-		public boolean scheduleBuild(int i) {
-			return false;
-		}
-
-		public void checkAbortPermission() {
-		}
-
-		public Executable createExecutable() throws IOException {
-			return null;
-		}
-
-		public Label getAssignedLabel() {
-			return null;
-		}
-
-		public CauseOfBlockage getCauseOfBlockage() {
-			return null;
-		}
-
-		public Node getLastBuiltOn() {
-			return null;
-		}
-
-		public String getWhyBlocked() {
-			return null;
-		}
-
-		public boolean hasAbortPermission() {
-			return false;
-		}
-
-		public boolean isBuildBlocked() {
-			return false;
-		}
-
-		public boolean isConcurrentBuild() {
-			return false;
-		}
-
-		public String getDescription() {
-			return description;
-		}
-
-		public void setDescription(String description) {
-			this.description = description;
-		}
-		
-		@Override
-		public Collection<? extends SubTask> getSubTasks() {
-			return null;
-		}
-
-		@Override
-		public Task getOwnerTask() {
-			return null;
-		}
-
-		@Override
-		public Object getSameNodeConstraint() {
-			return null;
-		}
-		
-	}
-	@SuppressWarnings("unchecked")
-	static class TestProject extends AbstractProject implements TopLevelItem {
-
-		public TestProject(String name) {
-			super(new TestItemGroup(), name);
-		}
-		@Override
-		protected void buildDependencyGraph(DependencyGraph graph) {
-		}
-		@Override
-		protected Class getBuildClass() {
-			return null;
-		}
-		@Override
-		public DescribableList getPublishersList() {
-			return null;
-		}
-		@Override
-		public boolean isFingerprintConfigured() {
-			return false;
-		}
-		protected void removeRun(Run run) {
-		}
-		@Override
-		protected synchronized void saveNextBuildNumber() throws IOException {
-		}
-		@Override
-		public void checkPermission(Permission p) {
-			super.checkPermission(p);
-		}
-		public TopLevelItemDescriptor getDescriptor() {
-			return null;
-		}
-		@Override
-		public Hudson getParent() {
-			return null;
-		}
-		@Override
-		public synchronized void save() throws IOException {
-			// do nothing!
+	private void assertFilterEquals(List<RegExJobFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+		assertThat(actualFilters.size(), is(expectedFilters.size()));
+		for (int i = 0; i < actualFilters.size(); i++) {
+			ViewJobFilter actualFilter = actualFilters.get(i);
+		    RegExJobFilter expectedFilter = expectedFilters.get(i);
+			assertThat(actualFilter, instanceOf(RegExJobFilter.class));
+			assertThat(((RegExJobFilter)actualFilter).getRegex(), is(expectedFilter.getRegex()));
+			assertThat(((RegExJobFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
+			assertThat(((RegExJobFilter)actualFilter).getValueTypeString(), is(expectedFilter.getValueTypeString()));
 		}
 	}
-	@SuppressWarnings("unchecked")
-	static class TestItemGroup implements ItemGroup {
-		private String name;
 
-		public TestItemGroup(String name) {
-			this.name = name;
-		}
-		public TestItemGroup() {
-			this("");
-		}
-
-		public String getDisplayName() {
-			return null;
-		}
-		public void save() throws IOException {
-		}
-		public String getFullDisplayName() {
-			return null;
-		}
-		public String getFullName() {
-			return name;
-		}
-		public Item getItem(String name) {
-			return null;
-		}
-		public Collection getItems() {
-			return null;
-		}
-		public File getRootDirFor(Item child) {
-			return null;
-		}
-		public String getUrl() {
-			return null;
-		}
-		public String getUrlChildPrefix() {
-			return null;
-		}
-		public File getRootDir() {
-			return null;
-		}
-		@Override
-		public void onDeleted(Item arg0) throws IOException {
-			
-		}
-		@Override
-		public void onRenamed(Item arg0, String arg1, String arg2)
-				throws IOException {
-		}
-		
-	}
 }

@@ -20,10 +20,12 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 		if (item instanceof AbstractProject) {
 			AbstractProject project = (AbstractProject) item;
 			DescribableList<Publisher,Descriptor<Publisher>> publishers = project.getPublishersList();
-			Publisher emailPublisher = publishers.get(descriptor);
-			if (emailPublisher != null) {
-				String value = getValue(emailPublisher);
-				values.add(value);
+			if (publishers != null) {
+                Publisher emailPublisher = publishers.get(descriptor);
+                if (emailPublisher != null) {
+                    String value = getValue(emailPublisher);
+                    values.add(value);
+                }
 			}
 		}
 		return values;
@@ -31,7 +33,7 @@ public abstract class AbstractEmailValuesProvider implements PluginHelperTestabl
 
 	@SuppressWarnings("unchecked")
 	protected Descriptor<Publisher> getDescriptor() {
-		return Hudson.getInstance().getDescriptor(getPluginTesterClass());
+		return JenkinsUtil.getInstance().getDescriptor(getPluginTesterClass());
 	}
 	protected abstract String getValue(Publisher publisher);
 }

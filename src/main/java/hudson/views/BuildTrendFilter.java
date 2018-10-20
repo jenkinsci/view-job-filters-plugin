@@ -70,17 +70,10 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 			}
 		},
 		TriggeredByUser(true) {
-			@SuppressWarnings("unchecked")
 			@Override
 			protected boolean matchesCause(Cause cause) {
-				if (cause == null) {
-					return false;
-				}
-				// have to have this check because jenkins 1.427 introduced "UserIdCause" (vs "UserCause")
-				// and I don't want to make this class depend on the bleeding edge
-				Class cls = cause.getClass();
-				String name = cls.getSimpleName();
-				return name.startsWith("User");
+				return (cause instanceof Cause.UserCause || cause instanceof Cause.UserIdCause) &&
+					!(cause instanceof CLICause);
 			}
 		},
 		TriggeredByRemote(true) {
@@ -92,7 +85,7 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 		TriggeredByUpstream(true) {
 			@Override
 			protected boolean matchesCause(Cause cause) {
-				return (cause instanceof UpstreamCause);
+				return (cause instanceof UpstreamCause || cause instanceof UpstreamCause.DeeplyNestedUpstreamCause);
 			}
 		},
 		TriggeredByCli(true) {

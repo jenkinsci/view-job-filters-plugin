@@ -6,9 +6,11 @@ import hudson.model.TopLevelItem;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
 
-import org.jvnet.hudson.test.HudsonTestCase;
+import org.junit.Test;
 
-public class UserRelevanceFilterContainerTest extends HudsonTestCase {
+public class UserRelevanceFilterContainerTest extends AbstractJenkinsTest {
+
+	@Test
 	public void testEmailWithNoUser() throws IOException {
 		UserRelevanceFilter filter = new UserRelevanceFilter(
 				true, true, true, true, true,
@@ -16,7 +18,7 @@ public class UserRelevanceFilterContainerTest extends HudsonTestCase {
 				BuildCountType.AtLeastOne.toString(), 2, AmountType.Builds.toString(),
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString()
 				);
-		TopLevelItem item = createFreeStyleProject();
+		TopLevelItem item = j.createFreeStyleProject();
 		filter.matchesEmail(item);
 	}
 }

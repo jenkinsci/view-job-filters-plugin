@@ -92,10 +92,10 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     }
     private User getUser() {
     	try {
-    		return Hudson.getInstance().getMe();
+    		return JenkinsUtil.getInstance().getMe();
     	} catch (Exception e) {
         	try {
-        		return Hudson.getInstance().getUser(Hudson.ANONYMOUS.getName());
+        		return JenkinsUtil.getInstance().getUser(Hudson.ANONYMOUS.getName());
         	} catch (Exception e2) {
             	return null;
         	}
@@ -192,12 +192,10 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 		for (Object causeObject: run.getCauses()) {
 			Cause cause = (Cause) causeObject;
 			String builderName = getUserValue(cause, matchAgainstFullName);
-			if (builderName != null) {
-				boolean matches = userName.equals(builderName);
-				if (matches) {
-					return true;
-				}
-			} 
+			boolean matches = userName.equals(builderName);
+			if (matches) {
+				return true;
+			}
 		}
 		return false;
 	}

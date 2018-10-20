@@ -1,6 +1,14 @@
 target
 work
-/*.iml
-/*.idea
-.idea/
 
+# IntelliJ settings
+.idea
+*.iml
+
+# Eclipse settings
+.settings
+.project
+.classpath
+
+# Logfiles
+*.log

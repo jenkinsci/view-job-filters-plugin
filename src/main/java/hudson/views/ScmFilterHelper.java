@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ScmFilterHelper {
 
-	public static List<ScmValuesProvider> matchers = buildMatchers();
+	public static final List<ScmValuesProvider> matchers = buildMatchers();
 	
 	public static List<String> getValues(SCM scm) {
 		List<String> values = new ArrayList<String>();

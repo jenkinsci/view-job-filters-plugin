@@ -40,7 +40,6 @@ public abstract class AbstractBuildTrendFilter
 	
 	private float amount;
 	
-	@DataBoundConstructor
 	public AbstractBuildTrendFilter(
 			String buildCountTypeString, 
 			float amount, String amountTypeString,
@@ -76,7 +75,7 @@ public abstract class AbstractBuildTrendFilter
 				// check the different types of durations to see if we've checked back far enough
 				if (amount > 0 && amountType != AmountType.Builds) {
                         // get the amount of time since it last built
-                        long now = System.currentTimeMillis();
+                        long now = Clock.getInstance().currentTimeMillis();
                         long then = run.getTimeInMillis();
                         float diff = now - then;
                         diff = amountType.convertMillisToAmount(diff);
