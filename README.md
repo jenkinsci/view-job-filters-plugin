@@ -11,11 +11,31 @@ as "chaining" of filters and negating filters.
 
 ## Development
 
-Clone the repository then execute the following in the project's root directory:
+* Start a local jenkins instance with the view-job-filter plugin included:
 
-```
-$ mvn hpi:run
-```
+  ```
+  $ mvn hpi:run
+  ```
+
+* Run tests and create a code coverage report:
+ 
+  ```
+  $ mvn test jacoco:report
+  ```
+  
+  The code coverage will be in `target/site/jacoco/index.html`.
+
+* Before submitting a pull request, run a full build including integration tests and findbugs:
+
+  ```
+  $ mvn install
+  ```
+  
+* Publish a release (only for maintainers):
+
+  ```
+  $ mvn release:prepare release:perform
+  ```
 
 ## License
 
