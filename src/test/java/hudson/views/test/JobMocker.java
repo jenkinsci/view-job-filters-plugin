@@ -18,6 +18,7 @@ import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
 import hudson.views.BuildTrendFilter;
+import jenkins.model.Jenkins;
 import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -29,9 +30,7 @@ import java.util.*;
 
 import static hudson.views.test.JobType.*;
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.*;
 
 public class JobMocker<T extends Job> {
 
@@ -66,6 +65,26 @@ public class JobMocker<T extends Job> {
     public JobMocker<T> name(String name) {
         when(job.getName()).thenReturn(name);
         when(job.toString()).thenReturn(name);
+        return this;
+    }
+
+    public JobMocker<T> fullName(String fullName) {
+        when(job.getFullName()).thenReturn(fullName);
+        return this;
+    }
+
+    public JobMocker<T> displayName(String fullName) {
+        when(job.getDisplayName()).thenReturn(fullName);
+        return this;
+    }
+
+    public JobMocker<T> parent(final ItemGroup parent) {
+        when(job.getParent()).thenAnswer(new Answer<ItemGroup>() {
+            @Override
+            public ItemGroup answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return parent;
+            }
+        });
         return this;
     }
 
@@ -206,7 +225,7 @@ public class JobMocker<T extends Job> {
     }
 
     public enum EmailType {
-       DEFAULT, EXTENDED
+        DEFAULT, EXTENDED
     }
 
     public JobMocker<T> email(String email, EmailType emailType) {

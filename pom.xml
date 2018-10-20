@@ -68,7 +68,7 @@
             <optional>true</optional>
         </dependency>
 
-	<!-- plugins extracted from jenkins-core -->
+        <!-- plugins extracted from jenkins-core -->
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
@@ -88,15 +88,21 @@
             <optional>true</optional>
         </dependency>
 
-	<!-- plugins necessary for tests -->
+        <!-- plugins necessary for tests -->
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>nested-view</artifactId>
             <version>1.14</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>cloudbees-folder</artifactId>
+            <version>6.0.0</version>
+            <scope>test</scope>
+        </dependency>
 
-	<!-- libs necessary for tests -->
+        <!-- libs necessary for tests -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -116,7 +122,7 @@
             <scope>test</scope>
         </dependency>
 
-	<!-- lib needed to support legacy git plugin -->
+        <!-- lib needed to support legacy git plugin -->
         <dependency>
             <groupId>org.spearce</groupId>
             <artifactId>jgit</artifactId>
@@ -124,7 +130,7 @@
             <scope>provided</scope>
         </dependency>
 
-	<!-- graph library to detect cycles in views -->
+        <!-- graph library to detect cycles in views -->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>

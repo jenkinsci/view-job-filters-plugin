@@ -22,6 +22,27 @@ public class ViewJobFilters {
                 RegExJobFilter.ValueType.NAME.name());
     }
 
+    public static RegExJobFilter fullNameRegex(String regex) {
+        return new RegExJobFilter(
+                regex,
+                includeMatched.name(),
+                RegExJobFilter.ValueType.FULL_NAME.name());
+    }
+
+    public static RegExJobFilter displayNameRegex(String regex) {
+        return new RegExJobFilter(
+                regex,
+                includeMatched.name(),
+                RegExJobFilter.ValueType.DISPLAY_NAME.name());
+    }
+
+    public static RegExJobFilter folderNameRegex(String regex) {
+        return new RegExJobFilter(
+                regex,
+                includeMatched.name(),
+                RegExJobFilter.ValueType.FOLDER_NAME.name());
+    }
+
     public static RegExJobFilter descRegex(String regex) {
         return new RegExJobFilter(
                 regex,
@@ -78,7 +99,7 @@ public class ViewJobFilters {
 
     public static JobStatusFilter jobStatus(
             boolean unstable,
-			boolean failed,
+            boolean failed,
             boolean aborted,
             boolean disabled,
             boolean stable) {
@@ -128,7 +149,7 @@ public class ViewJobFilters {
 
     public static BuildDurationFilter buildDuration(float minutes, String lessThan) {
         return new BuildDurationFilter(minutes, "<".equals(lessThan),
-            All.name(), 0, Builds.name(), includeMatched.name());
+                All.name(), 0, Builds.name(), includeMatched.name());
     }
 
     public static BuildTrendFilter buildTrend(BuildTrendFilter.StatusType statusType) {
@@ -144,22 +165,22 @@ public class ViewJobFilters {
     public static UserRelevanceFilter userRelevance(UserRelevanceOption... options) {
         List<UserRelevanceOption> optionsList = asList(options);
         return new UserRelevanceFilter(
-            optionsList.contains(MATCH_USER_ID),
-            optionsList.contains(MATCH_USER_FULL_NAME),
-            optionsList.contains(IGNORE_CASE),
-            optionsList.contains(IGNORE_WHITESPACE),
-            optionsList.contains(IGNORE_NON_ALPHA_NUM),
-            optionsList.contains(MATCH_BUILDER),
-            optionsList.contains(MATCH_EMAIL),
-            optionsList.contains(MATCH_SCM_LOG),
-            All.name(), 0, AbstractBuildTrendFilter.AmountType.Builds.name(), includeMatched.name());
+                optionsList.contains(MATCH_USER_ID),
+                optionsList.contains(MATCH_USER_FULL_NAME),
+                optionsList.contains(IGNORE_CASE),
+                optionsList.contains(IGNORE_WHITESPACE),
+                optionsList.contains(IGNORE_NON_ALPHA_NUM),
+                optionsList.contains(MATCH_BUILDER),
+                optionsList.contains(MATCH_EMAIL),
+                optionsList.contains(MATCH_SCM_LOG),
+                All.name(), 0, AbstractBuildTrendFilter.AmountType.Builds.name(), includeMatched.name());
     }
 
     public static ParameterFilter parameter(String nameRegex,
                                             String valueRegex,
                                             String descriptionRegex) {
         return new ParameterFilter(includeMatched.name(), nameRegex, valueRegex, descriptionRegex,
-           true, false, 0, false);
+                true, false, 0, false);
     }
 
 
