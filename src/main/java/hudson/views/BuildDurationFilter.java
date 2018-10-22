@@ -47,7 +47,7 @@ public class BuildDurationFilter extends AbstractBuildTrendFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Build Duration Filter";
+			return hudson.views.filters.Messages.BuildDurationFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

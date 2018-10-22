@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-  <f:entry title="${%Match Type}">
+  <f:entry title="${%Match Type}:">
     <select name="includeExcludeTypeString" class="setting-input">
       <f:option value="includeMatched" selected="${instance.includeMatched}">${%Include Matched - Add jobs that match this filter}</f:option>
       <f:option value="includeUnmatched" selected="${instance.includeUnmatched}">${%Include Unmatched - Add jobs that don't match this filter}</f:option>

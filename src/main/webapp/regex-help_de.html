@@ -1,0 +1,22 @@
+<div>
+  Es können so viele Fiter für Reguläre Ausdrücke wie gewünscht verwendet werden. Die Filter werden in der Reihenfolge
+  angewendet in der sie angeordnet sind.
+  <br/><br/>
+  <b>Wert</b>: Es kann aus den folgenden Werten gewählt werden:
+  <ul>
+  	<li><u>Job: Name</u></li>
+  	<li><u>Job: Vollständiger Name</u>: Vollständiger Name inklusive Name des Ordners, ohne führendes '/'</li>
+  	<li><u>Job: Anzeigename</u></li>
+  	<li><u>Ordner: Vollständiger Name</u>: Vollständiger Pfad aller Ordner, z.B. 'topfolder/subfolder'</li>
+  	<li><u>Job-Beschreibung</u></li>
+  	<li><u>SCM-Konfiguration</u>: Auswahl anhand des SCMs ist nützlich wenn man hunderte von Jobs hat, die
+       automatisch organisiert werden sollen, und die im SCM bereits organisiert sind.
+       (Zieht momentan die Pfade/Konfiguration für CVS, SVN und git heran.)</li>
+  	<li><u>Email-Empfänger</u>: Auswahl anhand der Email ist ein nützliches Kriterium für "Wer interessiert sich für diesen Job?"</li>
+  	<li><u>Maven-Konfiguration</u></li>
+  	<li><u>Build-Zeitplan</u>: Vergleich mit dem CRON Ausdruck (und Kommentaren) für zeitgesteuerte Builds und Builds anhand regelmäßiger SCM-Abfragen</li>
+  	<li><u>Node Label Ausdruck</u>: Vergleich mit dem Label-Ausdruck der "Beschränke, wo dieses Projekt ausgeführt werden darf" Option.</li>
+  </ul>
+  <br/>
+  <b>Filter-Typ</b>: Ob dieser Filter zusätzliche Jobs hinzufügt oder bestehende herausfiltert.
+</div>

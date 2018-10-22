@@ -89,7 +89,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 		
 		@Override
 		public String getDisplayName() {
-			return "Other Views Filter";
+			return hudson.views.filters.Messages.OtherViewsFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {
@@ -117,17 +117,17 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
          */
         public FormValidation doCheckOtherViewName(@QueryParameter String otherViewName, @QueryParameter String viewName) throws IOException, ServletException, InterruptedException  {
         	if (NO_VIEW_SELECTED.equals(otherViewName)) {
-        		return FormValidation.error("You must select a view");
+        		return FormValidation.error(hudson.views.filters.Messages.OtherViewsFilter_Validation_NoViewSelected());
         	}
 
 			View otherView = ViewGraph.getView(otherViewName);
             if (otherView == null) {
-                return FormValidation.error("The view you selected (\"" + otherViewName + "\") has been deleted or renamed");
+                return FormValidation.error(hudson.views.filters.Messages.OtherViewsFilter_Validation_DeletedOrRenamed(otherViewName));
             }
 
             View thisView = ViewGraph.getView(viewName);
             if (thisView == null) {
-				return FormValidation.warning("Unable to validate filter");
+				return FormValidation.warning(hudson.views.filters.Messages.OtherViewsFilter_Validation_CannotValidate());
 			}
 
 			ListView thisViewNew = new ListView(thisView.getViewName());
@@ -140,7 +140,7 @@ public class OtherViewsFilter extends AbstractIncludeExcludeJobFilter {
 			if (viewGraph.getViewsInCycles().contains(thisViewNew)) {
 				List<View> cycle = viewGraph.getFirstCycleWithView(thisViewNew);
 				cycle.set(cycle.indexOf(thisViewNew), thisView);
-				return FormValidation.error("Circular view definition: " + ViewGraph.toName(cycle));
+				return FormValidation.error(hudson.views.filters.Messages.OtherViewsFilter_Validation_CircularViewDefinition(ViewGraph.toName(cycle)));
 			}
             return FormValidation.ok();
         }

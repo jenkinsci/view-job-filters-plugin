@@ -89,7 +89,7 @@ public class MostRecentJobsFilter extends ViewJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Most Recent Jobs Filter";
+			return hudson.views.filters.Messages.MostRecentJobsFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

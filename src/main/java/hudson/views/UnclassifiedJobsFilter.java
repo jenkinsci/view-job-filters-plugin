@@ -74,7 +74,7 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Unclassified Jobs";
+			return hudson.views.filters.Messages.UnclassifiedJobsFilter_DisplayName();
 		}
         @Override
         public String getHelpFile() {
@@ -87,7 +87,7 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 		public FormValidation doCheck(@QueryParameter String viewName) throws IOException, ServletException, InterruptedException  {
 			View thisView = ViewGraph.getView(viewName);
 			if (thisView == null) {
-				return FormValidation.warning("Unable to validate filter");
+				return FormValidation.warning(hudson.views.filters.Messages.UnclassifiedJobsFilter_Validation_CannotValidate());
 			}
 
 			ListView thisViewNew = new ListView(thisView.getViewName());
@@ -100,7 +100,7 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
 			if (viewGraph.getViewsInCycles().contains(thisViewNew)) {
 				List<View> cycle = viewGraph.getFirstCycleWithView(thisViewNew);
 				cycle.set(cycle.indexOf(thisViewNew), thisView);
-				return FormValidation.error("Circular view definition: " + ViewGraph.toName(cycle));
+				return FormValidation.error(hudson.views.filters.Messages.UnclassifiedJobsFilter_Validation_CircularViewDefinition(ViewGraph.toName(cycle)));
 			}
 			return FormValidation.ok();
 		}

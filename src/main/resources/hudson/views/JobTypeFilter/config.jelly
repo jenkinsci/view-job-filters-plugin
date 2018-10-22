@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-  <f:entry title="${%Job Type}" field="jobType">
+  <f:entry title="${%Job Type}:" field="jobType">
     <select name="jobType" class="setting-input">
     	<j:forEach var="type" items="${descriptor.getJobTypes(it.ownerItemGroup)}">
 	      <f:option value="${type.id}" selected="${instance.jobType == type}">${type.displayName}</f:option>

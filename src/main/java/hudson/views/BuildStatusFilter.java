@@ -45,7 +45,7 @@ public class BuildStatusFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Build Statuses Filter";
+			return hudson.views.filters.Messages.BuildStatusFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

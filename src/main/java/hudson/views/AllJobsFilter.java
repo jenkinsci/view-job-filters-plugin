@@ -29,7 +29,7 @@ public class AllJobsFilter extends ViewJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "All Jobs";
+			return hudson.views.filters.Messages.AllJobsFilter_DisplayName();
 		}
         @Override
         public String getHelpFile() {

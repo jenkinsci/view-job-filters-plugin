@@ -46,7 +46,7 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Job Type Filter";
+			return hudson.views.filters.Messages.JobTypeFilter_DisplayName();
 		}
 		public List<TopLevelItemDescriptor> getJobTypes(ItemGroup<?> context) {
             return DescriptorVisibilityFilter.apply(context, Items.all());

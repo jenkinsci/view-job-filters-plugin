@@ -254,7 +254,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Logged-in User Relevance Filter";
+			return hudson.views.filters.Messages.UserRelevanceFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

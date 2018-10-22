@@ -111,7 +111,7 @@ public class UpstreamDownstreamJobsFilter extends ViewJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Upstream/Downstream Jobs Filter";
+			return hudson.views.filters.Messages.UpstreamDownstreamJobsFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

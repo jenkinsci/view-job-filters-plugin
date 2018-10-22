@@ -194,7 +194,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
     public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
         @Override
         public String getDisplayName() {
-            return "Regular Expression Job Filter";
+            return hudson.views.filters.Messages.RegExJobFilter_DisplayName();
         }
         @Override
         public String getHelpFile() {

@@ -160,7 +160,7 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Build Trend Filter";
+			return hudson.views.filters.Messages.BuildTrendFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

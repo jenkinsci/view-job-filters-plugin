@@ -58,7 +58,7 @@ public class AddRemoveFallbackFilter extends ViewJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Fallback Filter";
+		    return hudson.views.filters.Messages.AddRemoveFallbackFilter_DisplayName();
 		}
 
 		@Override

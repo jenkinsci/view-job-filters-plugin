@@ -1,0 +1,9 @@
+<?jelly escape-by-default='true'?>
+<div>
+Erstelle dynamische Ansichten mit genau den Elementen, die du sehen willst. Dynamische Ansichten
+können Elemente automatisch anhand unterschiedlichster Kriterien inkludieren oder exkludieren:
+anhand des SCM-Pfads oder Typs; des Elementtyps; des Builderfolgs, des Buildtrends und der
+Buildauslöser; der Relevanz für den eingeloggten Benutzer; der Emailempfänger; der Maven-Konfiguration;
+der Build-Parameterisierung; oder der Benutzerrechte. Filter können beliebig kombiniert werden,
+um in Ansichten genau die Elemente anzuzeigen, die man sehen will.
+</div>

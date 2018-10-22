@@ -63,7 +63,7 @@ public class JobStatusFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Job Statuses Filter";
+			return hudson.views.filters.Messages.JobStatusFilter_DisplayName();
 		}
 		@Override
         public String getHelpFile() {

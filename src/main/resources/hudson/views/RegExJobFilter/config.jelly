@@ -2,10 +2,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
-  <f:entry title="${%Regular Expression}">
+  <f:entry title="${%Regular Expression}:">
       <f:textbox name="regex" field="regex" checkUrl="'${rootURL}/descriptorByName/hudson.views.RegExJobFilter/checkRegex?value='+encodeURIComponent(this.value)"/>
   </f:entry>
-  <f:entry title="${%Match Value}">
+  <f:entry title="${%Match Value}:">
     <select name="valueTypeString" class="setting-input">
       <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
       <f:option value="FULL_NAME" selected="${instance.valueTypeString == 'FULL_NAME'}">${%Job full name}</f:option>

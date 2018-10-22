@@ -40,7 +40,7 @@ public class SecuredJobsFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "Project-based Secured Jobs";
+			return hudson.views.filters.Messages.SecuredJobsFilter_DisplayName();
 		}
         @Override
         public String getHelpFile() {

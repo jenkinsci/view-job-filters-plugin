@@ -62,7 +62,7 @@ public class SecurityFilter extends AbstractIncludeExcludeJobFilter {
 	public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
 		@Override
 		public String getDisplayName() {
-			return "User Permissions for Jobs";
+			return hudson.views.filters.Messages.SecurityFilter_DisplayName();
 		}
         @Override
         public String getHelpFile() {

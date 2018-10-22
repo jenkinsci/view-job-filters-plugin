@@ -52,7 +52,7 @@ public class BuildFilterColumn extends ListViewColumn {
 	public static class DescriptorImpl extends ListViewColumnDescriptor {
 		@Override
 		public String getDisplayName() {
-			return "Build Filter (Wrapper) Column";
+			return hudson.views.filters.Messages.BuildFilterColumn_DisplayName();
 		}
 		@Override
 		public ListViewColumn newInstance(StaplerRequest req, JSONObject obj)

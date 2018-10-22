@@ -256,7 +256,7 @@ public class ParameterFilter
     public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
         @Override
         public String getDisplayName() {
-            return "Parameterized Jobs Filter";
+            return hudson.views.filters.Messages.ParameterFilter_DisplayName();
         }
         @Override
         public String getHelpFile() {
