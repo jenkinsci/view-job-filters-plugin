@@ -3,10 +3,22 @@
   <br/><br/>
   <b>Match Value</b>: Choose from the following to match on
   <ul>
-  	<li><u>Job name</u></li>
-  	<li><u>Job full name</u>: including the name of folders, without a leading '/'</li>
-  	<li><u>Job display name</u></li>
-  	<li><u>Job folder name</u>: The full name of all folders, like 'topfolder/subfolder'</li>
+    <li><u>Job name</u>
+      <ul>
+        <li><u>Name</u> of the job itself, e.g. 'job'</li>
+        <li><u>Full name</u> of the job including parent folders, e.g. 'folder/subfolder/job'</li>
+        <li><u>Display name</u> of the job, e.g. 'Job'</li>
+        <li><u>Full display name</u> of the job including parent folders, e.g. 'Folder » SubFolder » Job'</li>
+      </ul>
+    </li>
+  	<li><u>Job folder name</u>: the name of the job's parent folder
+      <ul>
+        <li><u>Name</u> of the folder itself, e.g. 'subfolder'</li>
+        <li><u>Full name</u> of the folder including parent folders, e.g. 'folder/subfolder'</li>
+        <li><u>Display name</u> of the folder, e.g. 'SubFolder'</li>
+        <li><u>Full display name</u> of the folder including parent folders, e.g. 'Folder » SubFolder'</li>
+      </ul>
+    </li>
   	<li><u>Job description</u></li>
   	<li><u>Job SCM configuration</u>: Matching by SCM is extremely useful if you have hundreds of jobs that need to be "auto organized", and are already organized under source control.  (Currently matches against SVN, Git, and CVS paths/configuration)</li>
   	<li><u>Email recipients</u>: Matching by Email is useful for organizing by "who cares about this job."</li>
@@ -16,9 +28,4 @@
   </ul>
   <br/>
   <b>Match Type</b>: Choose whether this filter will add additional jobs, or remove jobs.
-  <br/><br/>
-  <b>Example</b> - combine two Regular Expression Filters in this way:<br/> 
-  One with a Regular Expression of "<b>.*_Nightly</b>" for a Match Value of "<b>Job name</b>", and a Match Type of "<b>Include Matched</b>",<br/> 
-  And another with a Regular Expression of "<b>.*site:deploy.*</b>" for a Match Value of "<b>Maven configuration</b>", and a Match Type of "<b>Exclude Unmatched</b>".<br/>
-  This combination creates a view that shows all nightly jobs that also deploy a Maven site.
 </div>

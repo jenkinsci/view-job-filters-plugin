@@ -4,10 +4,22 @@
   <br/><br/>
   <b>Wert</b>: Es kann aus den folgenden Werten gewählt werden:
   <ul>
-  	<li><u>Job: Name</u></li>
-  	<li><u>Job: Vollständiger Name</u>: Vollständiger Name inklusive Name des Ordners, ohne führendes '/'</li>
-  	<li><u>Job: Anzeigename</u></li>
-  	<li><u>Ordner: Vollständiger Name</u>: Vollständiger Pfad aller Ordner, z.B. 'topfolder/subfolder'</li>
+  	<li><u>Job-Name</u>
+      <ul>
+        <li><u>Name</u> des Jobs selbst, z.B. 'job'</li>
+        <li><u>Vollständiger Name</u> des Jobs einschließlich Elternordner, z.B. 'ordner/unterordner/job'</li>
+        <li><u>Anzeigename</u> des Jobs, z.B. 'Job'</li>
+        <li><u>Vollständiger Anzeigename</u> des Jobs einschließlich Elternordner, z.B. 'Ordner » Unterordner » Job'</li>
+      </ul>
+    </li>
+  	<li><u>Ordner-Name</u>: Name des Elternordners
+      <ul>
+        <li><u>Name</u> des Elternordners, z.B. 'unterordner'</li>
+        <li><u>Vollständiger Name</u> des Elternordners einschließlich eigener Elternordner, z.B. 'ordner/unterordner'</li>
+        <li><u>Anzeigename</u> des Elternordners, z.B. 'Job'</li>
+        <li><u>Vollständiger Anzeigename</u> des Elternordners einschließlich eigener Elternordner, z.B. 'Ordner » Unterordner'</li>
+      </ul>
+    </li>
   	<li><u>Job-Beschreibung</u></li>
   	<li><u>SCM-Konfiguration</u>: Auswahl anhand des SCMs ist nützlich wenn man hunderte von Jobs hat, die
        automatisch organisiert werden sollen, und die im SCM bereits organisiert sind.

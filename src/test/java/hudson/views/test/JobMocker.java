@@ -17,8 +17,6 @@ import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
-import hudson.views.BuildTrendFilter;
-import jenkins.model.Jenkins;
 import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -33,8 +31,6 @@ import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 public class JobMocker<T extends Job> {
-
-
 
     public enum MavenBuildStep {
         PRE, POST
@@ -75,6 +71,11 @@ public class JobMocker<T extends Job> {
 
     public JobMocker<T> displayName(String fullName) {
         when(job.getDisplayName()).thenReturn(fullName);
+        return this;
+    }
+
+    public JobMocker<T> fullDisplayName(String fullDisplayName) {
+        when(job.getFullDisplayName()).thenReturn(fullDisplayName);
         return this;
     }
 

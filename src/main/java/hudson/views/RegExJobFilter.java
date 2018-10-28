@@ -7,7 +7,6 @@ import hudson.scm.SCM;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -23,8 +22,6 @@ import javax.servlet.ServletException;
  * Simple JobFilter that filters jobs based on a regular expression, and
  * making use of negate and exclude flags.
  *
- * TODO limitation - cannot perform validations in hetero list?
- *
  * @author Jacob Robertson
  */
 public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
@@ -32,13 +29,24 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	public enum ValueType {
 		NAME {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
-				values.addAll(Collections.singletonList(item.getName()));
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
+			    if (options.matchName) {
+					values.add(item.getName());
+				}
+				if (options.matchFullName) {
+					values.add(item.getFullName());
+				}
+				if (options.matchDisplayName) {
+					values.add(item.getDisplayName());
+				}
+				if (options.matchFullDisplayName) {
+					values.add(item.getFullDisplayName());
+				}
 			}
 		},
 		DESCRIPTION {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 			   	if (item instanceof AbstractItem) {
 					addSplitValues(values, ((AbstractItem) item).getDescription());
 				}
@@ -46,7 +54,7 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 		},
 		SCM {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 				if (item instanceof AbstractProject) {
 					SCM scm = ((AbstractProject)item).getScm();
 					values.addAll(ScmFilterHelper.getValues(scm));
@@ -64,19 +72,19 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 		},
 		EMAIL {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 				values.addAll(EmailValuesHelper.getValues(item));
 			}
 		},
 		MAVEN {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 				values.addAll(MavenValuesHelper.getValues(item));
 			}
 		},
 		SCHEDULE {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 				for (String scheduleValue: TriggerFilterHelper.getValues(item)) {
 					// we do this split, because the spec may have multiple lines - especially including the comment
 					addSplitValues(values, scheduleValue);
@@ -85,30 +93,29 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 		},
 		NODE {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 			    if (item instanceof AbstractProject) {
 					String node = ((AbstractProject) item).getAssignedLabelString();
 					values.add(node);
 				}
 			}
 		},
-		DISPLAY_NAME {
-			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
-				values.add(item.getDisplayName());
-			}
-		},
-		FULL_NAME {
-			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
-				values.add(item.getFullName());
-			}
-		},
 		FOLDER_NAME {
 			@Override
-			void doGetMatchValues(TopLevelItem item, List<String> values) {
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
 				if (item.getParent() != null) {
-					values.add(item.getParent().getFullName());
+					if (options.matchName && item.getParent() instanceof Item) {
+						values.add(((Item)item.getParent()).getName());
+					}
+					if (options.matchFullName) {
+						values.add(item.getParent().getFullName());
+					}
+					if (options.matchDisplayName) {
+						values.add(item.getParent().getDisplayName());
+					}
+					if (options.matchFullDisplayName) {
+						values.add(item.getParent().getFullDisplayName());
+					}
 				}
 			}
 		};
@@ -124,22 +131,26 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 			}
 		}
 
-		/**
-		 * Extracts the values to match against for a given Item.
-		 * @param item The item to match against
-		 * @param values The list of values to add to
-		 */
-		abstract void doGetMatchValues(TopLevelItem item, List<String> values);
+		abstract void doGetMatchValues(TopLevelItem item, Options options, List<String> values);
 
-		/**
-		 * Returns a list of the match values for this Enum value.
-		 * @param item The item to match against.
-		 * @return A list containing all values to match against. Never null.
-		 */
-		public List<String> getMatchValues(TopLevelItem item) {
+		public List<String> getMatchValues(TopLevelItem item, Options options) {
 		    List<String> values = new ArrayList<String>();
-			doGetMatchValues(item, values);
+			doGetMatchValues(item, options, values);
 			return values;
+		}
+	}
+
+	public static class Options {
+		public final boolean matchName;
+		public final boolean matchFullName;
+		public final boolean matchDisplayName;
+		public final boolean matchFullDisplayName;
+
+	    public Options(boolean matchName, boolean matchFullName, boolean matchDisplayName, boolean matchFullDisplayName) {
+			this.matchName = matchName;
+			this.matchFullName = matchFullName;
+			this.matchDisplayName = matchDisplayName;
+			this.matchFullDisplayName = matchFullDisplayName;
 		}
 	}
 
@@ -147,14 +158,28 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	private String valueTypeString;
 	private String regex;
 	transient private Pattern pattern;
+	private boolean matchName;
+	private boolean matchFullName;
+	private boolean matchDisplayName;
+	private boolean matchFullDisplayName;
+
+	public RegExJobFilter(String regex, String includeExcludeTypeString, String valueTypeString) {
+	    this(regex, includeExcludeTypeString, valueTypeString, true, false, false, false);
+	}
 
     @DataBoundConstructor
-    public RegExJobFilter(String regex, String includeExcludeTypeString, String valueTypeString) {
+    public RegExJobFilter(String regex, String includeExcludeTypeString, String valueTypeString,
+			boolean matchName, boolean matchFullName, boolean matchDisplayName, boolean matchFullDisplayName) {
     	super(includeExcludeTypeString);
     	this.regex = regex;
     	this.pattern = Pattern.compile(regex);
     	this.valueTypeString = valueTypeString;
     	this.valueType = ValueType.valueOf(valueTypeString);
+    	this.matchName = matchName;
+    	this.matchFullName = matchFullName;
+    	this.matchDisplayName = matchDisplayName;
+    	this.matchFullDisplayName = matchFullDisplayName;
+    	initOptions();
     }
 
     Object readResolve() {
@@ -164,11 +189,18 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
         if (valueTypeString != null) {
         	valueType = ValueType.valueOf(valueTypeString);
         }
+        initOptions();
         return super.readResolve();
     }
 
+    private void initOptions() {
+		if (!this.matchName && !this.matchFullName && !this.matchDisplayName && !this.matchFullDisplayName) {
+			this.matchName = true;
+		}
+	}
+
     public boolean matches(TopLevelItem item) {
-        List<String> matchValues = valueType.getMatchValues(item);
+        List<String> matchValues = valueType.getMatchValues(item, getOptions());
         for (String matchValue: matchValues) {
         	// check null here so matchers don't have to
         	if (matchValue != null &&
@@ -189,8 +221,24 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 	public String getValueTypeString() {
 		return valueTypeString;
 	}
+	public boolean isMatchName() {
+		return matchName;
+	}
+	public boolean isMatchFullName() {
+		return matchFullName;
+	}
+	public boolean isMatchDisplayName() {
+		return matchDisplayName;
+	}
+	public boolean isMatchFullDisplayName() {
+		return matchFullDisplayName;
+	}
 
-    @Extension
+	public Options getOptions() {
+		return new Options(matchName, matchFullName, matchDisplayName, matchFullDisplayName);
+	}
+
+	@Extension
     public static class DescriptorImpl extends Descriptor<ViewJobFilter> {
         @Override
         public String getDisplayName() {
@@ -213,5 +261,4 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
             return FormValidation.ok();
         }
     }
-
 }

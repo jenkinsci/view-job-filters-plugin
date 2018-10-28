@@ -3,6 +3,8 @@ package hudson.views;
 import com.cloudbees.hudson.plugins.folder.Folder;
 import hudson.model.*;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import org.jvnet.hudson.test.WithoutJenkins;
 import static hudson.views.test.JobMocker.EmailType.DEFAULT;
 import static hudson.views.test.JobMocker.EmailType.EXTENDED;
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static hudson.views.test.ViewJobFilters.NameOptions.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -30,52 +33,49 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	@Test
 	@WithoutJenkins
 	public void testName() {
-		assertFalse(nameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(nameRegex(".*", MATCH_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(nameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(nameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(nameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(nameRegex(".*").matches(jobOfType(type).name(null).asItem()));
-			assertTrue(nameRegex(".*").matches(jobOfType(type).name("").asItem()));
-			assertTrue(nameRegex("Foo").matches(jobOfType(type).name("Foo").asItem()));
-			assertFalse(nameRegex("Foo").matches(jobOfType(type).name("Foobar").asItem()));
-			assertTrue(nameRegex("Foo.*").matches(jobOfType(type).name("Foobar").asItem()));
-			assertFalse(nameRegex("bar").matches(jobOfType(type).name("Foobar").asItem()));
-			assertTrue(nameRegex(".*bar").matches(jobOfType(type).name("Foobar").asItem()));
-			assertTrue(nameRegex(".ooba.").matches(jobOfType(type).name("Foobar").asItem()));
-		}
-	}
+			assertFalse(nameRegex(".*", MATCH_NAME).matches(jobOfType(type).name(null).asItem()));
+			assertTrue(nameRegex(".*", MATCH_NAME).matches(jobOfType(type).name("").asItem()));
+			assertTrue(nameRegex("Foo", MATCH_NAME).matches(jobOfType(type).name("Foo").asItem()));
+			assertFalse(nameRegex("Foo", MATCH_NAME).matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex("Foo.*", MATCH_NAME).matches(jobOfType(type).name("Foobar").asItem()));
+			assertFalse(nameRegex("bar", MATCH_NAME).matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".*bar", MATCH_NAME).matches(jobOfType(type).name("Foobar").asItem()));
+			assertTrue(nameRegex(".ooba.", MATCH_NAME).matches(jobOfType(type).name("Foobar").asItem()));
 
-	@Test
-	@WithoutJenkins
-	public void testFullName() {
-		assertFalse(fullNameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+			assertFalse(nameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(type).fullName(null).asItem()));
+			assertTrue(nameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(type).fullName("").asItem()));
+			assertTrue(nameRegex("folder/Foo", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foo").asItem()));
+			assertFalse(nameRegex("folder/Foo", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
+			assertTrue(nameRegex("folder/Foo.*", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
+			assertFalse(nameRegex("folder/bar", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
+			assertTrue(nameRegex("folder/.*bar", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
+			assertTrue(nameRegex("folder/.ooba.", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
+			assertTrue(nameRegex(".*der/Foobar", MATCH_FULL_NAME).matches(jobOfType(type).fullName("folder/Foobar").asItem()));
 
-		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(fullNameRegex(".*").matches(jobOfType(type).fullName(null).asItem()));
-			assertTrue(fullNameRegex(".*").matches(jobOfType(type).fullName("").asItem()));
-			assertTrue(fullNameRegex("folder/Foo").matches(jobOfType(type).fullName("folder/Foo").asItem()));
-			assertFalse(fullNameRegex("folder/Foo").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-			assertTrue(fullNameRegex("folder/Foo.*").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-			assertFalse(fullNameRegex("folder/bar").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-			assertTrue(fullNameRegex("folder/.*bar").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-			assertTrue(fullNameRegex("folder/.ooba.").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-			assertTrue(fullNameRegex(".*der/Foobar").matches(jobOfType(type).fullName("folder/Foobar").asItem()));
-		}
-	}
+			assertFalse(nameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName(null).asItem()));
+			assertTrue(nameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("").asItem()));
+			assertTrue(nameRegex("Foo", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foo").asItem()));
+			assertFalse(nameRegex("Foo", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foobar").asItem()));
+			assertTrue(nameRegex("Foo.*", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foobar").asItem()));
+			assertFalse(nameRegex("bar", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foobar").asItem()));
+			assertTrue(nameRegex(".*bar", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foobar").asItem()));
+			assertTrue(nameRegex(".ooba.", MATCH_DISPLAY_NAME).matches(jobOfType(type).displayName("Foobar").asItem()));
 
-	@Test
-	@WithoutJenkins
-	public void testDisplayName() {
-		assertFalse(displayNameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
-
-		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(displayNameRegex(".*").matches(jobOfType(type).displayName(null).asItem()));
-			assertTrue(displayNameRegex(".*").matches(jobOfType(type).displayName("").asItem()));
-			assertTrue(displayNameRegex("Foo").matches(jobOfType(type).displayName("Foo").asItem()));
-			assertFalse(displayNameRegex("Foo").matches(jobOfType(type).displayName("Foobar").asItem()));
-			assertTrue(displayNameRegex("Foo.*").matches(jobOfType(type).displayName("Foobar").asItem()));
-			assertFalse(displayNameRegex("bar").matches(jobOfType(type).displayName("Foobar").asItem()));
-			assertTrue(displayNameRegex(".*bar").matches(jobOfType(type).displayName("Foobar").asItem()));
-			assertTrue(displayNameRegex(".ooba.").matches(jobOfType(type).displayName("Foobar").asItem()));
+			assertFalse(nameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName(null).asItem()));
+			assertTrue(nameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("").asItem()));
+			assertTrue(nameRegex("folder » Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foo").asItem()));
+			assertFalse(nameRegex("folder » Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
+			assertTrue(nameRegex("folder » Foo.*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
+			assertFalse(nameRegex("folder » bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
+			assertTrue(nameRegex("folder » .*bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
+			assertTrue(nameRegex("folder » .ooba.", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
+			assertTrue(nameRegex(".*der » Foobar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).fullDisplayName("folder » Foobar").asItem()));
 		}
 	}
 
@@ -83,25 +83,63 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	public void testFolderName() {
 		Jenkins jenkins = j.getInstance();
 
-		assertFalse(folderNameRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(folderNameRegex(".*", MATCH_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(folderNameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(folderNameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+		assertFalse(folderNameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertFalse(folderNameRegex(".*").matches(jobOfType(type).parent(new Folder(jenkins, null)).asItem()));
-			assertTrue(folderNameRegex(".*").matches(jobOfType(type).parent(new Folder(jenkins, "")).asItem()));
-			assertTrue(folderNameRegex("Foo").matches(jobOfType(type).parent(new Folder(jenkins, "Foo")).asItem()));
-			assertFalse(folderNameRegex("Foo").matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
-			assertTrue(folderNameRegex("Foo.*").matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
-			assertFalse(folderNameRegex("bar").matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
-			assertTrue(folderNameRegex(".*bar").matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
-			assertTrue(folderNameRegex(".ooba.").matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertFalse(folderNameRegex(".*", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, null)).asItem()));
+			assertTrue(folderNameRegex(".*", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "")).asItem()));
+			assertTrue(folderNameRegex("Foo", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foo")).asItem()));
+			assertFalse(folderNameRegex("Foo", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex("Foo.*", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertFalse(folderNameRegex("bar", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*bar", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".ooba.", MATCH_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
 
-			assertTrue(folderNameRegex("folder/Foo").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foo")).asItem()));
-			assertFalse(folderNameRegex("folder/Foo").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
-			assertTrue(folderNameRegex("folder/Foo.*").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
-			assertFalse(folderNameRegex("folder/bar").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
-			assertTrue(folderNameRegex("folder/.*bar").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
-			assertTrue(folderNameRegex("folder/.ooba.").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
-			assertTrue(folderNameRegex(".*der/Foobar").matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertFalse(folderNameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, null)).asItem()));
+			assertTrue(folderNameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "")).asItem()));
+			assertTrue(folderNameRegex("Foo", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foo")).asItem()));
+			assertFalse(folderNameRegex("Foo", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex("Foo.*", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertFalse(folderNameRegex("bar", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*bar", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".ooba.", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+
+			assertTrue(folderNameRegex("folder/Foo", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foo")).asItem()));
+			assertFalse(folderNameRegex("folder/Foo", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder/Foo.*", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertFalse(folderNameRegex("folder/bar", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder/.*bar", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder/.ooba.", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*der/Foobar", MATCH_FULL_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+
+			assertFalse(folderNameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, null)).asItem()));
+			assertTrue(folderNameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "")).asItem()));
+			assertTrue(folderNameRegex("Foo", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foo")).asItem()));
+			assertFalse(folderNameRegex("Foo", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex("Foo.*", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertFalse(folderNameRegex("bar", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*bar", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".ooba.", MATCH_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+
+			assertFalse(folderNameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, null)).asItem()));
+			assertTrue(folderNameRegex(".*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "")).asItem()));
+			assertTrue(folderNameRegex("Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foo")).asItem()));
+			assertFalse(folderNameRegex("Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex("Foo.*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertFalse(folderNameRegex("bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".ooba.", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(jenkins, "Foobar")).asItem()));
+
+			assertTrue(folderNameRegex("folder » Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foo")).asItem()));
+			assertFalse(folderNameRegex("folder » Foo", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder » Foo.*", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertFalse(folderNameRegex("folder » bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder » .*bar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex("folder » .ooba.", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
+			assertTrue(folderNameRegex(".*der » Foobar", MATCH_FULL_DISPLAY_NAME).matches(jobOfType(type).parent(new Folder(new Folder(jenkins, "folder"), "Foobar")).asItem()));
 		}
 	}
 
@@ -328,30 +366,53 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
+	@WithoutJenkins
+	public void testBackwardsCompatibleDeserialization() throws IOException {
+		InputStream xml = RegExJobFilter.class.getResourceAsStream("/RegExJobFilterTest/view.xml");
+		ListView listView = (ListView) View.createViewFromXML("foo", xml);
+
+		RegExJobFilter filter = (RegExJobFilter) listView.getJobFilters().iterator().next();
+		assertThat(filter.getIncludeExcludeTypeString(), is(includeMatched.name()));
+		assertThat(filter.getValueTypeString(), is(NAME.name()));
+		assertThat(filter.getRegex(), is(".*"));
+		assertThat(filter.isMatchName(), is(true));
+		assertThat(filter.isMatchFullName(), is(false));
+		assertThat(filter.isMatchDisplayName(), is(false));
+		assertThat(filter.isMatchFullDisplayName(), is(false));
+	}
+
+	@Test
 	public void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 				"regex-view-1",
-				new RegExJobFilter("NaMeRegEx", excludeMatched.name(), NAME.name())
+				new RegExJobFilter("NaMeRegEx", excludeMatched.name(), NAME.name(),
+					false, true, false, true)
 		);
 
 		testConfigRoundtrip(
 				"regex-view-2",
-				new RegExJobFilter("DeScriptionRegEx", excludeMatched.name(), DESCRIPTION.name()),
-				new RegExJobFilter("EmailRegEx", includeUnmatched.name(), EMAIL.name())
+				new RegExJobFilter("DeScriptionRegEx", excludeMatched.name(), DESCRIPTION.name(),
+					true, true, false, false),
+				new RegExJobFilter("EmailRegEx", includeUnmatched.name(), EMAIL.name(),
+					false, false, true, true)
 		);
 
 		testConfigRoundtrip(
 				"regex-view-3",
-				new RegExJobFilter("MavenRegEx", excludeUnmatched.name(), MAVEN.name()),
-				new RegExJobFilter("NodeRegEx", excludeMatched.name(), NODE.name()),
-				new RegExJobFilter("ScmRegEx", excludeMatched.name(), SCM.name())
+				new RegExJobFilter("MavenRegEx", excludeUnmatched.name(), MAVEN.name(),
+					false, false, false, true),
+				new RegExJobFilter("NodeRegEx", excludeMatched.name(), NODE.name(),
+					false, false, true, false),
+				new RegExJobFilter("ScmRegEx", excludeMatched.name(), SCM.name(),
+					false, true, false, false)
 		);
 
 		testConfigRoundtrip(
 				"regex-view-4",
-				new RegExJobFilter("FullNameRegEx", includeMatched.name(), FULL_NAME.name()),
-				new RegExJobFilter("FolderNameRegEx", excludeUnmatched.name(), FOLDER_NAME.name()),
-				new RegExJobFilter("DisplayNameRegEx", includeUnmatched.name(), DISPLAY_NAME.name())
+				new RegExJobFilter("FullNameRegEx", includeMatched.name(), NAME.name(),
+					true, false, false, true),
+				new RegExJobFilter("FolderNameRegEx", excludeUnmatched.name(), FOLDER_NAME.name(),
+					true, false, true, true)
 		);
 	}
 
@@ -395,7 +456,13 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	private void testConfigRoundtrip(String viewName, RegExJobFilter... filters) throws Exception {
 		List<RegExJobFilter> expectedFilters = new ArrayList<RegExJobFilter>();
 		for (RegExJobFilter filter: filters) {
-			expectedFilters.add(new RegExJobFilter(filter.getRegex(), filter.getIncludeExcludeTypeString(), filter.getValueTypeString()));
+			expectedFilters.add(new RegExJobFilter(filter.getRegex(),
+				filter.getIncludeExcludeTypeString(),
+				filter.getValueTypeString(),
+				filter.isMatchName(),
+				filter.isMatchFullName(),
+				filter.isMatchDisplayName(),
+				filter.isMatchFullDisplayName()));
 		}
 
 		ListView view = createFilteredView(viewName, filters);
@@ -420,6 +487,10 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 			assertThat(((RegExJobFilter)actualFilter).getRegex(), is(expectedFilter.getRegex()));
 			assertThat(((RegExJobFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
 			assertThat(((RegExJobFilter)actualFilter).getValueTypeString(), is(expectedFilter.getValueTypeString()));
+			assertThat(((RegExJobFilter)actualFilter).isMatchName(), is(expectedFilter.isMatchName()));
+			assertThat(((RegExJobFilter)actualFilter).isMatchFullName(), is(expectedFilter.isMatchFullName()));
+			assertThat(((RegExJobFilter)actualFilter).isMatchDisplayName(), is(expectedFilter.isMatchDisplayName()));
+			assertThat(((RegExJobFilter)actualFilter).isMatchFullDisplayName(), is(expectedFilter.isMatchFullDisplayName()));
 		}
 	}
 }

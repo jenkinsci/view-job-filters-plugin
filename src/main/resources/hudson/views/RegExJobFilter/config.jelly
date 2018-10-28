@@ -6,18 +6,24 @@
       <f:textbox name="regex" field="regex" checkUrl="'${rootURL}/descriptorByName/hudson.views.RegExJobFilter/checkRegex?value='+encodeURIComponent(this.value)"/>
   </f:entry>
   <f:entry title="${%Match Value}:">
-    <select name="valueTypeString" class="setting-input">
-      <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
-      <f:option value="FULL_NAME" selected="${instance.valueTypeString == 'FULL_NAME'}">${%Job full name}</f:option>
-      <f:option value="DISPLAY_NAME" selected="${instance.valueTypeString == 'DISPLAY_NAME'}">${%Job display name}</f:option>
-      <f:option value="FOLDER_NAME" selected="${instance.valueTypeString == 'FOLDER_NAME'}">${%Job folder name}</f:option>
-      <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
-      <f:option value="SCM" selected="${instance.valueTypeString == 'SCM'}">${%Job SCM configuration}</f:option>
-      <f:option value="EMAIL" selected="${instance.valueTypeString == 'EMAIL'}">${%Email recipients}</f:option>
-      <f:option value="MAVEN" selected="${instance.valueTypeString == 'MAVEN'}">${%Maven configuration}</f:option>
-      <f:option value="SCHEDULE" selected="${instance.valueTypeString == 'SCHEDULE'}">${%Job schedule}</f:option>
-      <f:option value="NODE" selected="${instance.valueTypeString == 'NODE'}">${%Node label expression}</f:option>
-    </select>
+    <div class="valueType">
+      <select name="valueTypeString" class="setting-input" onchange="this.parentElement.querySelector('.nameOptions').style.display = ((this.options[this.selectedIndex].value.match(/NAME/)) ? 'block' : 'none')">
+        <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
+        <f:option value="FOLDER_NAME" selected="${instance.valueTypeString == 'FOLDER_NAME'}">${%Job folder name}</f:option>
+        <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
+        <f:option value="SCM" selected="${instance.valueTypeString == 'SCM'}">${%Job SCM configuration}</f:option>
+        <f:option value="EMAIL" selected="${instance.valueTypeString == 'EMAIL'}">${%Email recipients}</f:option>
+        <f:option value="MAVEN" selected="${instance.valueTypeString == 'MAVEN'}">${%Maven configuration}</f:option>
+        <f:option value="SCHEDULE" selected="${instance.valueTypeString == 'SCHEDULE'}">${%Job schedule}</f:option>
+        <f:option value="NODE" selected="${instance.valueTypeString == 'NODE'}">${%Node label expression}</f:option>
+      </select>
+      <div class="nameOptions" style="display: ${(empty instance.valueTypeString || instance.valueTypeString.contains('NAME')) ? 'block' : 'none'}">
+        <f:checkbox name="matchName" field="matchName" default="true" /> ${%Name}
+        <f:checkbox name="matchFullName" field="matchFullName" default="false" /> ${%Full name}
+        <f:checkbox name="matchDisplayName" field="matchDisplayName" default="false" /> ${%Display name}
+        <f:checkbox name="matchFullDisplayName" field="matchFullDisplayName" default="false" /> ${%Full display name}
+      </div>
+    </div>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
 </j:jelly>

@@ -1,10 +1,10 @@
 package hudson.views.test;
 
-import hudson.model.Descriptor;
 import hudson.model.TopLevelItemDescriptor;
 import hudson.scm.SCMDescriptor;
 import hudson.views.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
@@ -15,32 +15,30 @@ import static java.util.Arrays.asList;
 
 public class ViewJobFilters {
 
-    public static RegExJobFilter nameRegex(String regex) {
-        return new RegExJobFilter(
-                regex,
-                includeMatched.name(),
-                RegExJobFilter.ValueType.NAME.name());
+    public enum NameOptions {
+        MATCH_NAME, MATCH_FULL_NAME, MATCH_DISPLAY_NAME, MATCH_FULL_DISPLAY_NAME
     }
 
-    public static RegExJobFilter fullNameRegex(String regex) {
+    public static RegExJobFilter nameRegex(String regex, NameOptions... options) {
         return new RegExJobFilter(
                 regex,
                 includeMatched.name(),
-                RegExJobFilter.ValueType.FULL_NAME.name());
+                RegExJobFilter.ValueType.NAME.name(),
+                Arrays.asList(options).contains(NameOptions.MATCH_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_FULL_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_DISPLAY_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_FULL_DISPLAY_NAME));
     }
 
-    public static RegExJobFilter displayNameRegex(String regex) {
+    public static RegExJobFilter folderNameRegex(String regex, NameOptions... options) {
         return new RegExJobFilter(
                 regex,
                 includeMatched.name(),
-                RegExJobFilter.ValueType.DISPLAY_NAME.name());
-    }
-
-    public static RegExJobFilter folderNameRegex(String regex) {
-        return new RegExJobFilter(
-                regex,
-                includeMatched.name(),
-                RegExJobFilter.ValueType.FOLDER_NAME.name());
+                RegExJobFilter.ValueType.FOLDER_NAME.name(),
+                Arrays.asList(options).contains(NameOptions.MATCH_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_FULL_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_DISPLAY_NAME),
+                Arrays.asList(options).contains(NameOptions.MATCH_FULL_DISPLAY_NAME));
     }
 
     public static RegExJobFilter descRegex(String regex) {
