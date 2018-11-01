@@ -77,7 +77,7 @@ public class ScmTypeFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		@Override
         public String getHelpFile() {
-            return "/plugin/view-job-filters/scm-help.html";
+            return "/plugin/view-job-filters/scm-type-help.html";
         }
 		@SuppressWarnings("rawtypes")
 		public List<SCMDescriptor> getScmTypes() {

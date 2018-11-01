@@ -67,7 +67,7 @@ public class JobStatusFilter extends AbstractIncludeExcludeJobFilter {
 		}
 		@Override
         public String getHelpFile() {
-            return "/plugin/view-job-filters/include-exclude-help.html";
+            return "/plugin/view-job-filters/job-status-help.html";
         }
 	}
 

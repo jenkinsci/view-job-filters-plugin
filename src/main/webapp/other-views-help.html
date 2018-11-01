@@ -1,16 +1,40 @@
 <div>
-This filter allows you to base one view's jobs off of other view's jobs.  
-This is mostly helpful in large organizations with hundreds of jobs, and many views.
-<br/><br/>
-For example, if you have a company organizational hierarchy of projects, different configuration managers might
-want to view a different sub-set of jobs, and there's no reason to manage each view's list of jobs if some views
-are simply meant to be an aggregate of other views.
-<br/><br/>
-Another example is if you have one "special" view that contains utility or legacy jobs, and you want to easily exclude those
-jobs from other views, but there are no well-defined characteristics of those jobs that you can filter on.  With this filter,
-you can put your effort into creating that special view, and then for other views simply choose to exclude all jobs that
-appear in that special view.
-<br/><br/>
-Note: If you select a view as it's own "Other View" or otherwise create circular references between views
-this can lead to unpredictable behavior. This filter will warn you if that's the case.
+    This filter includes/excludes jobs based the jobs in another view.
 </div>
+
+<h4><u>Rationale</u></h4>
+
+<p>
+    Useful, e.g., if you have a company organizational hierarchy of projects, different configuration managers might
+    want to view a different sub-set of jobs, and there's no reason to manage each view's list of jobs if some views
+    are simply meant to be an aggregate of other views.
+</p>
+
+<p>
+    Another example is if you have one "special" view that contains utility or legacy jobs, and you want to easily
+    exclude those jobs from other views, but there are no well-defined characteristics of those jobs that you can filter
+    on. With this filter, you can put your effort into creating that special view, and then for other views simply
+    choose to exclude all jobs that appear in that special view.
+</p>
+
+<h4><u>Options</u></h4>
+
+<dl>
+    <dt>Other View:</dt>
+    <dd>This filter will match any job that's part of the view you select here.</dd>
+    <dt>Match type:</dt>
+    <dd>
+        Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+        <ul style="margin-top:0px">
+            <li>Include matched/unmatched: adds additional jobs to this view.</li>
+            <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Note</u></h4>
+
+<p>
+    If you select a view as it's own "Other View" or otherwise create circular references between views
+    this can lead to unpredictable behavior. This filter will warn you if that's the case.
+</p>

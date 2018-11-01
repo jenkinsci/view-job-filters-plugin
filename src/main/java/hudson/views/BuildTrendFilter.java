@@ -164,7 +164,7 @@ public class BuildTrendFilter extends AbstractBuildTrendFilter {
 		}
 		@Override
         public String getHelpFile() {
-            return "/plugin/view-job-filters/last-build-time-help.html";
+            return "/plugin/view-job-filters/build-trend-help.html";
         }
 	}
 	

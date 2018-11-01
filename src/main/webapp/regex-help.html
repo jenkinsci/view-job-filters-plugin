@@ -1,31 +1,56 @@
 <div>
-  You can use as many Regular Expression Filters as you like - they will each apply in the order you put them in.
-  <br/><br/>
-  <b>Match Value</b>: Choose from the following to match on
-  <ul>
-    <li><u>Job name</u>
-      <ul>
-        <li><u>Name</u> of the job itself, e.g. 'job'</li>
-        <li><u>Full name</u> of the job including parent folders, e.g. 'folder/subfolder/job'</li>
-        <li><u>Display name</u> of the job, e.g. 'Job'</li>
-        <li><u>Full display name</u> of the job including parent folders, e.g. 'Folder » SubFolder » Job'</li>
-      </ul>
-    </li>
-  	<li><u>Job folder name</u>: the name of the job's parent folder
-      <ul>
-        <li><u>Name</u> of the folder itself, e.g. 'subfolder'</li>
-        <li><u>Full name</u> of the folder including parent folders, e.g. 'folder/subfolder'</li>
-        <li><u>Display name</u> of the folder, e.g. 'SubFolder'</li>
-        <li><u>Full display name</u> of the folder including parent folders, e.g. 'Folder » SubFolder'</li>
-      </ul>
-    </li>
-  	<li><u>Job description</u></li>
-  	<li><u>Job SCM configuration</u>: Matching by SCM is extremely useful if you have hundreds of jobs that need to be "auto organized", and are already organized under source control.  (Currently matches against SVN, Git, and CVS paths/configuration)</li>
-  	<li><u>Email recipients</u>: Matching by Email is useful for organizing by "who cares about this job."</li>
-  	<li><u>Maven configuration</u>: Use this to match against "what does this job do"</li>
-  	<li><u>Job schedule</u>: Matches against the CRON pattern and any comments for Timer and SCM triggers.</li>
-  	<li><u>Node label expression</u>: Matches against the Label Expression under the "Restrict where this project can be run" option.</li>
-  </ul>
-  <br/>
-  <b>Match Type</b>: Choose whether this filter will add additional jobs, or remove jobs.
+    This filter includes/excludes jobs based on whether certain
+    job properties match regular expressions.
 </div>
+
+<h4><u>Options</u></h4>
+
+<dl>
+    <dt>Regular Expression:</dt>
+    <dd>
+        The regular expression to use for matching.
+        See the <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">full list of available patterns</a>.
+    </dd>
+    <dt>Match Value:</dt>
+    <dd>
+        The job property to match. One of the following:
+        <ul style="margin:0px">
+            <li><i>Job name</i>
+                <ul>
+                    <li><i>Name</i> of the job itself, e.g. 'job'</li>
+                    <li><i>Full name</i> of the job including parent folders, e.g. 'folder/subfolder/job'</li>
+                    <li><i>Display name</i> of the job, e.g. 'Job'</li>
+                    <li><i>Full display name</i> of the job including parent folders, e.g. 'Folder » SubFolder » Job'
+                    </li>
+                </ul>
+            </li>
+            <li><i>Job folder name</i>: the name of the job's parent folder
+                <ul>
+                    <li><i>Name</i> of the folder itself, e.g. 'subfolder'</li>
+                    <li><i>Full name</i> of the folder including parent folders, e.g. 'folder/subfolder'</li>
+                    <li><i>Display name</i> of the folder, e.g. 'SubFolder'</li>
+                    <li><i>Full display name</i> of the folder including parent folders, e.g. 'Folder » SubFolder'</li>
+                </ul>
+            </li>
+            <li><i>Job description</i></li>
+            <li><i>Job SCM configuration</i>: Matching by SCM is extremely useful if you have hundreds of jobs that need
+                to be "auto organized", and are already organized under source control. (Currently matches against SVN,
+                Git, and CVS paths/configuration)
+            </li>
+            <li><i>Email recipients</i>: Matching by Email is useful for organizing by "who cares about this job."</li>
+            <li><i>Maven configuration</i>: Use this to match against "what does this job do"</li>
+            <li><i>Job schedule</i>: Matches against the CRON pattern and any comments for Timer and SCM triggers.</li>
+            <li><i>Node label expression</i>: Matches against the Label Expression under the "Restrict where this
+                project can be run" option.
+            </li>
+        </ul>
+    </dd>
+    <dt>Match type:</dt>
+    <dd>
+        Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+        <ul style="margin-top:0px">
+            <li>Include matched/unmatched: adds additional jobs to this view.</li>
+            <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+        </ul>
+    </dd>
+</dl>

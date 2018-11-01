@@ -51,6 +51,11 @@ public class JobTypeFilter extends AbstractIncludeExcludeJobFilter {
 		public List<TopLevelItemDescriptor> getJobTypes(ItemGroup<?> context) {
             return DescriptorVisibilityFilter.apply(context, Items.all());
 		}
+
+		@Override
+		public String getHelpFile() {
+			return "/plugin/view-job-filters/job-type-help.html";
+		}
 	}
 }
 

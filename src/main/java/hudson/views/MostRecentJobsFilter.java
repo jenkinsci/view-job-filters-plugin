@@ -93,7 +93,7 @@ public class MostRecentJobsFilter extends ViewJobFilter {
 		}
 		@Override
         public String getHelpFile() {
-            return "/plugin/view-job-filters/most-recent-help.html";
+            return "/plugin/view-job-filters/most-recent-jobs-help.html";
         }
 	}
 

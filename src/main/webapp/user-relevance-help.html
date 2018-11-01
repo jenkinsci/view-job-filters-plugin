@@ -1,15 +1,38 @@
 <div>
-Create views that are most relevant to the logged-in user.
-<br/><br/>
-The "<b>Name Matching</b>" checkbox items are to allow you to get the name matching just right.  The problem is that
-organization often have different naming conventions that may not be consistent across version control, 
-network logins, and email addresses.  All of the options are checked by default so that this filter
-can make a thorough effort to find matching users. 
-<br/><br/>
-The "<b>Relevance Matching</b>" options should be self explanatory.  The point is to try and find
-all jobs that the logged in user cares about, based on their activity.
-<br/><br/>
-For the "How far back to check" value, use either "0" or blank to indicate you want to check all builds. 
-<br/><br/>
-Note that not all combinations of criteria will make sense.  Also take a look at the "User Permissions for Jobs" filter.
+    This filter includes/excludes jobs based on whether they contain the current user's name somewhere.
 </div>
+
+<h4><u>Options</u></h4>
+
+<dl>
+    <dt>Name matching:</dt>
+    <dd>
+        This specifies whether to search jobs for the current user's ID or name or both.
+        You can adjust the matching strategy by ignoring certain characters.
+    </dd>
+    <dt>Relevance Matching:</dt>
+    <dd>
+        What parts of a job to search for the current user's ID or name.
+    </dd>
+    <dt>Build trend type:</dt>
+    <dd>
+        How many builds that need to contain the current user's ID or name for this filter to match.
+    </dd>
+    <dt>How far back to check:</dt>
+    <dd>
+        A job can have many builds and this option determines how many of those builds
+        will be checked. Always goes backwards from the latest build. Can be a decimal
+        number, e.g. <kbd>1.5</kbd> hours. If you want to include all builds set this
+        value to <kbd>0</kbd>.
+    </dd>
+    <dt>Match type:</dt>
+    <dd>
+        Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+        <ul style="margin-top:0px">
+            <li>Include matched/unmatched: adds additional jobs to this view.</li>
+            <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+        </ul>
+    </dd>
+    <dd>
+    </dd>
+</dl>

@@ -1,0 +1,31 @@
+<div>
+This filter includes/excludes jobs based on their build status.
+</div>
+
+<p><u>Rationale</u></p>
+
+Useful if you want to handle jobs differently depending on their build status.
+
+<p><u>Options</u></p>
+
+<dl>
+<dt>Build Statuses:</dt>
+<dd>Which build statuses this filter should match.</dd>
+<dt>Match type:</dt>
+<dd>
+Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+<ul style="margin-top:0px">
+<li>Include matched/unmatched: adds additional jobs to this view.</li>
+<li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+</ul>
+</dd>
+<dd>
+</dd>
+</dl>
+
+<p><u>Examples</u></p>
+
+<ul>
+<li>Show all jobs that have never been built.</li>
+<li>Show all failed jobs (using Job Statuses Filter), but exclude the ones currently building.</li>
+</ul>

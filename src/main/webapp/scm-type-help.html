@@ -1,17 +1,22 @@
 <div>
-    This filter includes/excludes jobs that haven't already been included in another view.
+    This filter includes/excludes jobs based on their SCM type.
 </div>
 
 <h4><u>Rationale</u></h4>
 
 <p>
-Useful if you have hundreds of jobs organized into views, and you want an easy way to identify
-which jobs haven't been "classified" into a view yet.
+    Useful in a large organization with hundreds of jobs, or when you are migrating jobs to use a new SCM.
 </p>
 
 <h4><u>Options</u></h4>
 
 <dl>
+    <dt>SCM Type:</dt>
+    <dd>
+        Which type of job this filter should match. If the dropdown doesn't
+        have the type of SCM you're looking for that means you don't have
+        the necessary plugin installed.
+    </dd>
     <dt>Match type:</dt>
     <dd>
         Whether to add or remove jobs from this view. There's two kinds of match types:<br>
@@ -23,10 +28,3 @@ which jobs haven't been "classified" into a view yet.
     <dd>
     </dd>
 </dl>
-
-<h4><u>Note</u></h4>
-
-<p>
-Because this filter looks at other views, there is a risk of creating circular references between views
-which can lead to unpredictable behavior. This filter will warn you if that's the case.
-</p>

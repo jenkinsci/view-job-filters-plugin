@@ -1,9 +1,40 @@
 <div>
-  Use Regular Expressions to include or exclude parameterized jobs based on their build parameters.  
-  Match the parameter name, build value, or description.  Alternately, you may opt to depend on the default configured value.
-  <br/><br/>
-  For the name, value, and description - a blank indicates you do not care about that field - it 
-  behaves as if you had assigned it the regular expression <kbd>.*</kbd>.
-  <br/><br/>
-  This filter works with String, Boolean, File, Choice, and Validating String parameter types.
+    This filter includes/excludes jobs based on their parameters.
 </div>
+
+<h4><u>Options</u></h4>
+
+<dl>
+    <dt>Name:</dt>
+    <dd>
+        Name of the parameter to match against.
+    </dd>
+    <dt>Value:</dt>
+    <dd>
+        Regular expression that needs to match the parameter value
+        in order for this filter to match the job.
+        See the <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">full list of available patterns</a>.
+        Leave this field blank if you want to match any value.
+    </dd>
+    <dt>Description:</dt>
+    <dd>
+        Regular expression that needs to match the parameter description
+        in order for this filter to match the job.
+        See the <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">full list of available patterns</a>.
+        Leave this field blank if you want to match any description.
+    </dd>
+    <dt>Match type:</dt>
+    <dd>
+        Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+        <ul style="margin-top:0px">
+            <li>Include matched/unmatched: adds additional jobs to this view.</li>
+            <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Note</u></h4>
+
+<p>
+This filter works with the following parameter types: String, Boolean, File, Choice, and Validating String.
+</p>

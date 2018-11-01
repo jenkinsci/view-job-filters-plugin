@@ -1,15 +1,14 @@
 <div>
-    This filter includes/excludes jobs based on the permissions the current user
-    has for the job.
+    This filter includes/excludes jobs based on their build status.
 </div>
 
 <h4><u>Options</u></h4>
 
 <dl>
-    <dt>Permissions:</dt>
+    <dt>Build Statuses:</dt>
     <dd>
-        Permissions that the current user needs to have for a job in
-        order for that job to be matched by this filter
+        Which build statuses this filter should match. Checking multiple checkboxes matches any
+        job that matches any of the statuses.
     </dd>
     <dt>Match type:</dt>
     <dd>
@@ -19,10 +18,13 @@
             <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
         </ul>
     </dd>
+    <dd>
+    </dd>
 </dl>
 
-<h4><u>Note</u></h4>
+<h4><u>Examples</u></h4>
 
-<p>
-This filter does not <u>provide</u> security - it merely provides convenient views that feed off of the security you've already set up.
-</p>
+<ul>
+    <li>Show all jobs that have never been built.</li>
+    <li>Show all failed jobs (using Job Statuses Filter), but exclude the ones currently building.</li>
+</ul>
