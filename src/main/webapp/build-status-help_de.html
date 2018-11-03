@@ -1,31 +1,29 @@
 <div>
-This filter includes/excludes jobs based on their build status.
+    Dieser Filter inkludiert/exkludiert Jobs anhand ihres Build-Status.
 </div>
 
-<p><u>Rationale</u></p>
-
-Useful if you want to handle jobs differently depending on their build status.
-
-<p><u>Options</u></p>
+<p><u>Optionen</u></p>
 
 <dl>
-<dt>Build Statuses:</dt>
-<dd>Which build statuses this filter should match.</dd>
-<dt>Match type:</dt>
-<dd>
-Whether to add or remove jobs from this view. There's two kinds of match types:<br>
-<ul style="margin-top:0px">
-<li>Include matched/unmatched: adds additional jobs to this view.</li>
-<li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
-</ul>
-</dd>
-<dd>
-</dd>
+    <dt>Build-Status:</dt>
+    <dd>Gibt an auf welche Arten von Build-Status dieser Filter zutreffen soll.</dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter
+                hinzugefügt wurden.
+            </li>
+        </ul>
+    </dd>
 </dl>
 
-<p><u>Examples</u></p>
+<h4><u>Beispiele</u></h4>
 
 <ul>
-<li>Show all jobs that have never been built.</li>
-<li>Show all failed jobs (using Job Statuses Filter), but exclude the ones currently building.</li>
+    <li>Zeige alle Jobs, die noch nie gebaut wurden.</li>
+    <li>Zeige fehlgeschlagenen Jobs (mittels des Job-Status Filters), aber schließe alle diejenigen aus, die gerade am
+        bauen sind.
+    </li>
 </ul>

@@ -1,6 +1,46 @@
 <div>
-Erstelle Ansichten anhand des Build-Statuses über eine gewisse Zeitspanne. Einige Beispiele:
+	Dieser Filter inkludiert/exkludiert Jobs abhängig davon wie Builds gestart wurden und geendet haben.
 <br/>
+<ul>
+
+</ul>
+Um alle Builds zu überprüfen, kann die Option "Zurückliegender Bereich" entweder auf <kbd>0</kbd> gesetzt oder leer gelassen werden.
+<br/><br/>
+Beachte, dass nicht alle Kombinationen von Kriterien sinnvoll sein müssen. Falls dieser Filter komplizierter als
+nötig erscheint, könnten der "Build-Status Filter" und der "Job-Status Filter" hilfreich sein.
+</div>
+
+<div>
+	This filter includes/excludes jobs based on how their builds were started and how they finished.
+</div>
+
+<h4><u>Options</u></h4>
+
+<dl>
+	<dt>Build-Trend:</dt>
+	<dd>
+        Gibt an wie die Builds eines Jobs gestart wurden oder geendet haben müssen, damit dieser
+		Filter auf einen Job zutrifft.
+	</dd>
+	<dt>Zurückliegender Bereich:</dt>
+	<dd>
+		Ein Job kann viele Builds haben und diese Option bestimmt, wie viele dieser Builds zur
+		Überprüfung herangezogen werden. Die Angabe geht rückwärts vom letzten Build aus und kann
+		eine Dezimalzahl sein, z.B. <kbd>1.5</kbd> Stunden. Um alle Builds heranzuziehen kann <kb>0</kb>
+		als Wert angegeben werden.
+	</dd>
+	<dt>Filter-Typ:</dt>
+	<dd>
+		Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+		<ul style="margin-top:0px">
+			<li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+			<li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter hinzugefügt wurden.</li>
+		</ul>
+	</dd>
+</dl>
+
+<h4><u>Beispiele</u></h4>
+
 <ul>
 	<li>Alle Jobs, die innerhalb der letzten 3 Stunden liefen.</li>
 	<li>Alle Jobs, die die letzten 10 Builds stabil geblieben sind.</li>
@@ -9,8 +49,3 @@ Erstelle Ansichten anhand des Build-Statuses über eine gewisse Zeitspanne. Eini
 	<li>Alle Jobs, die in den letzten 30 Tagen nicht von einer SCM-Änderung ausgelöst wurden.</li>
 	<li>Alle Jobs, die zuletzt von einem entfernten Rechner ausgelöst wurden.</li>
 </ul>
-Um alle Builds zu überprüfen, kann die Option "Zurückliegender Bereich" entweder auf <kbd>0</kbd> gesetzt oder leer gelassen werden.
-<br/><br/>
-Beachte, dass nicht alle Kombinationen von Kriterien sinnvoll sein müssen. Falls dieser Filter komplizierter als
-nötig erscheint, könnten der "Build-Status Filter" und der "Job-Status Filter" hilfreich sein.
-</div>

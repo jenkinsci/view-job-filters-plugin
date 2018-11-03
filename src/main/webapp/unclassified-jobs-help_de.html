@@ -1,10 +1,32 @@
 <div>
-Dieser Filter erlaubt es eine Ansicht zu erstellen, die alle Jobs enthält, die in keiner anderen Ansicht vorkommen
-(ausschließlich solcher Ansichten, die alle Jobs enthalten)
-<br/><br/>
-Dies ist vor allem dann nützlich, wenn man hunderte von Jobs in Ansichten kategorisieren möchte und einen einfachen
-Weg braucht, um festzustellen, welche der Jobs noch nicht in einer Ansicht kategorisiert sind.
-<br/><br/>
-Vorsicht: Da dieser Filter andere Ansichten heranzieht, besteht die Gefahr zirkuläre Abhängigkeiten zwischen Ansichten zu
-erzeugen, welche zu unvorhergesehenem Verhalten führen können. In einem solchen Fall zeigt der Filter eine Warnmeldung an.
+    Dieser Filter inkludiert/exkludiert Jobs, die in keiner anderen Ansicht vorkommen.
 </div>
+
+<h4><u>Nutzen</u></h4>
+
+<p>
+    Nützlich vor allem dann, wenn man hunderte von Jobs in Ansichten kategorisieren möchte und einen einfachen
+    Weg braucht, um festzustellen, welche der Jobs noch nicht in einer Ansicht kategorisiert sind.
+</p>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter
+                hinzugefügt wurden.
+            </li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Anmerkungen</u></h4>
+
+<p>
+    Da dieser Filter andere Ansichten heranzieht, besteht die Gefahr zirkuläre Abhängigkeiten zwischen Ansichten zu
+    erzeugen, welche zu unvorhergesehenem Verhalten führen können. In einem solchen Fall zeigt der Filter eine Warnmeldung an.
+</p>

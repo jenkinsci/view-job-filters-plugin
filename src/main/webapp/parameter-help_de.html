@@ -1,9 +1,47 @@
 <div>
-  Dieser Filter erlaubt es parameterisierte Jobs anhand ihrer Parameter zu filtern. Reguläre Ausdrücke können dabei
-  auf die Namen, Werte und Beschreibung der Parameter angewandt werden. Alternativ können auch die Vorgabewerte verglichen werden.
-  <br/><br/>
-  Wenn Name, Wert oder Beschreibung leer gelassen wird, heißt das, dass dieses Feld irrelevant ist -
-  genauso als ob als der Reguläre Ausdruck <kbd>.*</kbd> verwendet worden wäre.
-  <br/><br/>
-  Dieser Filter funktioniert für folgende Parameter-Typen: Text, Boolscher Wert, Datei, Auswahl and validierender Text.
+    Dieser Filter inkludiert/exkludiert Jobs anhand ihrere Parameter.
 </div>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+    <dt>Name:</dt>
+    <dd>
+        Regulärer Ausdruck der auf den Namen eines Parameters zutreffen muss,
+        damit dieser Filter auf den Job zutrifft.
+        Siehe die <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">vollständige Liste
+        der verfügbaren Ausdrücke</a>.
+        Wenn dieses Feld leer ist, trifft jeder Parameter-Name zu.
+    </dd>
+    <dt>Wert:</dt>
+    <dd>
+        Regulärer Ausdruck der auf den Wert eines Parameters zutreffen muss,
+        damit dieser Filter auf den Job zutrifft.
+        Siehe die <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">vollständige Liste
+        der verfügbaren Ausdrücke</a>.
+        Wenn dieses Feld leer ist, trifft jeder Parameter-Wert zu.
+    </dd>
+    <dt>Beschreibug:</dt>
+    <dd>
+        Regulärer Ausdruck der auf die Beschreibung eines Parameters zutreffen muss,
+        damit dieser Filter auf den Job zutrifft.
+        Siehe die <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">vollständige Liste
+        der verfügbaren Ausdrücke</a>.
+        Wenn dieses Feld leer ist, trifft jede Parameter-Beschreibung zu.
+    </dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter hinzugefügt wurden.</li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Anmerkungen</u></h4>
+
+<p>
+    Dieser Filter funktioniert für folgende Parameter-Typen: Text, Boolscher Wert, Datei, Auswahl and validierender
+    Text.
+</p>

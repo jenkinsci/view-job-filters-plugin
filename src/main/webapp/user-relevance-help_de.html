@@ -1,16 +1,42 @@
 <div>
-Erstelle Ansichten, die für den aktuellen Benutzer relevant sind.
-<br/><br/>
-Die Checkboxen unter "<b>Namensvergleich</b>" ermöglichen es korrekte Treffer für den Benutzer sicherzustellen.
-Oft ist es so, dass Organisationen unterschiedliche Namenskonventionen haben, die zwischen Versionskontrolle, Logins und
-Email-Adressen nicht konsistent sind. Aus diesem Grund sind standardmäßig alle Optionen aktiviert, um am ehesten
-passende Benutzer zu identifizieren.
-<br/><br/>
-Die Optionen zu "<b>Zutreffende Jobs</b>" sollten selbsterklärend sein. Ihr Sinn ist es, die Jobs zu identifizieren
-für die sich der Benutzer interessiert.
-<br/><br/>
-Um alle Builds zu überprüfen, kann die Option "Zurückliegender Bereich" entweder auf <kbd>0</kbd> gesetzt oder leer gelassen werden.
-<br/><br/>
-Beachte, dass nicht alle Kombinationen von Kriterien sinnvoll sein müssen. Der Filter "Benutzerrechte für Jobs" könnte
-ebenfalls hilfreich sein.
+    Dieser Filter inkludiert/exkludiert Jobs abhängig davon ob der Name des aktuellen Benutzers
+    irgendwo vorkommt.
 </div>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+    <dt>Namenssuche:</dt>
+    <dd>
+        Gibt an, ob die Jobs nach der ID oder dem Namen des aktuellen Benutzers durchsucht
+        werden sollen. Der Namensvergleiche kann dahingehend angepasst werden, dass
+        bestimmte Buchstaben ignoriert werden.
+    </dd>
+    <dt>Zutreffende Jobs:</dt>
+    <dd>
+        Gibt an, welche Eigenschaften eines Jobs nach der ID oder dem Namen des aktuellen Benutzers
+        durchsucht werden.
+    </dd>
+    <dt>Zutreffende Builds:</dt>
+    <dd>
+        Gibt an, wie viele Builds die ID oder den Namen des aktuellen Benutzers enthalten müssen,
+        damit dieser Filter auf den Job zutrifft.
+    </dd>
+    <dt>Zurückliegender Bereich:</dt>
+    <dd>
+        Ein Job kann viele Builds haben und diese Option bestimmt, wie viele dieser Builds zur
+        Überprüfung herangezogen werden. Die Angabe geht rückwärts vom letzten Build aus und kann
+        eine Dezimalzahl sein, z.B. <kbd>1.5</kbd> Stunden. Um alle Builds heranzuziehen kann <kb>0</kb>
+        als Wert angegeben werden.
+    </dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter
+                hinzugefügt wurden.
+            </li>
+        </ul>
+    </dd>
+</dl>

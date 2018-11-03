@@ -1,40 +1,38 @@
 <div>
-This filter includes/excludes jobs based on how their builds were started and how they finished.
+    This filter includes/excludes jobs based on how their builds were started and how they finished.
 </div>
 
 <h4><u>Options</u></h4>
 
 <dl>
-	<dt>Build trend type:</dt>
-	<dd>
-		How a job's builds must have been started or how they must have finished in order for this filter to match.
-	</dd>
-	<dt>How far back to check:</dt>
-	<dd>
-		A job can have many builds and this option determines how many of those builds
-		will be checked. Always goes backwards from the latest build. Can be a decimal
-		number, e.g. <kbd>1.5</kbd> hours. If you want to include all builds set this
-		value to <kbd>0</kbd>.
-	</dd>
-	<dt>Match type:</dt>
-	<dd>
-		Whether to add or remove jobs from this view. There's two kinds of match types:<br>
-		<ul style="margin-top:0px">
-			<li>Include matched/unmatched: adds additional jobs to this view.</li>
-			<li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
-		</ul>
-	</dd>
-	<dd>
-	</dd>
+    <dt>Build trend type:</dt>
+    <dd>
+        How a job's builds must have been started or how they must have finished in order for this filter to match.
+    </dd>
+    <dt>How far back to check:</dt>
+    <dd>
+        A job can have many builds and this option determines how many of those builds
+        will be checked. Always goes backwards from the latest build. Can be a decimal
+        number, e.g. <kbd>1.5</kbd> hours. If you want to include all builds set this
+        value to <kbd>0</kbd>.
+    </dd>
+    <dt>Match type:</dt>
+    <dd>
+        Whether to add or remove jobs from this view. There's two kinds of match types:<br>
+        <ul style="margin-top:0px">
+            <li>Include matched/unmatched: adds additional jobs to this view.</li>
+            <li>Exclude matched/unmatched: removes jobs from this view that have been included by previous filters.</li>
+        </ul>
+    </dd>
 </dl>
 
 <h4><u>Examples</u></h4>
 
 <ul>
-	<li>All jobs that ran in the last 3 hours.</li>
-	<li>All jobs that have been stable for the last 10 builds.</li>
-	<li>All jobs that have at least one non-stable build in the last week.</li>
-	<li>All jobs that have not been run in the last 7 days. (Using the Match Type)</li>
-	<li>All jobs that have not been triggered by an SCM change for 30 days.</li>
-	<li>All jobs that were last triggered by a remote trigger.</li>
+    <li>All jobs that ran in the last 3 hours.</li>
+    <li>All jobs that have been stable for the last 10 builds.</li>
+    <li>All jobs that have at least one non-stable build in the last week.</li>
+    <li>All jobs that have not been run in the last 7 days. (Using the Match Type)</li>
+    <li>All jobs that have not been triggered by an SCM change for 30 days.</li>
+    <li>All jobs that were last triggered by a remote trigger.</li>
 </ul>

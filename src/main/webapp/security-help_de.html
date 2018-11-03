@@ -1,14 +1,31 @@
 <div>
-Filtert Jobs anhand der Rechte, die der aktuelle Benutzer für den jeweiligen Job hat.
-<br/><br/>
-Zum Beispiel könnten mit diesem Filter folgende Ansichten erstellt werden:
-<ul>
-<li><u>Konfigurierbare Jobs</u> - Wähle "Konfigurieren" und "Zutreffende aufnehmen"</li>
-<li><u>Nur lesbare Jobs</u> - Wähle "mindestens eines", "Konfigurieren", "Bauen", "Arbeitsbereich" und "Unzutreffende aufnehmen"</li>
-<li><u>Baubare Jobs</u> - Wähle "Bauen" und "Zutreffende aufnehmen"</li>
-</ul>
-Dieser Filter kann natürlich auch mit anderen Filtern kombiniert werden.
-<br/><br/>
-<b>ACHTUNG:</b>
-Dieser Filter liefert selbst <em>keinen</em> Zugriffsschutz. Er erlaubt es lediglich Ansichten anhand bestehender Zugriffsrechte zu erstellen.
+    Dieser Filter inkludiert/exkludiert Jobs anhand der Zugriffsrechte, die der
+    aktuelle Benutzer für den jeweiligen Job hat.
 </div>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+    <dt>Zugriffsrechte:</dt>
+    <dd>
+        Zugriffsrechte, die der aktuelle Benutzer für einen Job besitzen muss, damit
+        dieser Filter auf den Job zutrifft.
+    </dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter
+                hinzugefügt wurden.
+            </li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Anmerkungen</u></h4>
+
+<p>
+    Dieser Filter liefert selbst <em>keine</em> Sicherheit. Er erlaubt lediglich Ansichten anhand bestehender
+    Sicherheitsmechanismen zu erstellen.
+</p>

@@ -1,18 +1,40 @@
 <div>
-Dieser Filter erlaubt es eine Ansicht auf Basis einer anderen Ansicht zu erstellen.
-Dies ist vor allem in großen Organisationen mit hunderten von Jobs und vielen Ansichten hilfreich.
-<br/><br/>
-In einer unternehmensweit organisierten Hierarchie von Projekten zum Beispiel könnten Konfigurationsmanager
-unterschiedliche Teilmengen von Jobs betrachten wollen. Hier gibt es keinen Grund immer Listen von Jobs
-zu pflegen, wenn bestimmte Ansichten lediglich Übermengen anderer Ansichten darstellen.
-<br/><br/>
-Ein anderes Beispiel wäre, wenn man eine Ansicht hat, die Hilfs- und Legacy-Jobs enthält, welche man von anderen
-Ansichten ausschließen will, für die es aber keine wohl definierten Kriterien gibt, anhand derer man filtern könnte.
-In diesem Fall reicht es die erstere Ansicht zu erstellen. Danach kann man alle Jobs in dieser Ansicht aus den
-anderen Ansichten herausfiltern.
-<br/><br/>
-<b></b>
-Vorsicht: Wenn eine Ansicht als ihre eigene "Andere Ansicht" ausgewählt wird oder auf andere Weise eine zirkuläre
-Ansichtsreferenz erzeugt wird, kann dies zu unvorhergesehenem Verhalten führen. In einem solchen Fall zeigt der
-Filter eine Warnmeldung an.
+    Dieser Filter inkludiert/exkludiert Jobs mittels einer anderen Ansicht.
 </div>
+
+<h4><u>Nutzen</u></h4>
+
+<p>
+    Nützlich, z.B., in einer unternehmensweit organisierten Hierarchie von Projekten, in der Konfigurationsmanager
+    unterschiedliche Teilmengen von Jobs betrachten wollen. Hier gibt es keinen Grund immer Listen von Jobs
+    zu pflegen, wenn bestimmte Ansichten lediglich Übermengen anderer Ansichten darstellen
+</p>
+
+<p>
+    Vorsicht: Wenn eine Ansicht als ihre eigene "Andere Ansicht" ausgewählt wird oder auf andere Weise eine zirkuläre
+    Ansichtsreferenz erzeugt wird, kann dies zu unvorhergesehenem Verhalten führen. In einem solchen Fall zeigt der
+    Filter eine Warnmeldung an.
+</p>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+    <dt>Andere Ansicht:</dt>
+    <dd>Dieser Filter trifft auf jeden Job zu, der Teil der hier angegeben Ansicht ist.</dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter hinzugefügt wurden.</li>
+        </ul>
+    </dd>
+</dl>
+
+<h4><u>Anmerkungen</u></h4>
+
+<p>
+    Wenn eine Ansicht als ihre eigene "Andere Ansicht" ausgewählt wird oder auf andere Weise eine zirkuläre
+    Ansichtsreferenz erzeugt wird, kann dies zu unvorhergesehenem Verhalten führen. In einem solchen Fall zeigt der
+    Filter eine Warnmeldung an.
+</p>

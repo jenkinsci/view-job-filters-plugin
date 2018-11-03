@@ -1,8 +1,35 @@
 <div>
 Erstelle Ansichten anhand des Source Code Management (SCM) Typs.
 <br/><br/>
-Nützlich vor allem in Organisationen mit hunderten von Jobs oder wenn man dabei ist Jobs auf ein neues SCM umzustellen.
 <br/><br/>
-Wenn ein Typ von SCM nicht in der Liste auftaucht, dann liegt das daran, dass das entsprechende Plugin
-nicht installiert ist.
 </div>
+
+
+<div>
+    Dieser Filter inkludiert/exkludiert Jobs anhand ihres SCM-Typs.
+</div>
+
+<h4><u>Nutzen</u></h4>
+
+<p>
+    Nützlich vor allem in Organisationen mit hunderten von Jobs oder wenn man dabei ist Jobs auf ein neues SCM umzustellen.
+</p>
+
+<h4><u>Options</u></h4>
+
+<dl>
+    <dt>SCM Type:</dt>
+    <dd>
+        Gibt an auf welche SCM-Typen dieser Filter zutreffen soll.
+        Wenn ein Typ von SCM nicht in der Liste auftaucht, dann liegt das daran, dass das entsprechende Plugin
+        nicht installiert ist.
+    </dd>
+    <dt>Filter-Typ:</dt>
+    <dd>
+        Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+        <ul style="margin-top:0px">
+            <li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+            <li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter hinzugefügt wurden.</li>
+        </ul>
+    </dd>
+</dl>

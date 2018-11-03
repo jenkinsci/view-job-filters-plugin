@@ -1,9 +1,42 @@
 <div>
-Filtert Jobs anhand ihrer Build-Dauer. Beispiele:
-<br/>
-<ul>
-	<li>Alle Jobs bei denen der letzte Build länger als eine Stunde gedauert hat</li>
-	<li>Alle Jobs bei denen mindestens ein Build länger als 10 Stunden gedauert hat</li>
-	<li>Alle Jobs bei denen jeder Build in der letzen Woche kürzer als eine Minute war</li>
-</ul>
+	Dieser Filter inkludiert/exkludiert Jobs anhand ihrer Build-Dauer.
 </div>
+
+<h4><u>Nutzen</u></h4>
+
+<p>
+	Nützlich wenn man Jobs hat, die schnell beendet sein sollten und man diejenigen Jobs
+	finden will, die länger benötigen als erwartet. Das Gegenteil kann ebenfalls sinnvoll sein:
+	Wenn von einem Job bekannt ist, dass er lange braucht kann ein zu schnelles Beenden daraufhin
+	deuten, dass etwas mit dem Job nicht stimmt.
+</p>
+
+<h4><u>Optionen</u></h4>
+
+<dl>
+	<dt>Build-Dauer:</dt>
+	<dd>Wie lange die Builds des Jobs benötigt haben müssen, um von diesem Filter erfasst zu werden.</dd>
+	<dt>Zurückliegender Bereich:</dt>
+	<dd>
+		Ein Job kann viele Builds haben und diese Option bestimmt, wie viele dieser Builds zur
+		Überprüfung herangezogen werden. Die Angabe geht rückwärts vom letzten Build aus und kann
+		eine Dezimalzahl sein, z.B. <kbd>1.5</kbd> Stunden. Um alle Builds heranzuziehen kann <kb>0</kb>
+		als Wert angegeben werden.
+	</dd>
+	<dt>Filter-Typ:</dt>
+	<dd>
+		Gibt an ob Jobs hinzugefügt oder entfernt werden sollen. Es gibt zwei mögliche Arten von Filter-Typen:<br>
+		<ul style="margin-top:0px">
+			<li>Zutreffende/Unzutreffende aufnehmen: fügt zusätzliche Job zu dieser Ansicht hinzu.</li>
+			<li>Zutreffende/Unzutreffende auschließen: entfernt Jobs aus dieser Ansicht, die durch vorherige Filter hinzugefügt wurden.</li>
+		</ul>
+	</dd>
+</dl>
+
+<h4><u>Beispiele</u></h4>
+
+<ul>
+	<li>Zeige alle Jobs an, die länger als eine Stunde benötigt haben.</li>
+	<li>Zeige alle Jobs an, bei denen mindestens eine Build länger als 10 Stunden benötigt hat.</li>
+	<li>Zeige alle Jobs an, bei denen jeder Build in der letzten Woche weniger als eine Minute benötigt hat.</li>
+</ul>
