@@ -47,6 +47,6 @@
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractBuildTrendFilter" optional="false"/>
   <script>
-    document.querySelectorAll('.showOrHideBuildOptions').forEach(showOrHideBuildOptions);
+    Array.prototype.forEach.call(document.querySelectorAll('.showOrHideBuildOptions'), showOrHideBuildOptions);
   </script>
 </j:jelly>
