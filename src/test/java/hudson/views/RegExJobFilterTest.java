@@ -259,7 +259,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	public void testSchedule() {
 		assertFalse(scheduleRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
-		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, WORKFLOW_JOB)) {
 			assertFalse(scheduleRegex(".*").matches(jobOfType(type).trigger(null).asItem()));
 			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("").asItem()));
 			assertTrue(scheduleRegex(".*").matches(jobOfType(type).trigger("\n").asItem()));

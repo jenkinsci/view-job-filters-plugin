@@ -20,6 +20,8 @@ import hudson.util.DescribableList;
 import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.mockito.MockSettings;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -39,7 +41,11 @@ public class JobMocker<T extends Job> {
     T job;
 
     public JobMocker(Class<T> jobClass, Class... interfaces) {
-        this.job = Mockito.mock(jobClass, withSettings().extraInterfaces(interfaces).defaultAnswer(new Answer() {
+        MockSettings settings = withSettings();
+        if (interfaces.length > 0) {
+            settings = settings.extraInterfaces(interfaces);
+        }
+        this.job = Mockito.mock(jobClass, settings.defaultAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 if (DescribableList.class.isAssignableFrom(invocationOnMock.getMethod().getReturnType())) {
@@ -281,6 +287,9 @@ public class JobMocker<T extends Job> {
 
         if (job instanceof AbstractProject) {
             when(((AbstractProject)job).getTriggers()).thenReturn(triggers);
+        }
+        if (instanceOf(job, WORKFLOW_JOB)) {
+            when(((WorkflowJob)job).getTriggers()).thenReturn(triggers);
         }
         return this;
     }
