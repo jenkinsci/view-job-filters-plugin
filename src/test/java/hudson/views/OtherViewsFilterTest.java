@@ -84,7 +84,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 
 		testValidation(view1, null, null);
 		testValidation(view1, "", "You must select a view");
-		testValidation(view1, "All", null);
+		testValidation(view1, "all", null);
 		testValidation(view1, "view-1", ".*view-1 -> view-1.*");
 		testValidation(view2, "view-1", ".*view-\\d -> view-\\d -> view-\\d.*");
 		testValidation(view3, "view-1", ".*view-\\d -> view-\\d -> view-\\d -> view-\\d.*");

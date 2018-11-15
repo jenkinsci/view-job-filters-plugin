@@ -4,7 +4,8 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>2.29</version>
+        <version>3.4</version> <!-- SMPRIO min. 2.33 -->
+        <relativePath />
     </parent>
 
     <artifactId>view-job-filters</artifactId>
@@ -15,6 +16,10 @@
         include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well
         as "chaining" of filters and negating filters.
     </description>
+    <properties>
+        <jenkins.version>2.73.3</jenkins.version> <!-- 2.62 -->
+        <java.level>8</java.level>
+    </properties>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters</url>
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
@@ -40,25 +45,49 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>cvs</artifactId>
-            <version>2.9</version>
+            <version>2.14</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>subversion</artifactId>
-            <version>1.24</version>
+            <version>2.12.1</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jenkins-ci.plugins</groupId>
+                    <artifactId>credentials</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>git</artifactId>
-            <version>1.2.0</version>
+            <version>3.2.0</version>
             <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jenkins-ci.plugins</groupId>
+                    <artifactId>credentials</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>git-client</artifactId>
+            <version>2.7.3</version>
+            <scope>true</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jenkins-ci.plugins</groupId>
+                    <artifactId>credentials</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>email-ext</artifactId>
-            <version>2.37</version>
+            <version>2.63</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -70,15 +99,19 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
             <artifactId>workflow-job</artifactId>
-            <version>2.0</version>
+            <version>2.13</version>
             <optional>true</optional>
         </dependency>
-
+        <dependency>
+            <groupId>org.jenkins-ci.plugins.workflow</groupId>
+            <artifactId>workflow-cps</artifactId>
+            <version>2.17</version>
+        </dependency>
         <!-- plugins extracted from jenkins-core -->
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-project</artifactId>
-            <version>1.0</version>
+            <version>1.13</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -118,7 +151,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5</version>
+            <version>4.5.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -133,16 +166,62 @@
             <groupId>org.spearce</groupId>
             <artifactId>jgit</artifactId>
             <version>0.4-47e4af3</version>
-            <scope>provided</scope>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.jcraft</groupId>
+                    <artifactId>jsch</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>4.9.0.201710071750-r</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>ssh-credentials</artifactId>
+            <version>1.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>scm-api</artifactId>
+            <version>2.2.6</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>junit</artifactId>
+            <version>1.20</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.9.2</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>credentials</artifactId>
+            <version>2.1.17</version>
+            <optional>true</optional>
+        </dependency>
         <!-- graph library to detect cycles in views -->
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
             <version>0.9.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>subversion</artifactId>
+            <version>2.12.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -216,4 +295,4 @@
             <url>http://repo.jenkins-ci.org/public/</url>
         </pluginRepository>
     </pluginRepositories>
-</project>  
+</project>

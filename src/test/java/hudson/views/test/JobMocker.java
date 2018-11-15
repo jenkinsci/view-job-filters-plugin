@@ -181,7 +181,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getBranches()).thenReturn(branchSpecs);
-        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
+        when(scm.getDescriptor()).thenReturn((GitSCM.DescriptorImpl) new GitSCM.DescriptorImpl());
         return scm(scm);
     }
 
@@ -198,7 +198,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getRepositories()).thenReturn(remotes);
-        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
+        when(scm.getDescriptor()).thenReturn((GitSCM.DescriptorImpl) new GitSCM.DescriptorImpl());
         return scm(scm);
     }
 

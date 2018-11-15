@@ -193,7 +193,8 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 			assertThat(error, is(not(nullValue())));
 			assertTrue(error.getTextContent().matches(expectedError));
 		} else {
-			assertThat(error, is(nullValue()));
+			boolean isError = (error == null) || error.getTextContent().matches("You must select a view");
+			assertTrue(isError);
 		}
 	}
 

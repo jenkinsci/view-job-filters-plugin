@@ -42,6 +42,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	@Before
 	public void before() {
 		j.getInstance().setSecurityRealm(j.createDummySecurityRealm());
+		hudson.model.User.ALLOW_USER_CREATION_VIA_URL = true;
 	}
 
 	private void setCurrentUser(String id, String fullName) {
