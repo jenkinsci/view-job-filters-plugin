@@ -99,7 +99,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 
 		if (otherViewName != null){
 			HtmlSelect select = filter.querySelector("select");
-			HtmlOption option = select.getOptionByValue(otherViewName);
+			HtmlOption option = select.getOptionByValue(otherViewName); // TODO broken
 			select.setSelectedAttribute(option, true);
 			webClient.waitForBackgroundJavaScript(2000);
 		}

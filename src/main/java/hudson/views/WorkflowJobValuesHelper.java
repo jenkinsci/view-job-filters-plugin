@@ -11,7 +11,7 @@ public class WorkflowJobValuesHelper implements PluginHelperUtils.PluginHelperTe
 
     public Map getTriggers(TopLevelItem item) {
         if (item instanceof WorkflowJob) {
-            return ((WorkflowJob)item).getTriggers();
+            return ((WorkflowJob)item).getTriggers(); // TODO rather use ParameterizedJob
         }
         return null;
     }

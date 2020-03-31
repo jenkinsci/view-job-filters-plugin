@@ -51,18 +51,8 @@ public class ScmFilterHelper {
 	private static ScmValuesProvider buildCvs() {
 		return new CvsValuesProvider();
 	}
-	private static ScmValuesProvider buildGit() throws Exception {
-		// try both providers to allow legacy data format for git api
-		// look for the legacy provider first, because it is backwards compatible
-		ScmValuesProvider provider = null;
-		try {
-			provider = PluginHelperUtils.validateAndThrow(new GitLegacyValuesProvider());
-		} catch (Throwable e) {
-			// if we get here it means the legacy api isn't present
-			// if this constructor fails too, it means git isn't present at all
-			provider = PluginHelperUtils.validateAndThrow(new GitValuesProvider());
-		}
-		return provider;
+	private static ScmValuesProvider buildGit() {
+        return new GitValuesProvider();
 	}
 	
 }

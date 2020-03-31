@@ -158,7 +158,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "All"));
 		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
 
-		testValidation(view1, OtherViewsFilter.class, null);
+		testValidation(view1, OtherViewsFilter.class, null); // TODO fails
 		testValidation(view2, UnclassifiedJobsFilter.class, null);
 	}
 

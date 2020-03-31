@@ -332,7 +332,7 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         viewsByName.put("nested-view-1 / nested-view-2 / list-view-5", listView5);
         viewsByName.put("nested-view-1 / nested-view-2 / list-view-6", listView6);
 
-        Assert.assertThat(ViewGraph.getAllViewsByName(), is(viewsByName));
+        Assert.assertThat(ViewGraph.getAllViewsByName(), is(viewsByName)); // TODO fails
     }
 
     @Issue({"JENKINS-13464", "JENKINS-14916", "JENKINS-32496"})
@@ -357,7 +357,7 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         j.getInstance().setAuthorizationStrategy(strategy);
 
         User user = j.getInstance().getUser("test");
-        user.setFullName("test");
+        user.setFullName("test"); // TODO broken
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "", new GrantedAuthority[0]);
         SecurityContextHolder.getContext().setAuthentication(auth);
 

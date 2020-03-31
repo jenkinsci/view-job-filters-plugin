@@ -192,7 +192,7 @@ public class ParameterFilter
 	
 	protected String getStringValue(ParameterValue value) {
 		if (value instanceof StringParameterValue) {
-			return ((StringParameterValue) value).value;
+			return (String) ((StringParameterValue) value).getValue();
 		} else if (value instanceof BooleanParameterValue) {
 			boolean bval = ((BooleanParameterValue) value).value;
 			return String.valueOf(bval);

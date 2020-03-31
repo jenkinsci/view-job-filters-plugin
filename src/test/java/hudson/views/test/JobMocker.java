@@ -181,7 +181,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getBranches()).thenReturn(branchSpecs);
-        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
+        when(scm.getDescriptor()).thenReturn(new GitSCM.DescriptorImpl());
         return scm(scm);
     }
 
@@ -198,23 +198,7 @@ public class JobMocker<T extends Job> {
 
         GitSCM scm = mock(GitSCM.class);
         when(scm.getRepositories()).thenReturn(remotes);
-        when(scm.getDescriptor()).thenReturn((SCMDescriptor)new GitSCM.DescriptorImpl());
-        return scm(scm);
-    }
-
-    public JobMocker<T> gitReposLegacy(String... repos) {
-        List<org.spearce.jgit.transport.RemoteConfig> remotes = new ArrayList<org.spearce.jgit.transport.RemoteConfig>();
-        for (String repo: repos) {
-            org.spearce.jgit.transport.URIish uri = mock(org.spearce.jgit.transport.URIish.class);
-            when(uri.toPrivateString()).thenReturn(repo);
-
-            org.spearce.jgit.transport.RemoteConfig remote = mock(org.spearce.jgit.transport.RemoteConfig.class);
-            when(remote.getURIs()).thenReturn(Arrays.asList(uri));
-            remotes.add(remote);
-        }
-
-        GitSCM scm = mock(GitSCM.class);
-        when(scm.getRepositories()).thenReturn((List)remotes);
+        when(scm.getDescriptor()).thenReturn(new GitSCM.DescriptorImpl());
         return scm(scm);
     }
 
