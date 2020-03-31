@@ -187,7 +187,7 @@ public class BuildFilterColumn extends ListViewColumn {
 		}
 	}
 
-	public class JobWrapper extends Job {
+	public class JobWrapper extends Job implements TopLevelItem {
 		private final Job delegate;
 
 		public JobWrapper(Job delegate) {
@@ -233,6 +233,12 @@ public class BuildFilterColumn extends ListViewColumn {
 		@Override
 		protected void removeRun(Run run) {
 		}
+
+        @Override
+        public TopLevelItemDescriptor getDescriptor() {
+            return ((TopLevelItem) delegate).getDescriptor();
+        }
+
 	}
 
 	public class RunWrapper extends Run {
