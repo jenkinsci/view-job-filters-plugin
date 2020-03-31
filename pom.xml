@@ -9,13 +9,13 @@
 
     <artifactId>view-job-filters</artifactId>
     <packaging>hpi</packaging>
-    <version>2.1.2-SNAPSHOT</version>
+    <version>2.2-SNAPSHOT</version>
     <name>View Job Filters</name>
     <description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to
         include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well
         as "chaining" of filters and negating filters.
     </description>
-    <url>http://wiki.jenkins-ci.org/display/JENKINS/View+Job+Filters</url>
+    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     <scm>
         <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
@@ -28,13 +28,6 @@
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-    <developers>
-        <developer>
-            <name>Sven Schoenung</name>
-            <email>sven.schoenung@gmail.com</email>
-            <url>https://sven.schoenung.org</url>
-        </developer>
-    </developers>
     <dependencies>
         <!-- optional jenkins plugins -->
         <dependency>
