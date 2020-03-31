@@ -16,7 +16,9 @@ public class GitTest {
 		List<ScmValuesProvider> matchers = ScmFilterHelper.matchers;
 		for (ScmValuesProvider provider: matchers) {
 			String test = provider.getClass().getName();
-			assertFalse(test.contains("Git"));
+			if (test.contains("Git")) {
+                assertFalse(provider.checkLoaded());
+            }
 		}
 	}
 }

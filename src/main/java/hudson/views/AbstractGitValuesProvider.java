@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO fold into GitValuesProvider
-public abstract class AbstractGitValuesProvider implements ScmValuesProvider {
+public abstract class AbstractGitValuesProvider extends AbstractScmValuesProvider {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getValues(SCM scm) {
