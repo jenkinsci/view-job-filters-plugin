@@ -1,0 +1,2 @@
+_extends: .github
+tag-template: view-job-filters-$NEXT_MINOR_VERSION
