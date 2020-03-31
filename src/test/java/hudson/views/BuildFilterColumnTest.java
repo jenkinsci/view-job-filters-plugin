@@ -101,6 +101,6 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
 
     private DomNode getBuildFilterColumn(ListView view) throws IOException, SAXException {
         HtmlPage viewPage = j.createWebClient().getPage(view);
-        return viewPage.querySelectorAll(".bigtable > tbody > tr > td").get(0); // TODO broken
+        return viewPage.querySelectorAll(".bigtable > tbody > tr > td").get(0);
     }
 }
