@@ -155,10 +155,10 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	public void testValidationNoCycle() throws IOException, SAXException, InterruptedException {
-		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "All"));
+		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "all"));
 		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
 
-		testValidation(view1, OtherViewsFilter.class, null); // TODO fails
+		testValidation(view1, OtherViewsFilter.class, null);
 		testValidation(view2, UnclassifiedJobsFilter.class, null);
 	}
 
@@ -193,7 +193,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 			assertThat(error, is(not(nullValue())));
 			assertTrue(error.getTextContent().matches(expectedError));
 		} else {
-			assertThat(error, is(nullValue()));
+			assertThat(error != null ? error.getTextContent() : "<none>", error, is(nullValue()));
 		}
 	}
 
