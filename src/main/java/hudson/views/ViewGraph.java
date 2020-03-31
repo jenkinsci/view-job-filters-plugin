@@ -21,7 +21,7 @@ public class ViewGraph {
     private static final Comparator<List<String>> SORT_BY_SIZE_DESC = new Comparator<List<String>>() {
         @Override
         public int compare(List<String> o1, List<String> o2) {
-            return Integer.valueOf(o2.size()).compareTo(o1.size());
+            return Integer.compare(o2.size(), o1.size());
         }
     };
 
