@@ -27,7 +27,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 	public void testMatch() {
 		assertFalse(jobStatus(true, true, true, true, true).matches(mock(TopLevelItem.class)));
 
-		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, WORKFLOW_JOB)) {
 			assertFalse(jobStatus(true, true, true, true, true).matches(jobOfType(type).asItem()));
 
 			assertTrue(jobStatus(true, false, false, false, false).matches(jobOfType(type).result(Result.UNSTABLE).asItem()));
@@ -54,7 +54,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 			assertTrue(jobStatus(false, false, false, false, true).matches(jobOfType(type).result(Result.SUCCESS).asItem()));
 			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).disabled(true).asItem()));
 
-			assertTrue(jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(true).asItem()));
+			assertTrue("works on " + type.getJobClass().getSimpleName(), jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(true).asItem()));
 			assertFalse(jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(false).asItem()));
 
 			assertTrue(jobStatus(true, true, false, false, false).matches(jobOfType(type).result(Result.UNSTABLE).asItem()));

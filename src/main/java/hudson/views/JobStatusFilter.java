@@ -1,12 +1,12 @@
 package hudson.views;
 
 import hudson.Extension;
-import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
+import jenkins.model.ParameterizedJobMixIn;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -31,8 +31,8 @@ public class JobStatusFilter extends AbstractIncludeExcludeJobFilter {
 	}
 	@SuppressWarnings("rawtypes")
 	protected boolean matches(TopLevelItem item) {
-		if (item instanceof AbstractProject) {
-			AbstractProject project = (AbstractProject) item;
+		if (item instanceof ParameterizedJobMixIn.ParameterizedJob) {
+			ParameterizedJobMixIn.ParameterizedJob project = (ParameterizedJobMixIn.ParameterizedJob) item;
 			if (disabled && project.isDisabled()) {
 				return true;
 			}

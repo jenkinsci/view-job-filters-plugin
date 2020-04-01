@@ -17,6 +17,7 @@ import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
 import hudson.util.DescribableList;
+import jenkins.model.ParameterizedJobMixIn;
 import jenkins.triggers.SCMTriggerItem;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -108,8 +109,8 @@ public class JobMocker<T extends Job> {
     }
 
     public JobMocker<T> disabled(boolean disabled) {
-        if (job instanceof AbstractProject) {
-            when(((AbstractProject) job).isDisabled()).thenReturn(disabled);
+        if (job instanceof ParameterizedJobMixIn.ParameterizedJob) {
+            when(((ParameterizedJobMixIn.ParameterizedJob) job).isDisabled()).thenReturn(disabled);
         }
         return this;
     }
@@ -203,7 +204,7 @@ public class JobMocker<T extends Job> {
     }
 
     public JobMocker scm(SCM scm) {
-        if (job instanceof AbstractProject) {
+        if (job instanceof AbstractProject) { // TODO unnecessary, covered by SCMTriggerItem
             when(((AbstractProject) job).getScm()).thenReturn(scm);
         }
         if (job instanceof SCMTriggerItem) {
@@ -269,7 +270,7 @@ public class JobMocker<T extends Job> {
         Map<TriggerDescriptor, Trigger<?>> triggers = new HashMap<TriggerDescriptor, Trigger<?>>();
         triggers.put(mock(TriggerDescriptor.class), trigger);
 
-        if (job instanceof AbstractProject) {
+        if (job instanceof AbstractProject) { // TODO replace this and next by ParameterizedJobMixIn.ParameterizedJob
             when(((AbstractProject)job).getTriggers()).thenReturn(triggers);
         }
         if (instanceOf(job, WORKFLOW_JOB)) {
