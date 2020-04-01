@@ -5,7 +5,6 @@ import hudson.DescriptorExtensionList;
 import hudson.Extension;
 import hudson.model.*;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Logger;
@@ -15,7 +14,6 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import net.sf.json.JSONObject;
 
-import org.jenkinsci.plugins.workflow.support.steps.build.RunWrapper;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -189,7 +187,7 @@ public class BuildFilterColumn extends ListViewColumn {
 		}
 	}
 
-	public class JobWrapper extends Job {
+	public class JobWrapper extends Job implements TopLevelItem {
 		private final Job delegate;
 
 		public JobWrapper(Job delegate) {
@@ -235,6 +233,12 @@ public class BuildFilterColumn extends ListViewColumn {
 		@Override
 		protected void removeRun(Run run) {
 		}
+
+        @Override
+        public TopLevelItemDescriptor getDescriptor() {
+            return ((TopLevelItem) delegate).getDescriptor();
+        }
+
 	}
 
 	public class RunWrapper extends Run {

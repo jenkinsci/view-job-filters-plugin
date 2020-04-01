@@ -45,7 +45,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void setCurrentUser(String id, String fullName) {
-		User user = j.getInstance().getUser(id);
+		User user = User.getById(id, true);
 		user.setFullName(fullName);
 		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(id, ""));
 	}

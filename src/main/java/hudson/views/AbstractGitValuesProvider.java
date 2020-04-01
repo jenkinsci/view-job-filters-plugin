@@ -7,7 +7,8 @@ import hudson.scm.SCM;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGitValuesProvider implements ScmValuesProvider {
+// TODO fold into GitValuesProvider
+public abstract class AbstractGitValuesProvider extends AbstractScmValuesProvider {
 
 	@SuppressWarnings("unchecked")
 	public List<String> getValues(SCM scm) {

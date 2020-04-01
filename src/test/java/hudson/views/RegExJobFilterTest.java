@@ -217,15 +217,6 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitRepos("Foobar").asItem()));
 			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
 			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitRepos("Foo", "Bar").asItem()));
-
-			assertFalse(scmRegex(".*").matches(jobOfType(type).gitReposLegacy().asItem()));
-			assertTrue(scmRegex(".*").matches(jobOfType(type).gitReposLegacy("").asItem()));
-			assertTrue(scmRegex("Foo").matches(jobOfType(type).gitReposLegacy("Foo").asItem()));
-			assertTrue(scmRegex("Foo.*").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
-			assertFalse(scmRegex("bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
-			assertTrue(scmRegex(".*bar").matches(jobOfType(type).gitReposLegacy("Foobar").asItem()));
-			assertTrue(scmRegex("Bar").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
-			assertTrue(scmRegex("B.*").matches(jobOfType(type).gitReposLegacy("Foo", "Bar").asItem()));
 		}
 	}
 

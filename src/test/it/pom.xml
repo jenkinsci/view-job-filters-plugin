@@ -10,6 +10,10 @@
 	<artifactId>view-job-filters-it</artifactId>
 	<version>1.23-SNAPSHOT</version>
 	<packaging>pom</packaging>
+
+        <properties>
+            <java.level>8</java.level>
+        </properties>
 	
 	<modules>
 		<module>git-none</module>

@@ -324,7 +324,7 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         View listView6 = addToNestedView(nestedView2, new ListView("list-view-6"));
 
         Map<String, View> viewsByName = new HashMap<String, View>();
-        viewsByName.put("All", getView("All"));
+        viewsByName.put("all", getView("all"));
         viewsByName.put("list-view-1", listView1);
         viewsByName.put("list-view-2", listView2);
         viewsByName.put("nested-view-1 / list-view-3", listView3);
@@ -356,7 +356,7 @@ public class ViewGraphTest extends AbstractJenkinsTest {
         GlobalMatrixAuthorizationStrategy strategy = new GlobalMatrixAuthorizationStrategy();
         j.getInstance().setAuthorizationStrategy(strategy);
 
-        User user = j.getInstance().getUser("test");
+        User user = User.getById("test", true);
         user.setFullName("test");
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "", new GrantedAuthority[0]);
         SecurityContextHolder.getContext().setAuthentication(auth);

@@ -19,10 +19,9 @@ public class GitTest {
 		boolean found = false;
 		for (ScmValuesProvider provider: matchers) {
 			String test = provider.getClass().getName();
-			if (test.contains("GitValuesProvider")) {
+			if (test.contains("GitValuesProvider") && provider.checkLoaded()) {
 				found = true;
 			}
-			assertFalse(test.contains("GitLegacyValuesProvider"));
 		}
 		assertTrue(found);
 	}

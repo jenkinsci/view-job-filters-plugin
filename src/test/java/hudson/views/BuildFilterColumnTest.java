@@ -19,7 +19,7 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
 
     @Test
     public void testWrappedStatusColumn() throws Exception {
-        FreeStyleProject project = createFreeStyleProject("project");
+        FreeStyleProject project = createProject();
 
         ListView view = createViewWithBuildFilterColumn(new StatusColumn());
 
@@ -41,7 +41,7 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
 
     @Test
     public void testWrappedWeatherColumn() throws Exception {
-        FreeStyleProject project = createFreeStyleProject("project");
+        FreeStyleProject project = createProject();
 
         ListView view = createViewWithBuildFilterColumn(new WeatherColumn());
 
@@ -74,6 +74,12 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
         assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("80plus"));
+    }
+
+    private FreeStyleProject createProject() throws IOException {
+        FreeStyleProject p = createFreeStyleProject("project");
+        p.addProperty(new ParametersDefinitionProperty(new StringParameterDefinition("BRANCH", null)));
+        return p;
     }
 
     private FreeStyleBuild runWithParameter(FreeStyleProject project, Result result, String paramName, String paramValue) throws Exception {
