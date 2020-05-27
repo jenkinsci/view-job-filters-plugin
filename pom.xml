@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>3.57</version>
+        <version>4.2</version>
         <relativePath />
     </parent>
 
@@ -30,15 +30,15 @@
         </license>
     </licenses>
     <properties>
-        <jenkins.version>2.150.3</jenkins.version>
+        <jenkins.version>2.164.3</jenkins.version>
         <java.level>8</java.level>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.150.x</artifactId>
-                <version>6</version>
+                <artifactId>bom-2.164.x</artifactId>
+                <version>9</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -185,29 +185,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/Messages.class</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
