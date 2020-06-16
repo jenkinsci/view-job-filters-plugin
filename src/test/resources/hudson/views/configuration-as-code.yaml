@@ -1,0 +1,25 @@
+jenkins:
+  views:
+    - all:
+        name: "all"
+    - list:
+        columns:
+          - "status"
+          - "weather"
+          - "jobName"
+          - "lastSuccess"
+          - "lastFailure"
+          - "lastDuration"
+          - "buildButton"
+        description: "test view"
+        includeRegex: ".*"
+        jobFilters:
+          - buildDurationFilter:
+              amount: 24.0F
+              amountTypeString: "Hours"
+              buildCountTypeString: "Latest"
+              buildDurationMinutes: "10"
+              includeExcludeTypeString: "includeMatched"
+              lessThan: true
+        name: "test"
+  viewsTabBar: "standard"
