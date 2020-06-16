@@ -1,15 +1,11 @@
 package hudson.views;
 
 import hudson.model.ListView;
-import hudson.model.View;
 import io.jenkins.plugins.casc.misc.RoundTripAbstractTest;
 import org.jvnet.hudson.test.RestartableJenkinsRule;
 
-import java.util.Collection;
-
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 
 public class ViewJobFiltersConfigAsCodeTest extends RoundTripAbstractTest {
@@ -20,12 +16,12 @@ public class ViewJobFiltersConfigAsCodeTest extends RoundTripAbstractTest {
         assertThat(listView, notNullValue());
         assertThat(listView.getIncludeRegex(), is(".*"));
         assertThat(listView.getDescription(), is("test view"));
-        assertThat(listView.getJobFilters().get(0), is(BuildDurationFilter.class));
+        assertThat(listView.getJobFilters().get(0), is(instanceOf(BuildDurationFilter.class)));
 
     }
 
     @Override
     protected String stringInLogExpected() {
-        return null;
+        return "Setting class hudson.model.ListView.name = test";
     }
 }
