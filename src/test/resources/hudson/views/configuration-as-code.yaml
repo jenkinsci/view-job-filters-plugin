@@ -15,7 +15,7 @@ jenkins:
         includeRegex: ".*"
         jobFilters:
           - buildDurationFilter:
-              amount: 24.0
+              amount: 24.0F
               amountTypeString: "Hours"
               buildCountTypeString: "Latest"
               buildDurationMinutes: "10"
