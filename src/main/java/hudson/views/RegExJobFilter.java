@@ -7,6 +7,7 @@ import hudson.scm.SCM;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -115,6 +116,25 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 					}
 					if (options.matchFullDisplayName) {
 						values.add(item.getParent().getFullDisplayName());
+					}
+				}
+			}
+		},
+		BUILD_NAME {
+			@Override
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
+				if (item.getAllJobs() != null) {
+					ArrayList<Job> jobs = new ArrayList<>(item.getAllJobs());
+					for (Job job : jobs) {
+						for (Iterator iterator = job.getBuilds().listIterator(); iterator.hasNext(); ) {
+							Run run = (Run) iterator.next();
+							if (options.matchName || options.matchDisplayName) {
+								values.add(run.getDisplayName());
+							}
+							if (options.matchFullName || options.matchFullDisplayName) {
+								values.add(run.getFullDisplayName());
+							}
+						}
 					}
 				}
 			}
