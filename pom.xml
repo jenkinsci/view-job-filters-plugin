@@ -206,6 +206,7 @@
                         </goals>
                         <configuration>
                             <projectsDirectory>src/test/it</projectsDirectory>
+                            <writeJunitReport>true</writeJunitReport>
                         </configuration>
                     </execution>
                 </executions>
