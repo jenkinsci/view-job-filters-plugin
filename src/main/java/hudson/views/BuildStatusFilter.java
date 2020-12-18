@@ -13,15 +13,18 @@ public class BuildStatusFilter extends AbstractIncludeExcludeJobFilter {
 	private boolean neverBuilt;
 	private boolean building;
 	private boolean inBuildQueue;
+	private boolean buildable;
 	
 	@DataBoundConstructor
 	public BuildStatusFilter(boolean neverBuilt,
 			boolean building, boolean inBuildQueue,
+			boolean buildable,
 			String includeExcludeTypeString) {
 		super(includeExcludeTypeString);
 		this.neverBuilt = neverBuilt;
 		this.building = building;
 		this.inBuildQueue = inBuildQueue;
+		this.buildable = buildable;
 	}
 	@SuppressWarnings("rawtypes")
 	protected boolean matches(TopLevelItem item) {
@@ -33,6 +36,9 @@ public class BuildStatusFilter extends AbstractIncludeExcludeJobFilter {
 			if (inBuildQueue && job.isInQueue()) {
 				return true;
 			}
+			if (buildable && job.isBuildable()){
+			    return true;
+            }
 			Run last = job.getLastBuild();
 			if (last == null && neverBuilt) {
 				return true;
@@ -62,4 +68,7 @@ public class BuildStatusFilter extends AbstractIncludeExcludeJobFilter {
 	public boolean isInBuildQueue() {
 		return inBuildQueue;
 	}
+	public boolean isBuildable() {
+	    return buildable;
+    }
 }
