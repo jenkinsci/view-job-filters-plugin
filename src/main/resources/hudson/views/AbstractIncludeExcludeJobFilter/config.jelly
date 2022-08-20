@@ -3,11 +3,13 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <f:entry title="${%Match Type}:">
-    <select name="includeExcludeTypeString" class="setting-input">
-      <f:option value="includeMatched" selected="${instance.includeMatched}">${%Include Matched - Add jobs that match this filter}</f:option>
-      <f:option value="includeUnmatched" selected="${instance.includeUnmatched}">${%Include Unmatched - Add jobs that don't match this filter}</f:option>
-      <f:option value="excludeMatched" selected="${instance.excludeMatched}">${%Exclude Matched - Filter out jobs that match this filter}</f:option>
-      <f:option value="excludeUnmatched" selected="${instance.excludeUnmatched}">${%Exclude Unmatched - Filter out jobs that don't match this filter}</f:option>
-    </select>
+    <div class="jenkins-select">
+      <select name="includeExcludeTypeString" class="jenkins-select__input">
+        <f:option value="includeMatched" selected="${instance.includeMatched}">${%Include Matched - Add jobs that match this filter}</f:option>
+        <f:option value="includeUnmatched" selected="${instance.includeUnmatched}">${%Include Unmatched - Add jobs that don't match this filter}</f:option>
+        <f:option value="excludeMatched" selected="${instance.excludeMatched}">${%Exclude Matched - Filter out jobs that match this filter}</f:option>
+        <f:option value="excludeUnmatched" selected="${instance.excludeUnmatched}">${%Exclude Unmatched - Filter out jobs that don't match this filter}</f:option>
+      </select>
+    </div>
   </f:entry>
 </j:jelly>

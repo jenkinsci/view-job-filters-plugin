@@ -3,14 +3,21 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <f:entry title="${%Permissions}">
-  	<select name="permissionCheckType">
-      <f:option value="MustMatchAll" selected="${instance.permissionCheckType == 'MustMatchAll'}">${%Must Match All - Match jobs for which the current user has all of these permissions}</f:option>
-      <f:option value="AtLeastOne" selected="${instance.permissionCheckType == 'AtLeastOne'}">${%Match At Least One - Match jobs for which current user has at least one of these permissions}</f:option>
-    </select>
-    <br/>
-    <f:checkbox name="configure" field="configure"/> ${%Configure} <br/>
-    <f:checkbox name="build" field="build"/> ${%Build} <br/>
-    <f:checkbox name="workspace" field="workspace"/> ${%Workspace}
+    <div class="jenkins-select jenkins-!-margin-bottom-2">
+      <select class="jenkins-select__input" name="permissionCheckType">
+        <f:option value="MustMatchAll" selected="${instance.permissionCheckType == 'MustMatchAll'}">${%Must Match All - Match jobs for which the current user has all of these permissions}</f:option>
+        <f:option value="AtLeastOne" selected="${instance.permissionCheckType == 'AtLeastOne'}">${%Match At Least One - Match jobs for which current user has at least one of these permissions}</f:option>
+      </select>
+    </div>
+    <div>
+      <f:checkbox title="${%Configure}" field="configure"/>
+    </div>
+    <div>
+      <f:checkbox title="${%Build}" field="build"/>
+    </div>
+    <div>
+      <f:checkbox title="${%Workspace}" field="workspace"/>
+    </div>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
 </j:jelly>
