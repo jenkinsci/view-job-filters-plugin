@@ -26,17 +26,17 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
+        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
 
         runWithParameter(project, Result.FAILURE, "BRANCH", "master");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-red"));
+        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-red"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
         runWithParameter(project, Result.FAILURE, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
+        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
     }
 
     @Test
@@ -48,32 +48,32 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.FAILURE, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("00to19"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-pouring"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("40to59"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-cloudy"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("60to79"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("60to79"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("60to79"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("img").getAttributes().getNamedItem("class").getTextContent(), containsString("80plus"));
+        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-sunny"));
     }
 
     private FreeStyleProject createProject() throws IOException {
@@ -101,6 +101,6 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
 
     private DomNode getBuildFilterColumn(ListView view) throws IOException, SAXException {
         HtmlPage viewPage = j.createWebClient().getPage(view);
-        return viewPage.querySelectorAll(".bigtable > tbody > tr > td").get(0);
+        return viewPage.querySelectorAll(".jenkins-table > tbody > tr > td").get(0);
     }
 }
