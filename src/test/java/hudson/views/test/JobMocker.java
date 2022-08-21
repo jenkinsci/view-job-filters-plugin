@@ -296,20 +296,6 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
-    public JobMocker<T> mavenBuildStep(MavenBuildStep step, String targets, final String name, String properties, String opts) {
-        if (instanceOf(job, MAVEN_MODULE_SET)) {
-            Maven maven = mockMaven(targets, name, properties, opts);
-        }
-        return this;
-    }
-
-    public JobMocker<T> mavenPostBuildStep(String targets, final String name, String properties, String opts) {
-        if (instanceOf(job, MAVEN_MODULE_SET)) {
-            Maven maven = mockMaven(targets, name, properties, opts);
-        }
-        return this;
-    }
-
     private Maven mockMaven(final String targets, final String name, final String properties, final String opts) {
         final Maven.MavenInstallation mavenInstallation = mock(Maven.MavenInstallation.class);
         when(mavenInstallation.getName()).thenReturn(name);
