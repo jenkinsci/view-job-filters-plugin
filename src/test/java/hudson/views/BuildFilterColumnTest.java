@@ -1,6 +1,5 @@
 package hudson.views;
 
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.Functions;
@@ -8,7 +7,6 @@ import hudson.model.*;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
