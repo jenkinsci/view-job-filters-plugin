@@ -26,17 +26,17 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
+        assertThat(getBuildFilterColumn(view).querySelector("svg").getAttributes().getNamedItem("title").getTextContent(), containsString("Success"));
 
         runWithParameter(project, Result.FAILURE, "BRANCH", "master");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-red"));
+        assertThat(getBuildFilterColumn(view).querySelector("svg").getAttributes().getNamedItem("title").getTextContent(), containsString("Failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
         runWithParameter(project, Result.FAILURE, "BRANCH", "test");
 
-        assertThat(getBuildFilterColumn(view).querySelector("span").getAttributes().getNamedItem("class").getTextContent(), containsString("icon-blue"));
+        assertThat(getBuildFilterColumn(view).querySelector("svg").getAttributes().getNamedItem("title").getTextContent(), containsString("Success"));
     }
 
     @Test
@@ -48,32 +48,32 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.FAILURE, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-pouring"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("All recent builds failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-cloudy"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("1 out of the last 2 builds failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("1 out of the last 3 builds failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("1 out of the last 4 builds failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-partly-cloudy"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("1 out of the last 5 builds failed"));
 
         runWithParameter(project, Result.SUCCESS, "BRANCH", "test");
         runWithParameter(project, Result.SUCCESS, "BRANCH", "master");
 
-        assertThat(getBuildFilterColumn(view).querySelector("use").getAttributes().getNamedItem("href").getTextContent(), containsString("weather-sunny"));
+        assertThat(getBuildFilterColumn(view).getAttributes().getNamedItem("data-html-tooltip").getTextContent(), containsString("No recent builds failed"));
     }
 
     private FreeStyleProject createProject() throws IOException {

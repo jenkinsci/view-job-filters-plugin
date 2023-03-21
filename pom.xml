@@ -4,24 +4,20 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.46</version>
-        <relativePath />
+        <version>4.55</version>
+        <relativePath/>
     </parent>
 
     <artifactId>view-job-filters</artifactId>
     <packaging>hpi</packaging>
-    <version>2.4-SNAPSHOT</version>
+    <version>${changelist}</version>
     <name>View Job Filters</name>
-    <description>Manage multiple views and hundreds of jobs much more easily. This plug-in provides more ways to
-        include/exclude jobs from a view, including filtering by SCM path, and by any job or build status type, as well
-        as "chaining" of filters and negating filters.
-    </description>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
     <scm>
-        <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-        <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
+        <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+        <url>https://github.com/${gitHubRepo}</url>
+        <tag>${scmTag}</tag>
     </scm>
     <licenses>
         <license>
@@ -30,16 +26,23 @@
         </license>
     </licenses>
     <properties>
-        <jenkins.version>2.346.1</jenkins.version>
+        <changelist>999999-SNAPSHOT</changelist>
+        <gitHubRepo>jenkinsci/view-job-filters-plugin</gitHubRepo>
+        <jenkins.version>2.387.1</jenkins.version>
     </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.346.x</artifactId>
-                <version>1595.v8c71c13cc3a_9</version>
+                <artifactId>bom-2.387.x</artifactId>
+                <version>1887.vda_d0ddb_c15c4</version>
                 <scope>import</scope>
                 <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.jenkins-ci.main</groupId>
+                <artifactId>maven-plugin</artifactId>
+                <version>3.5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -48,12 +51,13 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>cvs</artifactId>
-            <version>2.19.1</version>
+            <version>2.15</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>subversion</artifactId>
+            <version>2.13.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -64,16 +68,34 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>email-ext</artifactId>
+            <version>2.94</version>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.jenkins-ci.main</groupId>
-            <artifactId>maven-plugin</artifactId>
-            <version>3.19</version>
+            <groupId>org.jenkins-ci.plugins</groupId>
+            <artifactId>m2-extra-steps</artifactId>
+            <version>1.1.8</version>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
+                    <groupId>org.apache.maven.wagon</groupId>
+                    <artifactId>wagon-ssh</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven.wagon</groupId>
+                    <artifactId>wagon-http</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven.wagon</groupId>
+                    <artifactId>wagon-webdav-jackrabbit</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -92,6 +114,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-auth</artifactId>
+            <version>2.5</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -104,7 +127,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>nested-view</artifactId>
-            <version>1.26</version>
+            <version>1.14</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -148,14 +171,14 @@
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.4.0</version>
+            <version>0.9.2</version>
         </dependency>
 
         <!-- bytecode library to create proxies for build filter column -->
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.29.0-GA</version>
+            <version>3.23.1-GA</version>
         </dependency>
     </dependencies>
 
@@ -164,7 +187,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-invoker-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>integration-test-install</id>
