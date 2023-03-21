@@ -4,16 +4,13 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>2.29</version>
+		<version>4.56</version>
 	</parent>
 
 	<artifactId>view-job-filters-it</artifactId>
 	<version>1.23-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-        <properties>
-            <java.level>8</java.level>
-        </properties>
 	
 	<modules>
 		<module>git-none</module>
