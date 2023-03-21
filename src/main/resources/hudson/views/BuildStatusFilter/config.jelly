@@ -6,6 +6,7 @@
     <f:checkbox name="building" field="building"/> ${%Currently Building}
     <f:checkbox name="neverBuilt" field="neverBuilt"/> ${%Never Built}
     <f:checkbox name="inBuildQueue" field="inBuildQueue"/> ${%In Build Queue}
+    <f:checkbox name="buildable" field="buildable"/> ${%Is Buildable}
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
 </j:jelly>

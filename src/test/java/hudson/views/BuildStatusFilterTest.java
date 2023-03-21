@@ -25,24 +25,27 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 	public void testMatch() {
 		Build build = mock(Build.class);
 
-		assertFalse(buildStatus(true, true, true).matches(mock(TopLevelItem.class)));
+		assertFalse(buildStatus(true, true, true, true).matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			assertTrue(buildStatus(true, false, false).matches(jobOfType(type).lastBuild(null).asItem()));
-			assertTrue(buildStatus(true, true, false).matches(jobOfType(type).lastBuild(null).asItem()));
-			assertTrue(buildStatus(true, false, true).matches(jobOfType(type).lastBuild(null).asItem()));
-			assertFalse(buildStatus(true, false, false).matches(jobOfType(type).lastBuild(build).asItem()));
-			assertFalse(buildStatus(false, false, false).matches(jobOfType(type).lastBuild(null).asItem()));
+			assertTrue(buildStatus(true, false, false, true).matches(jobOfType(type).lastBuild(null).asItem()));
+			assertTrue(buildStatus(true, true, false, true).matches(jobOfType(type).lastBuild(null).asItem()));
+			assertTrue(buildStatus(true, false, true, true).matches(jobOfType(type).lastBuild(null).asItem()));
+			assertFalse(buildStatus(true, false, false, true).matches(jobOfType(type).lastBuild(build).asItem()));
+			assertFalse(buildStatus(false, false, false, true).matches(jobOfType(type).lastBuild(null).asItem()));
 
-			assertTrue(buildStatus(false, true, false).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
-			assertTrue(buildStatus(true, true, false).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
-			assertTrue(buildStatus(false, true, true).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
-			assertFalse(buildStatus(false, true, false).matches(jobOfType(type).building(false).lastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, false, true).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
+			assertTrue(buildStatus(true, true, false, true).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, true, true).matches(jobOfType(type).building(true).lastBuild(build).asItem()));
+			assertFalse(buildStatus(false, true, false, true).matches(jobOfType(type).building(false).lastBuild(build).asItem()));
 
-			assertTrue(buildStatus(false, false, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
-			assertTrue(buildStatus(true, false, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
-			assertTrue(buildStatus(false, true, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
-			assertFalse(buildStatus(false, false, true).matches(jobOfType(type).inQueue(false).lastBuild(build).asItem()));
+			assertTrue(buildStatus(false, false, true, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
+			assertTrue(buildStatus(true, false, true, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
+			assertTrue(buildStatus(false, true, true, true).matches(jobOfType(type).inQueue(true).lastBuild(build).asItem()));
+			assertFalse(buildStatus(false, false, true, true).matches(jobOfType(type).inQueue(false).lastBuild(build).asItem()));
+
+            assertTrue(buildStatus(false, false, false, true).matches(jobOfType(type).buildable(true).lastBuild(build).asItem()));
+            assertFalse(buildStatus(false, false, false, false).matches(jobOfType(type).buildable(true).lastBuild(null).asItem()));
 		}
 	}
 
@@ -50,13 +53,14 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 	public void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
-			new BuildStatusFilter(false, true, false, excludeMatched.name())
+			new BuildStatusFilter(false, true, false, true, excludeMatched.name())
 		);
 
 		testConfigRoundtrip(
 			"view-2",
-			new BuildStatusFilter(true, false, true, includeMatched.name()),
-			new BuildStatusFilter(true, true, false, excludeMatched.name())
+			new BuildStatusFilter(true, false, true, true, includeMatched.name()),
+			new BuildStatusFilter(true, true, false, true, excludeMatched.name()),
+            new BuildStatusFilter(true, true, false, false, excludeMatched.name())
 		);
 	}
 
@@ -67,6 +71,7 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 				filter.isNeverBuilt(),
 				filter.isBuilding(),
 				filter.isInBuildQueue(),
+				filter.isBuildable(),
 				filter.getIncludeExcludeTypeString()));
 		}
 
@@ -92,6 +97,7 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 			assertThat(((BuildStatusFilter)actualFilter).isNeverBuilt(), is(expectedFilter.isNeverBuilt()));
 			assertThat(((BuildStatusFilter)actualFilter).isBuilding(), is(expectedFilter.isBuilding()));
 			assertThat(((BuildStatusFilter)actualFilter).isInBuildQueue(), is(expectedFilter.isInBuildQueue()));
+			assertThat(((BuildStatusFilter)actualFilter).isBuildable(), is(expectedFilter.isBuildable()));
 			assertThat(((BuildStatusFilter)actualFilter).getIncludeExcludeTypeString(), is(expectedFilter.getIncludeExcludeTypeString()));
 		}
 	}

@@ -115,6 +115,12 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> buildable(boolean buildable) {
+        when(job.isBuildable()).thenReturn(buildable);
+        return this;
+    }
+
+
     public JobMocker<T> building(boolean building) {
         when(job.isBuilding()).thenReturn(building);
         return this;

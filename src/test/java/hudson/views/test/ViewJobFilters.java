@@ -87,11 +87,13 @@ public class ViewJobFilters {
     public static BuildStatusFilter buildStatus(
             boolean neverBuild,
             boolean building,
-            boolean inBuildQueue) {
+            boolean inBuildQueue,
+            boolean buildable) {
         return new BuildStatusFilter(
                 neverBuild,
                 building,
                 inBuildQueue,
+                buildable,
                 includeMatched.name());
     }
 
