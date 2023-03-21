@@ -16,6 +16,7 @@
         <f:option value="MAVEN" selected="${instance.valueTypeString == 'MAVEN'}">${%Maven configuration}</f:option>
         <f:option value="SCHEDULE" selected="${instance.valueTypeString == 'SCHEDULE'}">${%Job schedule}</f:option>
         <f:option value="NODE" selected="${instance.valueTypeString == 'NODE'}">${%Node label expression}</f:option>
+        <f:option value="BUILD_NAME" selected="${instance.valueTypeString == 'BUILD_NAME'}">${%Build name}</f:option>
       </select>
       <div class="nameOptions" style="display: ${(empty instance.valueTypeString || instance.valueTypeString.contains('NAME')) ? 'block' : 'none'}">
         <f:checkbox name="matchName" field="matchName" default="true" /> ${%Name}
