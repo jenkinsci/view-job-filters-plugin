@@ -17,7 +17,6 @@ public class PluginHelperUtilsTest extends AbstractJenkinsTest {
         PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
         PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
         PluginHelperUtils.validateAndThrow(new GitValuesProvider());
-        PluginHelperUtils.validateAndThrow(new MavenExtraStepsValuesHelper());
         PluginHelperUtils.validateAndThrow(new MavenProjectValuesHelper());
         PluginHelperUtils.validateAndThrow(new SvnValuesProvider());
     }

@@ -4,10 +4,18 @@
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
 	
 	<f:entry>
-		<f:checkbox name="includeDownstream" field="includeDownstream" /> ${%Include downstream jobs} <br/>
-		<f:checkbox name="includeUpstream" field="includeUpstream" /> ${%Include upstream jobs} <br/>
-		<f:checkbox name="recursive" field="recursive" /> ${%Include upstream/downstream jobs recursively} <br/>
-		<f:checkbox name="excludeOriginals" field="excludeOriginals" /> ${%Do not show source jobs}
+		<div>
+			<f:checkbox title="${%Include downstream jobs}" field="includeDownstream"/>
+		</div>
+		<div>
+			<f:checkbox title="${%Include upstream jobs}" field="includeUpstream"/>
+		</div>
+		<div>
+			<f:checkbox title="${%Include upstream/downstream jobs recursively}" field="recursive"/>
+		</div>
+		<div>
+			<f:checkbox title="${%Do not show source jobs}" field="excludeOriginals"/>
+		</div>
 	</f:entry>
 	
 </j:jelly>

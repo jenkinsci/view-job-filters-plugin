@@ -7,7 +7,6 @@ import hudson.model.*;
 import hudson.plugins.emailext.ExtendedEmailPublisher;
 import hudson.plugins.git.BranchSpec;
 import hudson.plugins.git.GitSCM;
-import hudson.plugins.m2extrasteps.M2ExtraStepsWrapper;
 import hudson.scm.*;
 import hudson.security.ACL;
 import hudson.security.Permission;
@@ -293,29 +292,6 @@ public class JobMocker<T extends Job> {
             when(set.getMavenOpts()).thenReturn(opts);
             when(set.getAlternateSettings()).thenReturn(properties);
             when(set.getGoals()).thenReturn(targets);
-        }
-        return this;
-    }
-
-    public JobMocker<T> mavenBuildStep(MavenBuildStep step, String targets, final String name, String properties, String opts) {
-        if (instanceOf(job, MAVEN_MODULE_SET)) {
-            Maven maven = mockMaven(targets, name, properties, opts);
-            M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
-            wrapper.setPreBuildSteps((step == MavenBuildStep.PRE) ? asList((Builder) maven) : new ArrayList<Builder>());
-            wrapper.setPostBuildSteps((step == MavenBuildStep.POST) ? asList((Builder) maven) : new ArrayList<Builder>());
-            DescribableList wrappers = new DescribableList(mock(Saveable.class), asList(wrapper));
-            when(((MavenModuleSet)job).getBuildWrappers()).thenReturn(wrappers);
-        }
-        return this;
-    }
-
-    public JobMocker<T> mavenPostBuildStep(String targets, final String name, String properties, String opts) {
-        if (instanceOf(job, MAVEN_MODULE_SET)) {
-            Maven maven = mockMaven(targets, name, properties, opts);
-            M2ExtraStepsWrapper wrapper = new M2ExtraStepsWrapper(null);
-            wrapper.setPostBuildSteps(asList((Builder)maven));
-            DescribableList wrappers = new DescribableList(mock(Saveable.class), asList(wrapper));
-            when(((MavenModuleSet)job).getBuildWrappers()).thenReturn(wrappers);
         }
         return this;
     }

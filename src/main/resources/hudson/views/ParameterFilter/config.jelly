@@ -9,15 +9,16 @@
       <f:textbox name="valueRegex" field="valueRegex" />
   </f:entry>
   <f:entry help="/plugin/view-job-filters/parameter-default-help.html">
-      <f:checkbox name="useDefaultValue" field="useDefaultValue"/> ${%Match the configured default values instead of the actual value from last successful build}
+      <f:checkbox title="${%Match the configured default values instead of the actual value from last successful build}" field="useDefaultValue"/>
   </f:entry>
   <f:entry>
-      <f:checkbox name="matchAllBuilds" field="matchAllBuilds"/> ${%Match against this many previous builds} (${%blank or 0 for all}):
-      <st:nbsp />
-      <input type="text" name="maxBuildsToMatch" value="${instance.maxBuildsToMatch}" size="10" maxlength="10" />
+      <f:checkbox title="${%Match against this many previous builds} (${%blank or 0 for all})" field="matchAllBuilds"/>
+    <div>
+      <input class="jenkins-input" name="maxBuildsToMatch" value="${instance.maxBuildsToMatch}" size="10" maxlength="10" />
+    </div>
   </f:entry>
   <f:entry>
-      <f:checkbox name="matchBuildsInProgress" field="matchBuildsInProgress"/> ${%Match against builds in progress}
+      <f:checkbox title="${%Match against builds in progress}" field="matchBuildsInProgress"/>
   </f:entry>
   <f:entry title="${%Description}:">
       <f:textbox name="descriptionRegex" field="descriptionRegex" />

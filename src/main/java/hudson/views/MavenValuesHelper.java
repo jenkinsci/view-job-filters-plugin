@@ -15,7 +15,6 @@ public class MavenValuesHelper {
 	 * If I add any more helpers, switch to a better design first.
 	 */
 	public static final MavenProjectValuesHelper MODULESET_HELPER = buildMavenProjectValuesHelper();
-	public static final MavenExtraStepsValuesHelper EXTRASTEPS_HELPER = buildMavenExtraStepsValuesHelper();
 	public static final MatrixProjectBuildersHelper MATRIX_PROJECT_HELPER = buildMatrixProjectBuildersHelper();
 
 	@SuppressWarnings({ "unchecked" })
@@ -31,10 +30,6 @@ public class MavenValuesHelper {
 		}
 		if (MODULESET_HELPER != null) {
 			List<String> more = MODULESET_HELPER.getValues(item);
-			values.addAll(more);
-		}
-		if (EXTRASTEPS_HELPER != null) {
-			List<String> more = EXTRASTEPS_HELPER.getValues(item);
 			values.addAll(more);
 		}
 		return values;
@@ -75,15 +70,6 @@ public class MavenValuesHelper {
 	private static MavenProjectValuesHelper buildMavenProjectValuesHelper() {
 		try {
 			return PluginHelperUtils.validateAndThrow(new MavenProjectValuesHelper());
-		} catch (Throwable t) {
-			// necessary maven plugins not installed
-			return null;
-		}
-	}
-
-	private static MavenExtraStepsValuesHelper buildMavenExtraStepsValuesHelper() {
-		try {
-			return PluginHelperUtils.validateAndThrow(new MavenExtraStepsValuesHelper());
 		} catch (Throwable t) {
 			// necessary maven plugins not installed
 			return null;
