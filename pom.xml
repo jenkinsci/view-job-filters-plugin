@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.56</version>
+        <version>4.66</version>
         <relativePath/>
     </parent>
 
@@ -43,6 +43,17 @@
                 <groupId>commons-net</groupId>
                 <artifactId>commons-net</artifactId>
                 <version>3.9.0</version>
+            </dependency>
+            <!-- TODO pending https://github.com/jenkinsci/configuration-as-code-plugin/pull/2283 in BOM -->
+            <dependency>
+                <groupId>io.jenkins</groupId>
+                <artifactId>configuration-as-code</artifactId>
+                <version>1647.ve39ca_b_829b_42</version>
+            </dependency>
+            <dependency>
+                <groupId>io.jenkins.configuration-as-code</groupId>
+                <artifactId>test-harness</artifactId>
+                <version>1647.ve39ca_b_829b_42</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

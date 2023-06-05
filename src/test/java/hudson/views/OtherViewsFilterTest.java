@@ -1,6 +1,6 @@
 package hudson.views;
 
-import com.gargoylesoftware.htmlunit.html.*;
+import org.htmlunit.html.*;
 import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
 
