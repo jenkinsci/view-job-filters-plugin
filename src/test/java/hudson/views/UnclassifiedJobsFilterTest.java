@@ -1,7 +1,7 @@
 package hudson.views;
 
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlPage;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
