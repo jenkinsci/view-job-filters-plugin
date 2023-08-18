@@ -16,9 +16,7 @@ public class EmailValuesHelper {
 		}
 		for (AbstractEmailValuesProvider matcher: matchers) {
 			List<String> some = matcher.getValues(item);
-			if (some != null) {
-				values.addAll(some);
-			}
+			values.addAll(some);
 		}
 		return values;
 	}

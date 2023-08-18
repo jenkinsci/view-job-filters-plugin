@@ -1,5 +1,7 @@
 package hudson.views;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.DescriptorExtensionList;
 import hudson.Extension;
@@ -16,9 +18,6 @@ import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.StaplerRequest;
-
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 
 /**
  * This column wraps another column so that when that delegate column renders, it is
@@ -111,6 +110,7 @@ public class BuildFilterColumn extends ListViewColumn {
 	}
 
 	@SuppressWarnings("unchecked")
+	@SuppressFBWarnings(value="REC_CATCH_EXCEPTION")
 	public Job getJobWrapper(final Job job) {
 
 		final JobWrapper wrapper = new JobWrapper(job);
@@ -249,7 +249,7 @@ public class BuildFilterColumn extends ListViewColumn {
 			this.delegate = delegate;
 		}
 
-		@Nonnull
+		@NonNull
 		@Override
 		protected Run _this() {
 			return this;

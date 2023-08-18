@@ -40,18 +40,6 @@ public class UnclassifiedJobsFilter extends AbstractIncludeExcludeJobFilter {
         }
     }
 
-	private boolean containsUnclassifiedJobsFilter(View view) {
-	    if (view instanceof ListView) {
-	    	ListView listView = (ListView)view;
-	    	for (ViewJobFilter filter: listView.getJobFilters()) {
-	    		if (filter instanceof UnclassifiedJobsFilter) {
-	    			return true;
-				}
-			}
-		}
-		return false;
-	}
-
 	private List<TopLevelItem> getAllClassifiedItems(Set<View> allViews, int allJobsCount, View filteringView) {
     	List<TopLevelItem> classified = new ArrayList<TopLevelItem>();
 		for (View otherView: allViews) {

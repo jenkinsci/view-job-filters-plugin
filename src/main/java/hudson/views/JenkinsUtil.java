@@ -2,10 +2,10 @@ package hudson.views;
 
 import jenkins.model.Jenkins;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 public class JenkinsUtil {
-    @Nonnull
+    @NonNull
     public static Jenkins getInstance() {
         Jenkins jenkins = Jenkins.getInstance();
         if (jenkins != null) {
