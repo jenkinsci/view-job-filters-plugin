@@ -5,10 +5,13 @@ import hudson.model.TopLevelItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class EmailValuesHelper {
 
 	private static List<AbstractEmailValuesProvider> matchers = buildMatchers();
 	
+	@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 	public static List<String> getValues(TopLevelItem item) {
 		List<String> values = new ArrayList<String>();
 		if (item == null) {
@@ -16,7 +19,9 @@ public class EmailValuesHelper {
 		}
 		for (AbstractEmailValuesProvider matcher: matchers) {
 			List<String> some = matcher.getValues(item);
-			values.addAll(some);
+			if (some != null) {
+				values.addAll(some);
+			}
 		}
 		return values;
 	}
