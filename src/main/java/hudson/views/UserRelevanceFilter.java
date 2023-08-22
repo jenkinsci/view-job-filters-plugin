@@ -25,7 +25,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 
-	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase(Locale.getDefault());
+	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase(Locale.ROOT);
+
 	
 	private boolean matchUserId = true;
 	private boolean matchUserFullName = true;
@@ -121,7 +122,8 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     }
     public String normalize(String userName) {
     	if (ignoreCase) {
-    		userName = userName.toUpperCase(Locale.getDefault());
+    		userName = userName.toUpperCase(Locale.ROOT);
+
     	}
     	if (!ignoreNonAlphaNumeric && !ignoreWhitespace) {
     		return userName;
