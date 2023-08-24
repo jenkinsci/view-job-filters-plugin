@@ -14,8 +14,10 @@ import hudson.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Locale;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Filters jobs that are relevant to the user.
@@ -23,7 +25,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 
-	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase();
+	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase(Locale.ROOT);
+
 	
 	private boolean matchUserId = true;
 	private boolean matchUserFullName = true;
@@ -119,7 +122,8 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     }
     public String normalize(String userName) {
     	if (ignoreCase) {
-    		userName = userName.toUpperCase();
+    		userName = userName.toUpperCase(Locale.ROOT);
+
     	}
     	if (!ignoreNonAlphaNumeric && !ignoreWhitespace) {
     		return userName;
@@ -211,6 +215,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 		}
 		return builderName;
 	}
+	@SuppressFBWarnings("REC_CATCH_EXCEPTION")
 	public String getUserValue(Cause cause, String methodName) {
 		Method m = ReflectionUtils.getPublicMethodNamed(cause.getClass(), methodName);
 		if (m == null) {

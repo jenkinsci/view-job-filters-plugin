@@ -9,16 +9,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import jenkins.model.Jenkins;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.jvnet.hudson.test.HudsonTestCase;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.annotation.CheckForNull;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
