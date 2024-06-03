@@ -8,18 +8,17 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import hudson.views.test.MockServletInputStream;
+import hudson.views.test.MockStaplerRequest;
+import hudson.views.test.MockStaplerResponse;
 import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class AbstractJenkinsTest {
 
@@ -74,37 +73,9 @@ public abstract class AbstractJenkinsTest {
 
 		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
-		StaplerRequest request = mock(StaplerRequest.class);
-		when(request.getContentType()).thenReturn("application/xml");
-		when(request.getParameter("name")).thenReturn(view.getViewName());
-		when(request.getInputStream()).thenReturn(new ServletInputStream() {
-
-			@Override
-			public int read() throws IOException {
-				return in.read();
-			}
-
-			@Override
-			public boolean isFinished() {
-				return false;
-			}
-
-			@Override
-			public boolean isReady() {
-				return true;
-			}
-
-			@Override
-			public void setReadListener(ReadListener readListener) {
-			}
-
-			@Override
-			public void close() throws IOException {
-				in.close();
-			}
-		});
-
-		nestedView.doCreateView(request, mock(StaplerResponse.class));
+		StaplerRequest request = new MockStaplerRequest("application/xml", Map.of("name", view.getViewName()), new MockServletInputStream(in));
+		StaplerResponse response = new MockStaplerResponse();
+		nestedView.doCreateView(request, response);
 		return (T)nestedView.getView(view.getViewName());
 	}
 
