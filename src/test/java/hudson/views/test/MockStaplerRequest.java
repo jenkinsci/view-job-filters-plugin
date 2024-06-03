@@ -407,6 +407,11 @@ public class MockStaplerRequest implements StaplerRequest {
     }
 
     @Override
+    public org.apache.commons.fileupload2.core.FileItem getFileItem2(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public FileItem getFileItem(String name) {
         throw new UnsupportedOperationException();
     }
@@ -423,6 +428,11 @@ public class MockStaplerRequest implements StaplerRequest {
 
     @Override
     public String createJavaScriptProxy(Object toBeExported) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RenderOnDemandParameters createJavaScriptProxyParameters(Object toBeExported) {
         throw new UnsupportedOperationException();
     }
 
