@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>4.72</version>
+        <version>4.83</version>
         <relativePath/>
     </parent>
 
@@ -28,7 +29,7 @@
     <properties>
         <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/view-job-filters-plugin</gitHubRepo>
-        <jenkins.version>2.387.3</jenkins.version>
+        <jenkins.version>2.426.3</jenkins.version>
         <spotbugs.effort>Max</spotbugs.effort>
         <spotbugs.threshold>Low</spotbugs.threshold>
     </properties>
@@ -36,26 +37,10 @@
         <dependencies>
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
-                <artifactId>bom-2.387.x</artifactId>
-                <version>2329.v078520e55c19</version>
+                <artifactId>bom-2.426.x</artifactId>
+                <version>3105.v672692894683</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>commons-net</groupId>
-                <artifactId>commons-net</artifactId>
-                <version>3.9.0</version>
-            </dependency>
-            <!-- TODO pending https://github.com/jenkinsci/configuration-as-code-plugin/pull/2283 in BOM -->
-            <dependency>
-                <groupId>io.jenkins</groupId>
-                <artifactId>configuration-as-code</artifactId>
-                <version>1647.ve39ca_b_829b_42</version>
-            </dependency>
-            <dependency>
-                <groupId>io.jenkins.configuration-as-code</groupId>
-                <artifactId>test-harness</artifactId>
-                <version>1647.ve39ca_b_829b_42</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -64,13 +49,12 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>cvs</artifactId>
-            <version>2.15</version>
+            <version>2.19.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>subversion</artifactId>
-            <version>2.13.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -81,13 +65,11 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>email-ext</artifactId>
-            <version>2.94</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.main</groupId>
             <artifactId>maven-plugin</artifactId>
-            <version>3.21</version>
             <optional>true</optional>
             <exclusions>
                 <exclusion>
@@ -111,7 +93,6 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>matrix-auth</artifactId>
-            <version>2.5</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -124,7 +105,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>nested-view</artifactId>
-            <version>1.14</version>
+            <version>1.33</version>
             <scope>test</scope>
         </dependency>
         <dependency>
