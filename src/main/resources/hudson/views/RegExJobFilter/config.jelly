@@ -3,12 +3,12 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <f:entry title="${%Regular Expression}:">
-    <f:textbox name="regex" field="regex" checkUrl="${rootURL}/descriptorByName/hudson.views.RegExJobFilter/checkRegex" checkDependsOn=""/>
+    <f:textbox name="regex" field="regex"/>
   </f:entry>
   <f:entry title="${%Match Value}:">
     <div class="valueType">
       <div class="jenkins-select jenkins-!-margin-bottom-2">
-        <select name="valueTypeString" class="jenkins-select__input" onchange="this.parentElement.querySelector('.nameOptions').style.display = ((this.options[this.selectedIndex].value.match(/NAME/)) ? 'block' : 'none')">
+        <select name="valueTypeString" class="jenkins-select__input vjf-regex-select">
           <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
           <f:option value="FOLDER_NAME" selected="${instance.valueTypeString == 'FOLDER_NAME'}">${%Job folder name}</f:option>
           <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
@@ -19,7 +19,7 @@
           <f:option value="NODE" selected="${instance.valueTypeString == 'NODE'}">${%Node label expression}</f:option>
         </select>
       </div>
-      <div class="nameOptions" style="display: ${(empty instance.valueTypeString || instance.valueTypeString.contains('NAME')) ? 'block' : 'none'}">
+      <div class="nameOptions ${(empty instance.valueTypeString || instance.valueTypeString.contains('NAME')) ? '' : 'jenkins-hidden'}">
         <div>
           <f:checkbox title="${%Name}" field="matchName" default="true"/>
         </div>
@@ -36,4 +36,5 @@
     </div>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
+  <st:adjunct includes="hudson.views.RegExJobFilter.nameOptions"/>
 </j:jelly>
