@@ -5,7 +5,7 @@
 	<j:invokeStatic className="hudson.views.ViewGraph" method="toName" var="thisViewName">
 		<j:arg value="${it}" type="hudson.model.View"/>
 	</j:invokeStatic>
-  <f:invisibleEntry>
+	<f:invisibleEntry>
 		<f:textbox name="viewName" value="${thisViewName}"/>
 	</f:invisibleEntry>
 	<f:entry>
