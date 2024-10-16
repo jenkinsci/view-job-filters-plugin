@@ -7,18 +7,17 @@ function showOrHideBuildOptions(elem) {
   var tr3 = jobFilter.querySelector('[name="amountTypeString"]').parentElement.parentElement.parentElement;
 
   if (matchBuilder.checked || matchScmChanges.checked) {
-    tr2.classList.remove('jenkins-hidden');
-    tr3.classList.remove('jenkins-hidden');
+    tr2.classList.remove("jenkins-hidden");
+    tr3.classList.remove("jenkins-hidden");
   } else {
-    tr2.classList.add('jenkins-hidden');
-    tr3.classList.add('jenkins-hidden');
+    tr2.classList.add("jenkins-hidden");
+    tr3.classList.add("jenkins-hidden");
   }
 }
 
 Behaviour.specify(".showOrHideBuildOptions", "showOrHideBuildOptions", 0, function (element) {
   element.onclick = function () {
     showOrHideBuildOptions(element);
-  }
+  };
   showOrHideBuildOptions(element);
 });
-
