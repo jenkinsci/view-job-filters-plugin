@@ -3,7 +3,7 @@
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
   <f:entry title="${%Regular Expression}:">
-      <f:textbox name="regex" field="regex" checkUrl="${rootURL}/descriptorByName/hudson.views.RegExJobFilter/checkRegex" checkDependsOn=""/>
+    <f:textbox name="regex" field="regex" checkUrl="${rootURL}/descriptorByName/hudson.views.RegExJobFilter/checkRegex" checkDependsOn=""/>
   </f:entry>
   <f:entry title="${%Match Value}:">
     <div class="valueType">
