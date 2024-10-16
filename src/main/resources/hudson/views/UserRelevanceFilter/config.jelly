@@ -29,31 +29,11 @@
     </div>
     <div>
       <f:checkbox title="${%Match jobs with builds 'started by' user}" name="matchBuilder" field="matchBuilder" default="true"
-                  onclick="showOrHideBuildOptions(this)"/>
+                  class="showOrHideBuildOptions"/>
     </div>
     <div>
       <f:checkbox title="${%Match jobs with builds where user is source code committer}" name="matchScmChanges" field="matchScmChanges"
-                  default="true" onclick="showOrHideBuildOptions(this)"/>
-    </div>
-    <div class="showOrHideBuildOptions">
-    <script>
-      function showOrHideBuildOptions(elem) {
-        var jobFilter = elem.closest('[name="jobFilters"]');
-        var matchBuilder = jobFilter.querySelector('[name="matchBuilder"]');
-        var matchScmChanges = jobFilter.querySelector('[name="matchScmChanges"]');
-
-        var tr2 = jobFilter.querySelector('[name="buildCountTypeString"]').parentElement.parentElement.parentElement;
-        var tr3 = jobFilter.querySelector('[name="amountTypeString"]').parentElement.parentElement.parentElement;
-
-        if (matchBuilder.checked || matchScmChanges.checked) {
-          tr2.classList.remove('jenkins-hidden');
-          tr3.classList.remove('jenkins-hidden');
-        } else {
-          tr2.classList.add('jenkins-hidden');
-          tr3.classList.add('jenkins-hidden');
-        }
-      }
-    </script>
+                  class="showOrHideBuildOptions"/>
     </div>
   </f:entry>
   <f:entry title="${%Build trend type}:">
@@ -66,7 +46,5 @@
     </div>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractBuildTrendFilter" optional="false"/>
-  <script>
-    Array.prototype.forEach.call(document.querySelectorAll('.showOrHideBuildOptions'), showOrHideBuildOptions);
-  </script>
+  <st:adjunct includes="hudson.views.UserRelevanceFilter.showOptions"/>
 </j:jelly>

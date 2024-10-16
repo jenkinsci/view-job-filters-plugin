@@ -5,9 +5,12 @@
 	<j:invokeStatic className="hudson.views.ViewGraph" method="toName" var="thisViewName">
 		<j:arg value="${it}" type="hudson.model.View"/>
 	</j:invokeStatic>
+	<f:invisibleEntry>
+		<f:textbox name="viewName" value="${thisViewName}"/>
+	</f:invisibleEntry>
 	<f:entry>
     <div style="display:none">
-		<f:textbox name="dummy" checkUrl="'${rootURL}/descriptorByName/hudson.views.UnclassifiedJobsFilter/check?viewName=' + encodeURIComponent('${h.jsStringEscape(thisViewName)}')"/>
+		<f:textbox name="dummy" checkUrl="${rootURL}/descriptorByName/hudson.views.UnclassifiedJobsFilter/check" checkDependsOn="viewName"/>
     </div>
     </f:entry>
 	<st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
