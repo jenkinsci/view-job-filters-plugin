@@ -16,7 +16,7 @@ function showOrHideBuildOptions(elem) {
 }
 
 Behaviour.specify(".showOrHideBuildOptions", "showOrHideBuildOptions", 0, function (element) {
-  element.onclick = function () {
+  element.addEventListener("click", function () {
     showOrHideBuildOptions(element);
   };
   showOrHideBuildOptions(element);
