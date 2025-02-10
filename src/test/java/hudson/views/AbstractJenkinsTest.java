@@ -15,10 +15,10 @@ import hudson.views.test.MockStaplerRequest;
 import hudson.views.test.MockStaplerResponse;
 import org.junit.Rule;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 public abstract class AbstractJenkinsTest {
 
@@ -73,8 +73,8 @@ public abstract class AbstractJenkinsTest {
 
 		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 
-		StaplerRequest request = new MockStaplerRequest("application/xml", Map.of("name", view.getViewName()), new MockServletInputStream(in));
-		StaplerResponse response = new MockStaplerResponse();
+		StaplerRequest2 request = new MockStaplerRequest("application/xml", Map.of("name", view.getViewName()), new MockServletInputStream(in));
+		StaplerResponse2 response = new MockStaplerResponse();
 		nestedView.doCreateView(request, response);
 		return (T)nestedView.getView(view.getViewName());
 	}

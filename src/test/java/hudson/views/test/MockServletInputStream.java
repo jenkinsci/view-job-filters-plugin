@@ -2,8 +2,8 @@ package hudson.views.test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
 
 public class MockServletInputStream extends ServletInputStream {
 

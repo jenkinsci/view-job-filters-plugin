@@ -3,18 +3,18 @@ package hudson.views;
 import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
 import hudson.security.GlobalMatrixAuthorizationStrategy;
-import org.acegisecurity.GrantedAuthority;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched;
@@ -358,7 +358,7 @@ public class ViewGraphTest extends AbstractJenkinsTest {
 
         User user = User.getById("test", true);
         user.setFullName("test");
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "", new GrantedAuthority[0]);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken("test", "", List.of());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         assertThat(view.getItems(), hasSize(0));

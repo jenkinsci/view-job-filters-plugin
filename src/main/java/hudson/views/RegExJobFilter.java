@@ -16,7 +16,7 @@ import jenkins.triggers.SCMTriggerItem;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 /**
  * Simple JobFilter that filters jobs based on a regular expression, and
