@@ -8,25 +8,25 @@ import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Locale;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import net.sf.json.JsonConfig;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 import org.kohsuke.stapler.export.Flavor;
 
-public class MockStaplerResponse implements StaplerResponse {
+public class MockStaplerResponse implements StaplerResponse2 {
 
     private int sc;
 
     @Override
-    public void forward(Object it, String url, StaplerRequest request) {
+    public void forward(Object it, String url, StaplerRequest2 request) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void forwardToPreviousPage(StaplerRequest request) {
+    public void forwardToPreviousPage(StaplerRequest2 request) {
         throw new UnsupportedOperationException();
     }
 
@@ -41,28 +41,28 @@ public class MockStaplerResponse implements StaplerResponse {
     }
 
     @Override
-    public void serveFile(StaplerRequest request, URL res) {
+    public void serveFile(StaplerRequest2 request, URL res) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void serveFile(StaplerRequest request, URL res, long expiration) {
+    public void serveFile(StaplerRequest2 request, URL res, long expiration) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void serveLocalizedFile(StaplerRequest request, URL res) {
+    public void serveLocalizedFile(StaplerRequest2 request, URL res) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void serveLocalizedFile(StaplerRequest request, URL res, long expiration) {
+    public void serveLocalizedFile(StaplerRequest2 request, URL res, long expiration) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void serveFile(
-            StaplerRequest req,
+            StaplerRequest2 req,
             InputStream data,
             long lastModified,
             long expiration,
@@ -73,7 +73,7 @@ public class MockStaplerResponse implements StaplerResponse {
 
     @Override
     public void serveFile(
-            StaplerRequest req,
+            StaplerRequest2 req,
             InputStream data,
             long lastModified,
             long expiration,
@@ -84,17 +84,17 @@ public class MockStaplerResponse implements StaplerResponse {
 
     @Override
     public void serveFile(
-            StaplerRequest req, InputStream data, long lastModified, long contentLength, String fileName) {
+            StaplerRequest2 req, InputStream data, long lastModified, long contentLength, String fileName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void serveFile(StaplerRequest req, InputStream data, long lastModified, int contentLength, String fileName) {
+    public void serveFile(StaplerRequest2 req, InputStream data, long lastModified, int contentLength, String fileName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void serveExposedBean(StaplerRequest req, Object exposedBean, Flavor flavor) {
+    public void serveExposedBean(StaplerRequest2 req, Object exposedBean, Flavor flavor) {
         throw new UnsupportedOperationException();
     }
 
@@ -109,7 +109,7 @@ public class MockStaplerResponse implements StaplerResponse {
     }
 
     @Override
-    public int reverseProxyTo(URL url, StaplerRequest req) {
+    public int reverseProxyTo(URL url, StaplerRequest2 req) {
         throw new UnsupportedOperationException();
     }
 

@@ -17,7 +17,7 @@ import javassist.util.proxy.ProxyFactory;
 import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * This column wraps another column so that when that delegate column renders, it is
@@ -62,7 +62,7 @@ public class BuildFilterColumn extends ListViewColumn {
 			return hudson.views.filters.Messages.BuildFilterColumn_DisplayName();
 		}
 		@Override
-		public ListViewColumn newInstance(StaplerRequest req, JSONObject obj)
+		public ListViewColumn newInstance(StaplerRequest2 req, JSONObject obj)
 				throws hudson.model.Descriptor.FormException {
 			BuildFilterColumn col;
 			try {
@@ -89,7 +89,7 @@ public class BuildFilterColumn extends ListViewColumn {
 			return col;
 		}
 		@SuppressWarnings("unchecked")
-		private ListViewColumn newInstanceFromClass(StaplerRequest req, JSONObject obj) 
+		private ListViewColumn newInstanceFromClass(StaplerRequest2 req, JSONObject obj) 
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException, FormException {
 			// {"delegate":{"stapler-class":"hudson.plugins.column.console.LastBuildColumn","value":"7"} ...
 			JSONObject delegate = obj.getJSONObject("delegate");

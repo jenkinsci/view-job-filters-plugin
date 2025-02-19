@@ -25,7 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class UserRelevanceFilter extends AbstractBuildTrendFilter {
 
-	private static final String ANONYMOUS = Hudson.ANONYMOUS.getName().toUpperCase(Locale.ROOT);
+	private static final String ANONYMOUS = Hudson.ANONYMOUS2.getName().toUpperCase(Locale.ROOT);
 
 	
 	private boolean matchUserId = true;
@@ -98,7 +98,7 @@ public class UserRelevanceFilter extends AbstractBuildTrendFilter {
     		return JenkinsUtil.getInstance().getMe();
     	} catch (Exception e) {
         	try {
-        		return JenkinsUtil.getInstance().getUser(Hudson.ANONYMOUS.getName());
+        		return JenkinsUtil.getInstance().getUser(Hudson.ANONYMOUS2.getName());
         	} catch (Exception e2) {
             	return null;
         	}

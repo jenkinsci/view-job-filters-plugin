@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hudson.views.test.JobMocker;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;

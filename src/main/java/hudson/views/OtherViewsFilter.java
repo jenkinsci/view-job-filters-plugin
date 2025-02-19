@@ -8,7 +8,7 @@ import hudson.util.ListBoxModel;
 import java.io.IOException;
 import java.util.*;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
