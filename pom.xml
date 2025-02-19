@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>cvs</artifactId>
-            <version>469.v57a_96d4f6886</version>
+            <version>471.v28a_41b_03ee4f</version>
             <optional>true</optional>
         </dependency>
         <dependency>
