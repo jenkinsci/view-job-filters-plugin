@@ -1,18 +1,21 @@
 package hudson.views;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class PluginHelperUtilsTest extends AbstractJenkinsTest {
-    /*
+@WithJenkins
+class PluginHelperUtilsTest extends AbstractJenkinsTest {
+	/*
      * Test all the helpers to see that no exceptions are thrown.
      */
-    @Test
-    @WithoutJenkins
-    public void testHelpers() {
+	@Test
+	@WithoutJenkins
+	void testHelpers() {
         PluginHelperUtils.validateAndThrow(new CoreEmailValuesProvider());
         PluginHelperUtils.validateAndThrow(new CvsValuesProvider());
         PluginHelperUtils.validateAndThrow(new EmailExtValuesProvider());
@@ -21,20 +24,18 @@ public class PluginHelperUtilsTest extends AbstractJenkinsTest {
         PluginHelperUtils.validateAndThrow(new SvnValuesProvider());
     }
 
-    @Test
-    @WithoutJenkins
-    public void testNull() {
+	@Test
+	@WithoutJenkins
+	void testNull() {
         assertThat(PluginHelperUtils.validateAndThrow(null), is(nullValue()));
     }
 
-    @Test(expected = RuntimeException.class)
-    @WithoutJenkins
-    public void testThrow() {
-        PluginHelperUtils.validateAndThrow(new PluginHelperUtils.PluginHelperTestable() {
-            @Override
-            public Class getPluginTesterClass() {
+	@Test
+	@WithoutJenkins
+	void testThrow() {
+		assertThrows(RuntimeException.class, () ->
+			PluginHelperUtils.validateAndThrow(() -> {
                 throw new RuntimeException("Test");
-            }
-        });
-    }
+            }));
+	}
 }

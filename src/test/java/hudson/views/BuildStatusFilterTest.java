@@ -2,8 +2,9 @@ package hudson.views;
 
 import hudson.model.*;
 import hudson.views.test.JobType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +14,19 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.in
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.buildStatus;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class BuildStatusFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class BuildStatusFilterTest extends AbstractJenkinsTest {
 
 	@Test
-    @WithoutJenkins
-	public void testMatch() {
+	@WithoutJenkins
+	void testMatch() {
 		Build build = mock(Build.class);
 
 		assertFalse(buildStatus(true, true, true).matches(mock(TopLevelItem.class)));
@@ -47,7 +51,7 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new BuildStatusFilter(false, true, false, excludeMatched.name())
@@ -61,7 +65,7 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, BuildStatusFilter... filters) throws Exception {
-		List<BuildStatusFilter> expectedFilters = new ArrayList<BuildStatusFilter>();
+		List<BuildStatusFilter> expectedFilters = new ArrayList<>();
 		for (BuildStatusFilter filter: filters) {
 			expectedFilters.add(new BuildStatusFilter(
 				filter.isNeverBuilt(),
@@ -83,7 +87,7 @@ public class BuildStatusFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<BuildStatusFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<BuildStatusFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

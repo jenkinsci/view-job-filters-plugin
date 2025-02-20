@@ -5,13 +5,16 @@ import java.io.IOException;
 import hudson.model.TopLevelItem;
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.AbstractBuildTrendFilter.BuildCountType;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserRelevanceFilterContainerTest extends AbstractJenkinsTest {
+@WithJenkins
+class UserRelevanceFilterContainerTest extends AbstractJenkinsTest {
 
 	@Test
-	public void testEmailWithNoUser() throws IOException {
+	void testEmailWithNoUser() throws IOException {
 		UserRelevanceFilter filter = new UserRelevanceFilter(
 				true, true, true, true, true,
 				true, true, true,

@@ -3,23 +3,26 @@ package hudson.views;
 import com.google.common.collect.Lists;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-public class AllJobsFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class AllJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldReturnNoJobsWhenNoJobsPresent() throws Exception {
+	void testShouldReturnNoJobsWhenNoJobsPresent() {
 	    List<TopLevelItem> all = Lists.newArrayList();
 
 		List<TopLevelItem> added = newArrayList();
@@ -32,8 +35,8 @@ public class AllJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldReturnAllJobsWhenJobsPresent() throws Exception {
-	    List<TopLevelItem> all = Lists.<TopLevelItem>newArrayList(
+	void testShouldReturnAllJobsWhenJobsPresent() {
+	    List<TopLevelItem> all = Lists.newArrayList(
 			freeStyleProject().name("job-0").asItem(),
 			freeStyleProject().name("job-1").asItem(),
 			freeStyleProject().name("job-2").asItem()
@@ -49,8 +52,8 @@ public class AllJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldNotReturnDuplicateJobs() throws Exception {
-		List<TopLevelItem> all = Lists.<TopLevelItem>newArrayList(
+	void testShouldNotReturnDuplicateJobs() {
+		List<TopLevelItem> all = Lists.newArrayList(
 			freeStyleProject().name("job-0").asItem(),
 			freeStyleProject().name("job-1").asItem(),
 			freeStyleProject().name("job-2").asItem()
@@ -65,7 +68,7 @@ public class AllJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new AllJobsFilter()
@@ -79,7 +82,7 @@ public class AllJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, AllJobsFilter... filters) throws Exception {
-	    List<AllJobsFilter> expectedFilters = new ArrayList<AllJobsFilter>();
+	    List<AllJobsFilter> expectedFilters = new ArrayList<>();
 	    for (AllJobsFilter filter: filters) {
 	    	expectedFilters.add(new AllJobsFilter());
 		}
@@ -97,7 +100,7 @@ public class AllJobsFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<AllJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<AllJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);
