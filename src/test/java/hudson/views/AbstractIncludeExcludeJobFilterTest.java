@@ -1,8 +1,9 @@
 package hudson.views;
 
 import hudson.model.TopLevelItem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.List;
 
@@ -12,9 +13,10 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
 
-    private class TestIncludeExcludeJobFilter extends AbstractIncludeExcludeJobFilter {
+    private static class TestIncludeExcludeJobFilter extends AbstractIncludeExcludeJobFilter {
         public TestIncludeExcludeJobFilter(String includeExcludeTypeString) {
             super(includeExcludeTypeString);
         }
@@ -25,9 +27,9 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
         }
     }
 
-    @Test
-    @WithoutJenkins
-    public void testIncludeMatched() {
+	@Test
+	@WithoutJenkins
+	void testIncludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeMatched.name());
         List<TopLevelItem> all = asList(
             freeStyleProject().name("0-matched").asItem(),
@@ -56,9 +58,9 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
         assertThat(filtered, is(expected));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testIncludeUnmatched() {
+	@Test
+	@WithoutJenkins
+	void testIncludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(includeUnmatched.name());
         List<TopLevelItem> all = asList(
             freeStyleProject().name("0-matched").asItem(),
@@ -88,9 +90,9 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
         assertThat(filtered, is(expected));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testExcludeMatched() {
+	@Test
+	@WithoutJenkins
+	void testExcludeMatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeMatched.name());
         List<TopLevelItem> all = asList(
             freeStyleProject().name("0-matched").asItem(),
@@ -120,9 +122,9 @@ public class AbstractIncludeExcludeJobFilterTest extends AbstractJenkinsTest {
         assertThat(filtered, is(expected));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testExcludeUnmatched() {
+	@Test
+	@WithoutJenkins
+	void testExcludeUnmatched() {
         TestIncludeExcludeJobFilter filter = new TestIncludeExcludeJobFilter(excludeUnmatched.name());
         List<TopLevelItem> all = asList(
             freeStyleProject().name("0-matched").asItem(),

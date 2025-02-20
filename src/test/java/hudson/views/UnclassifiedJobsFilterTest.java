@@ -2,11 +2,12 @@ package hudson.views;
 
 import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlPage;
+import org.junit.jupiter.api.Test;
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
 import hudson.model.View;
-import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -16,12 +17,12 @@ import java.util.List;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
-public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	@Test
-	public void testWithNoJobs() throws IOException {
+	void testWithNoJobs() throws IOException {
 		ListView filteredView = createFilteredView("unclassified-view", new UnclassifiedJobsFilter(includeMatched.name()));
 
 		List<TopLevelItem> items = filteredView.getItems();
@@ -29,7 +30,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testWithNoUnclassifiedJobs() throws IOException {
+	void testWithNoUnclassifiedJobs() throws IOException {
 		createFreeStyleProject("job-1");
 		createFreeStyleProject("job-2");
 		createFreeStyleProject("job-3");
@@ -56,7 +57,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testWithUnclassifiedJobs() throws IOException {
+	void testWithUnclassifiedJobs() throws IOException {
 		createFreeStyleProject("job-1");
 		createFreeStyleProject("job-2");
 		createFreeStyleProject("job-3");
@@ -83,7 +84,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testWithUnclassifiedJobsAndAllView() throws IOException {
+	void testWithUnclassifiedJobsAndAllView() throws IOException {
 		createFreeStyleProject("job-1");
 		createFreeStyleProject("job-2");
 		createFreeStyleProject("job-3");
@@ -120,7 +121,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testWithTwoUnclassifiedJobsViews() throws IOException {
+	void testWithTwoUnclassifiedJobsViews() throws IOException {
 		createFreeStyleProject("job-1");
 		createFreeStyleProject("job-2");
 		createFreeStyleProject("job-3");
@@ -154,7 +155,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testValidationNoCycle() throws IOException, SAXException, InterruptedException {
+	void testValidationNoCycle() throws IOException, SAXException {
 		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "all"));
 		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
 
@@ -163,7 +164,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testValidationWithCycle() throws IOException, SAXException, InterruptedException {
+	void testValidationWithCycle() throws IOException, SAXException {
 		View view1 = createFilteredView("view-1", new OtherViewsFilter(includeMatched.name(), "view-2"));
 		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
 
@@ -172,7 +173,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testValidationWithUnclassifiedJobsCycle() throws IOException, SAXException, InterruptedException {
+	void testValidationWithUnclassifiedJobsCycle() throws IOException, SAXException {
 		View view1 = createFilteredView("view-1", new UnclassifiedJobsFilter(includeMatched.name()));
 		View view2 = createFilteredView("view-2", new UnclassifiedJobsFilter(includeMatched.name()));
 
@@ -187,7 +188,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 		HtmlPage page = webClient.getPage(view, "configure");
 		HtmlDivision filter = page.querySelector("div[descriptorid='" + filterClass.getCanonicalName() + "']");
 
-		HtmlDivision error = (HtmlDivision) filter.querySelector("div[class='error']");
+		HtmlDivision error = filter.querySelector("div[class='error']");
 
 		if (expectedError != null) {
 			assertThat(error, is(not(nullValue())));
@@ -198,7 +199,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new UnclassifiedJobsFilter(excludeMatched.name())
@@ -212,7 +213,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, UnclassifiedJobsFilter... filters) throws Exception {
-		List<UnclassifiedJobsFilter> expectedFilters = new ArrayList<UnclassifiedJobsFilter>();
+		List<UnclassifiedJobsFilter> expectedFilters = new ArrayList<>();
 		for (UnclassifiedJobsFilter filter : filters) {
 			expectedFilters.add(new UnclassifiedJobsFilter(filter.getIncludeExcludeTypeString()));
 		}
@@ -230,7 +231,7 @@ public class UnclassifiedJobsFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<UnclassifiedJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<UnclassifiedJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);
