@@ -1,6 +1,7 @@
 package hudson.views;
 
 import org.htmlunit.html.*;
+import org.junit.jupiter.api.Test;
 import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
 
@@ -8,8 +9,8 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -17,12 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OtherViewsFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class OtherViewsFilterTest extends AbstractJenkinsTest {
 
 	@Test
-	public void testIncludeMatched() throws IOException {
+	void testIncludeMatched() throws IOException {
 	    TopLevelItem job1 = createFreeStyleProject("job-1");
 		TopLevelItem job2 = createFreeStyleProject("job-2");
 		TopLevelItem job3 = createFreeStyleProject("job-3");
@@ -34,7 +36,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testIncludeUnmatched() throws IOException {
+	void testIncludeUnmatched() throws IOException {
 		TopLevelItem job1 = createFreeStyleProject("job-1");
 		TopLevelItem job2 = createFreeStyleProject("job-2");
 		TopLevelItem job3 = createFreeStyleProject("job-3");
@@ -46,7 +48,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testExcludeMatched() throws IOException {
+	void testExcludeMatched() throws IOException {
 		TopLevelItem job1 = createFreeStyleProject("job-1");
 		TopLevelItem job2 = createFreeStyleProject("job-2");
 		TopLevelItem job3 = createFreeStyleProject("job-3");
@@ -59,7 +61,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testExcludeUnmatched() throws IOException {
+	void testExcludeUnmatched() throws IOException {
 		TopLevelItem job1 = createFreeStyleProject("job-1");
 		TopLevelItem job2 = createFreeStyleProject("job-2");
 		TopLevelItem job3 = createFreeStyleProject("job-3");
@@ -72,7 +74,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testValidation() throws IOException, SAXException, InterruptedException {
+	void testValidation() throws IOException, SAXException {
 		TopLevelItem job1 = createFreeStyleProject("job-1");
 		TopLevelItem job2 = createFreeStyleProject("job-2");
 		TopLevelItem job3 = createFreeStyleProject("job-3");
@@ -103,7 +105,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 			select.setSelectedAttribute(option, true);
 			webClient.waitForBackgroundJavaScript(2000);
 		}
-		HtmlDivision error = (HtmlDivision) filter.querySelector("div[class='error']");
+		HtmlDivision error = filter.querySelector("div[class='error']");
 
 		if (expectedError != null) {
 			assertThat(error, is(not(nullValue())));
@@ -114,7 +116,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		createListView("list-view-1");
 		createListView("list-view-2");
 
@@ -142,7 +144,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, OtherViewsFilter... filters) throws Exception {
-		List<OtherViewsFilter> expectedFilters = new ArrayList<OtherViewsFilter>();
+		List<OtherViewsFilter> expectedFilters = new ArrayList<>();
 		for (OtherViewsFilter filter: filters) {
 			expectedFilters.add(new OtherViewsFilter(
 					filter.getIncludeExcludeTypeString(),
@@ -162,7 +164,7 @@ public class OtherViewsFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<OtherViewsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<OtherViewsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

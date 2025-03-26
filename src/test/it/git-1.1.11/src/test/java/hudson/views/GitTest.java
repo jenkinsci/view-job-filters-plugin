@@ -4,17 +4,14 @@ import java.util.List;
 
 import hudson.views.ScmFilterHelper;
 import hudson.views.ScmValuesProvider;
-import junit.framework.TestCase;
-import org.junit.Rule;
-import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class GitTest {
+class GitTest {
 
 	@Test
-	public void testGitMatchers() {
+	void testGitMatchers() {
 		List<ScmValuesProvider> matchers = ScmFilterHelper.matchers;
 		boolean found = false;
 		for (ScmValuesProvider provider: matchers) {
@@ -25,5 +22,5 @@ public class GitTest {
 		}
 		assertTrue(found);
 	}
-	
+
 }
