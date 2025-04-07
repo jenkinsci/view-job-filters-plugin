@@ -1,8 +1,9 @@
 package hudson.views;
 
 import hudson.model.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -11,16 +12,17 @@ import java.util.List;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithStartTime() throws ParseException {
+	void testWithStartTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
 			freeStyleProject().name("job-1").lastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
@@ -49,7 +51,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithMaxTooLarge() throws ParseException {
+	void testWithMaxTooLarge() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
 			freeStyleProject().name("job-1").lastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
@@ -80,7 +82,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithEndTime() throws ParseException {
+	void testWithEndTime() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
 			freeStyleProject().name("job-1").lastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(90).create()).asItem(),
@@ -109,7 +111,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithRunningBuild() throws ParseException {
+	void testWithRunningBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").durationInMinutes(10).create()).asItem(),
 			freeStyleProject().name("job-1").lastBuild(build().startTime("2018-01-01 01:00:00").durationInMinutes(10).create()).asItem(),
@@ -142,7 +144,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithNoLastBuild() throws ParseException {
+	void testWithNoLastBuild() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 			freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
 			freeStyleProject().name("job-1").lastBuild(build().startTime("2018-01-01 01:00:00").create()).asItem(),
@@ -172,7 +174,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWithNotAJob() throws ParseException {
+	void testWithNotAJob() throws ParseException {
 		List<TopLevelItem> allJobs = asList(
 				freeStyleProject().name("job-0").lastBuild(build().startTime("2018-01-01 00:00:00").create()).asItem(),
 				mock(TopLevelItem.class),
@@ -206,7 +208,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 				"view-1",
 				new MostRecentJobsFilter(5, false)
@@ -220,7 +222,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, MostRecentJobsFilter... filters) throws Exception {
-		List<MostRecentJobsFilter> expectedFilters = new ArrayList<MostRecentJobsFilter>();
+		List<MostRecentJobsFilter> expectedFilters = new ArrayList<>();
 		for (MostRecentJobsFilter filter: filters) {
 			expectedFilters.add(new MostRecentJobsFilter(filter.getMaxToInclude(), filter.isCheckStartTime()));
 		}
@@ -238,7 +240,7 @@ public class MostRecentJobsFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<MostRecentJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<MostRecentJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);
