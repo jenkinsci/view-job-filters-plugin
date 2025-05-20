@@ -3,7 +3,6 @@ package hudson.views.test;
 import hudson.model.*;
 import hudson.scm.ChangeLogSet;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.text.ParseException;
@@ -15,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 public class BuildMocker<T extends AbstractBuild> {
 
-    T build;
+    final T build;
 
     public BuildMocker(Class<T> jobClass) {
         this.build = Mockito.mock(jobClass);
@@ -88,12 +87,7 @@ public class BuildMocker<T extends AbstractBuild> {
 
     public BuildMocker<T> changes(final ChangeLogSet.Entry... entries) {
         ChangeLogSet<ChangeLogSet.Entry> changes = mock(ChangeLogSet.class);
-        when(changes.iterator()).thenAnswer(new Answer<Iterator<ChangeLogSet.Entry>>() {
-            @Override
-            public Iterator<ChangeLogSet.Entry> answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return asList(entries).iterator();
-            }
-        });
+        when(changes.iterator()).thenAnswer((Answer<Iterator<ChangeLogSet.Entry>>) invocationOnMock -> asList(entries).iterator());
         when(build.getChangeSet()).thenReturn(changes);
         return this;
     }

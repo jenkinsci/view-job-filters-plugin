@@ -10,8 +10,9 @@ import java.util.List;
 
 import hudson.views.test.JobType;
 import jenkins.model.Jenkins;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import static hudson.views.test.JobMocker.EmailType.DEFAULT;
 import static hudson.views.test.JobMocker.EmailType.EXTENDED;
@@ -24,14 +25,16 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.RegExJobFilter.ValueType.*;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static hudson.views.test.ViewJobFilters.*;
 
-public class RegExJobFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testName() {
+	void testName() {
 		assertFalse(nameRegex(".*", MATCH_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 		assertFalse(nameRegex(".*", MATCH_FULL_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 		assertFalse(nameRegex(".*", MATCH_DISPLAY_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
@@ -79,7 +82,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testFolderName() {
+	void testFolderName() {
 		Jenkins jenkins = j.getInstance();
 
 		assertFalse(folderNameRegex(".*", MATCH_NAME).matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
@@ -144,7 +147,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testDescription() {
+	void testDescription() {
 		assertFalse(descRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type : availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
@@ -177,9 +180,8 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 
-
 	@Test
-	public void testSCM() {
+	void testSCM() {
 		assertFalse(scmRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, SCMED_ITEM, SCM_TRIGGER_ITEM)) {
@@ -220,7 +222,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testEmail() {
+	void testEmail() {
 		assertFalse(emailRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
@@ -246,7 +248,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testSchedule() {
+	void testSchedule() {
 		assertFalse(scheduleRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, WORKFLOW_JOB)) {
@@ -262,7 +264,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testMaven() {
+	void testMaven() {
 		assertFalse(mavenRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
@@ -304,7 +306,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testNode() {
+	void testNode() {
 		assertFalse(nodeRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
@@ -319,7 +321,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testBackwardsCompatibleDeserialization() throws IOException {
+	void testBackwardsCompatibleDeserialization() throws IOException {
 		InputStream xml = RegExJobFilter.class.getResourceAsStream("/RegExJobFilterTest/view.xml");
 		ListView listView = (ListView) View.createViewFromXML("foo", xml);
 
@@ -334,7 +336,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 				"regex-view-1",
 				new RegExJobFilter("NaMeRegEx", excludeMatched.name(), NAME.name(),
@@ -374,7 +376,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	 * https://wiki.jenkins.io/display/JENKINS/Using+the+View+Job+Filters+Match+Type
 	 */
 	@Test
-	public void testHelpExample() {
+	void testHelpExample() {
 		List<TopLevelItem> all = asList(
 				freeStyleProject().name("0-Test_Job").asItem(),
 				freeStyleProject().name("1-Test_Job").trigger("@midnight").asItem(),
@@ -385,7 +387,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 				freeStyleProject().name("6-Test_Job").asItem()
 		);
 
-		List<TopLevelItem> filtered = new ArrayList<TopLevelItem>();
+		List<TopLevelItem> filtered = new ArrayList<>();
 
 		RegExJobFilter includeTests = new RegExJobFilter(".*Test.*", includeMatched.name(), NAME.name());
 		filtered = includeTests.filter(filtered, all, null);
@@ -406,7 +408,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, RegExJobFilter... filters) throws Exception {
-		List<RegExJobFilter> expectedFilters = new ArrayList<RegExJobFilter>();
+		List<RegExJobFilter> expectedFilters = new ArrayList<>();
 		for (RegExJobFilter filter: filters) {
 			expectedFilters.add(new RegExJobFilter(filter.getRegex(),
 				filter.getIncludeExcludeTypeString(),
@@ -430,7 +432,7 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<RegExJobFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<RegExJobFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

@@ -1,18 +1,8 @@
 package hudson.views.test;
 
 import hudson.cli.BuildCommand;
-import hudson.model.Build;
 import hudson.model.Cause;
-import hudson.model.Result;
-import org.mockito.Mockito;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
-import static java.util.Arrays.asList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
