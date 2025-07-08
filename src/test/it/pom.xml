@@ -14,8 +14,6 @@
 	
 	<modules>
 		<module>git-none</module>
-		<module>git-1.1.9</module>
-		<module>git-1.1.11</module>
 		<module>maven-none</module>
 		<module>maven-ext</module>
 	</modules>
