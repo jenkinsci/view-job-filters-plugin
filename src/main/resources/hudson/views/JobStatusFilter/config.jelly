@@ -18,6 +18,9 @@
     <div>
       <f:checkbox title="${%Disabled}" field="disabled"/>
     </div>
+    <div>
+      <f:checkbox title="${%Not built}" field="notBuilt"/>
+    </div>
   </f:entry>
   <st:include page="config.jelly" class="hudson.views.AbstractIncludeExcludeJobFilter" optional="false"/>
 </j:jelly>

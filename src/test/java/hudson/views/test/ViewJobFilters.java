@@ -100,14 +100,28 @@ public class ViewJobFilters {
             boolean failed,
             boolean aborted,
             boolean disabled,
-            boolean stable) {
-        return new JobStatusFilter(
+            boolean stable,
+            boolean notBuilt,
+            String includeExcludeTypeString) {
+        JobStatusFilter jobStatusFilter = new JobStatusFilter(
                 unstable,
                 failed,
                 aborted,
                 disabled,
                 stable,
-                includeMatched.name());
+                includeExcludeTypeString);
+        jobStatusFilter.setNotBuilt(notBuilt);
+        return jobStatusFilter;
+    }
+
+    public static JobStatusFilter jobStatus(
+            boolean unstable,
+            boolean failed,
+            boolean aborted,
+            boolean disabled,
+            boolean stable,
+            boolean notBuilt) {
+        return jobStatus(unstable, failed, aborted, disabled, stable, notBuilt, includeMatched.name());
     }
 
     public static JobTypeFilter jobType(TopLevelItemDescriptor descriptor) {
