@@ -8,8 +8,9 @@ import hudson.scm.CVSSCM;
 import hudson.scm.SCMDescriptor;
 import hudson.scm.SubversionSCM;
 import hudson.views.test.JobType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,17 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class ScmTypeFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class ScmTypeFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@Issue({"JENKINS-29991", "JENKINS-31710"})
-	public void testMatch() {
+	void testMatch() {
 		SCMDescriptor cvs = new CVSSCM.DescriptorImpl();
 		SCMDescriptor svn = new SubversionSCM.DescriptorImpl();
 		SCMDescriptor git = new GitSCM.DescriptorImpl();
@@ -55,7 +59,7 @@ public class ScmTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testGetScmTypes() {
+	void testGetScmTypes() {
 		assertThat(scmType("hudson.scm.CVSSCM").getScmType(), instanceOf(CVSSCM.DescriptorImpl.class));
 		assertThat(scmType("CVS").getScmType(), instanceOf(CVSSCM.DescriptorImpl.class));
 
@@ -71,7 +75,7 @@ public class ScmTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"scm-type-view-1",
 			new ScmTypeFilter("hudson.scm.CVSSCM", excludeMatched.name())
@@ -85,7 +89,7 @@ public class ScmTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, ScmTypeFilter... filters) throws Exception {
-		List<ScmTypeFilter> expectedFilters = new ArrayList<ScmTypeFilter>();
+		List<ScmTypeFilter> expectedFilters = new ArrayList<>();
 		for (ScmTypeFilter filter: filters) {
 			expectedFilters.add(new ScmTypeFilter(filter.getScmType().clazz.getName(), filter.getIncludeExcludeTypeString()));
 		}
@@ -103,7 +107,7 @@ public class ScmTypeFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<ScmTypeFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<ScmTypeFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

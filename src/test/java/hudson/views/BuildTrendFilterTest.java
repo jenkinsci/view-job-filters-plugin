@@ -11,9 +11,10 @@ import hudson.model.ListView;
 import hudson.triggers.SCMTrigger.SCMTriggerCause;
 import hudson.triggers.TimerTrigger.TimerTriggerCause;
 import hudson.views.BuildTrendFilter.StatusType;
+import org.junit.jupiter.api.BeforeEach;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
 
 import java.util.ArrayList;
@@ -27,26 +28,28 @@ import static hudson.views.AbstractBuildTrendFilter.BuildCountType.All;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.AtLeastOne;
 import static hudson.views.AbstractBuildTrendFilter.BuildCountType.Latest;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
-import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched;
 import static hudson.views.BuildTrendFilter.StatusType.*;
 import static hudson.views.test.ViewJobFilters.buildTrend;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static hudson.views.test.BuildMocker.build;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class BuildTrendFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class BuildTrendFilterTest extends AbstractJenkinsTest {
 
-    @Before
-	public void before() throws Exception {
+	@BeforeEach
+	void before() {
         // Only necessary if run as part of the whole project:
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 
-    @Test
+	@Test
 	@WithoutJenkins
-	public void testMatchRun() {
+	void testMatchRun() {
     	assertTrue(buildTrend(StatusType.Started).matchesRun(build().started(true).create()));
 		assertFalse(buildTrend(StatusType.Started).matchesRun(build().started(false).create()));
 
@@ -150,7 +153,7 @@ public class BuildTrendFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"build-trend-view-1",
 			new BuildTrendFilter(All.name(), Started.name(),0, Builds.name(), includeMatched.name())
@@ -171,7 +174,7 @@ public class BuildTrendFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, BuildTrendFilter... filters) throws Exception {
-		List<BuildTrendFilter> expectedFilters = new ArrayList<BuildTrendFilter>();
+		List<BuildTrendFilter> expectedFilters = new ArrayList<>();
 		for (BuildTrendFilter filter: filters) {
 			expectedFilters.add(new BuildTrendFilter(
 					filter.getBuildCountTypeString(),
@@ -194,7 +197,7 @@ public class BuildTrendFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<BuildTrendFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<BuildTrendFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

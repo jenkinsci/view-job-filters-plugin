@@ -2,7 +2,6 @@ package hudson.views;
 
 import hudson.model.*;
 import hudson.plugins.nested_view.NestedView;
-import hudson.util.DescribableList;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,17 +12,23 @@ import java.util.Map;
 import hudson.views.test.MockServletInputStream;
 import hudson.views.test.MockStaplerRequest;
 import hudson.views.test.MockStaplerResponse;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 
 import jakarta.servlet.ServletException;
 
-public abstract class AbstractJenkinsTest {
+@WithJenkins
+abstract class AbstractJenkinsTest {
 
-	@Rule
-	public JenkinsRule j = new JenkinsRule();
+	protected JenkinsRule j;
+
+	@BeforeEach
+	void setUp(JenkinsRule j) {
+		this.j = j;
+	}
 
     protected ListView createFilteredView(String name, ViewJobFilter... filters) throws IOException {
         ListView view = new ListView(name, j.getInstance());
@@ -76,7 +81,7 @@ public abstract class AbstractJenkinsTest {
 		StaplerRequest2 request = new MockStaplerRequest("application/xml", Map.of("name", view.getViewName()), new MockServletInputStream(in));
 		StaplerResponse2 response = new MockStaplerResponse();
 		nestedView.doCreateView(request, response);
-		return (T)nestedView.getView(view.getViewName());
+		return (T) nestedView.getView(view.getViewName());
 	}
 
 

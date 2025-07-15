@@ -4,7 +4,6 @@ import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.FreeStyleProject;
 import hudson.model.Job;
-import hudson.model.TopLevelItem;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import java.util.ArrayList;
@@ -70,7 +69,7 @@ public class JobType<T extends Job> {
     }
 
     public static List<JobType<?>> availableJobTypes(JobType<?>... types) {
-        List<JobType<?>> availableJobTypes = new ArrayList<JobType<?>>();
+        List<JobType<?>> availableJobTypes = new ArrayList<>();
         for (JobType<?> type: types) {
             if (type.isAvailable()) {
                 availableJobTypes.add(type);

@@ -2,11 +2,12 @@ package hudson.views;
 
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlPage;
+import org.junit.jupiter.api.Test;
 import hudson.Functions;
 import hudson.model.*;
 import hudson.tasks.BatchFile;
 import hudson.tasks.Shell;
-import org.junit.Test;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -15,10 +16,11 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.in
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 
-public class BuildFilterColumnTest extends AbstractJenkinsTest {
+@WithJenkins
+class BuildFilterColumnTest extends AbstractJenkinsTest {
 
-    @Test
-    public void testWrappedStatusColumn() throws Exception {
+	@Test
+	void testWrappedStatusColumn() throws Exception {
         FreeStyleProject project = createProject();
 
         ListView view = createViewWithBuildFilterColumn(new StatusColumn());
@@ -39,8 +41,8 @@ public class BuildFilterColumnTest extends AbstractJenkinsTest {
         assertThat(getBuildFilterColumn(view).querySelector("svg").getAttributes().getNamedItem("title").getTextContent(), containsString("Success"));
     }
 
-    @Test
-    public void testWrappedWeatherColumn() throws Exception {
+	@Test
+	void testWrappedWeatherColumn() throws Exception {
         FreeStyleProject project = createProject();
 
         ListView view = createViewWithBuildFilterColumn(new WeatherColumn());
