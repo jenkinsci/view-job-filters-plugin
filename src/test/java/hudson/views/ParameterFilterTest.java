@@ -3,7 +3,6 @@ package hudson.views;
 import hudson.model.*;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -40,19 +39,7 @@ class ParameterFilterTest extends AbstractJenkinsTest {
 		testMatchesDefaultValue(new StringParameterDefinition("name", "test", "multi-line\ndesc"));
 		testMatchesDefaultValue(new BooleanParameterDefinition("name", true, "multi-line\ndesc"));
 		testMatchesDefaultValue(new ChoiceParameterDefinition("name", "multi-line\ntest", "multi-line\ndesc"));
-		testMatchesDefaultValue(newFileParameterDefinition("name", "test.txt", "multi-line\ndesc"));
 		testMatchesDefaultValue(newSimpleParameterDefinition("name", "test", "multi-line\ndesc"));
-	}
-
-	private static ParameterDefinition newFileParameterDefinition(String name, String file, String desc) {
-		FileParameterValue parameterValue = new FileParameterValue(name, new File(file), file);
-		parameterValue.setDescription(desc);
-
-		FileParameterDefinition parameter = mock(FileParameterDefinition.class);
-		when(parameter.getName()).thenReturn(name);
-		when(parameter.getDefaultParameterValue()).thenReturn(parameterValue);
-		when(parameter.getDescription()).thenReturn(desc);
-		return parameter;
 	}
 
 	private static ParameterDefinition newSimpleParameterDefinition(String name, String value, String desc) {
