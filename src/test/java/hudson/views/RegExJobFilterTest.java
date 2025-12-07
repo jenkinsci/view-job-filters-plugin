@@ -183,10 +183,8 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 		assertFalse(lastBuildDescRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
 
 		for (JobType<? extends Job> type : availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
-			// No last build - should not match
 			assertFalse(lastBuildDescRegex(".*").matches(jobOfType(type).asItem()));
 
-			// With last build description
 			assertFalse(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc(null).asItem()));
 			assertTrue(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc("").asItem()));
 			assertTrue(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Foo").asItem()));
@@ -196,7 +194,6 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 			assertTrue(lastBuildDescRegex(".*bar").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
 			assertTrue(lastBuildDescRegex(".ooba.").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
 
-			// Multi-line descriptions (common for build descriptions set by plugins)
 			assertTrue(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc("\n").asItem()));
 			assertTrue(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Quux\nFoo").asItem()));
 			assertFalse(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
@@ -205,7 +202,6 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 			assertTrue(lastBuildDescRegex(".*bar").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
 			assertTrue(lastBuildDescRegex(".ooba.").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
 
-			// Typical build description patterns
 			assertTrue(lastBuildDescRegex("Build #.*").matches(jobOfType(type).lastBuildDesc("Build #123 - SUCCESS").asItem()));
 			assertTrue(lastBuildDescRegex(".*deployed.*").matches(jobOfType(type).lastBuildDesc("Version 1.0.0 deployed to production").asItem()));
 			assertTrue(lastBuildDescRegex("v[0-9]+\\.[0-9]+\\.[0-9]+").matches(jobOfType(type).lastBuildDesc("v1.2.3").asItem()));
