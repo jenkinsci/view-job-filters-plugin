@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 
 public class ParameterFilter 
@@ -83,7 +83,7 @@ public class ParameterFilter
     }
     
     private Pattern toPattern(String regex) {
-    	if (StringUtils.isEmpty(regex)) {
+    	if ((regex == null || regex.isEmpty())) {
     		return null;
     	} else {
     		return Pattern.compile(regex);
