@@ -5,8 +5,7 @@ import static hudson.views.AbstractBuildTrendFilter.BuildCountType.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.JobMocker.freeStyleProject;
-import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 import hudson.model.*;
@@ -15,23 +14,23 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 import hudson.views.AbstractBuildTrendFilter.AmountType;
 import hudson.views.test.FixedClock;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.*;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
 
-    @After
-    public void afterEachTest() {
+	@AfterEach
+	void afterEachTest() {
         Clock.setInstance(Clock.SYSTEM_CLOCK);
     }
 
-    private class TestBuildTrendFilter extends AbstractBuildTrendFilter {
+    private static class TestBuildTrendFilter extends AbstractBuildTrendFilter {
         public TestBuildTrendFilter(String buildCountTypeString, float amount, String amountTypeString) {
             super(buildCountTypeString, amount, amountTypeString, includeMatched.name());
         }
@@ -42,9 +41,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         }
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesLatestBuild() {
+	@Test
+	@WithoutJenkins
+	void testMatchesLatestBuild() {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -63,9 +62,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         }
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAtLeastOneBuild() {
+	@Test
+	@WithoutJenkins
+	void testMatchesAtLeastOneBuild() {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -81,9 +80,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         }
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAllBuilds() {
+	@Test
+	@WithoutJenkins
+	void testMatchesAllBuilds() {
         for (AmountType amountType : AmountType.values()) {
             AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 0, amountType.name());
             assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -104,9 +103,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         }
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesLatestBuildOfLastFiveBuilds() {
+	@Test
+	@WithoutJenkins
+	void testMatchesLatestBuildOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
         assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
@@ -123,9 +122,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAtLeastOneOfLastFiveBuilds() {
+	@Test
+	@WithoutJenkins
+	void testMatchesAtLeastOneOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
         assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
@@ -154,9 +153,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAllOfLastFiveBuilds() {
+	@Test
+	@WithoutJenkins
+	void testMatchesAllOfLastFiveBuilds() {
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 5, Builds.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
         assertFalse(filter.matches(freeStyleProject().lastBuilds().asItem()));
@@ -199,9 +198,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesLatestBuildInLastSixHours() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesLatestBuildInLastSixHours() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -223,9 +222,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAtLastOneBuildInLastSixHours() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesAtLastOneBuildInLastSixHours() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -245,9 +244,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
     }
 
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAllBuildsInLastSixHours() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesAllBuildsInLastSixHours() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-01 12:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 6, Hours.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -277,9 +276,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
     }
 
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesLatestBuildInLastSixDays() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesLatestBuildInLastSixDays() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(Latest.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -301,9 +300,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAtLastOneBuildInLastSixDays() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesAtLastOneBuildInLastSixDays() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(AtLeastOne.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -322,9 +321,9 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Test
-    @WithoutJenkins
-    public void testMatchesAllBuildsInLastSixDays() throws ParseException {
+	@Test
+	@WithoutJenkins
+	void testMatchesAllBuildsInLastSixDays() throws ParseException {
         Clock.setInstance(new FixedClock("2018-01-12 00:00:00"));
         AbstractBuildTrendFilter filter = new TestBuildTrendFilter(All.name(), 6, Days.name());
         assertFalse(filter.matches(mock(TopLevelItem.class)));
@@ -353,11 +352,10 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         ).asItem()));
     }
 
-    @Issue("JENKINS-18986")
-    @Test
-    public void lazyLoading() throws Exception {
+	@Issue("JENKINS-18986")
+	@Test
+	void lazyLoading() throws Exception {
         final FreeStyleProject p1 = j.createFreeStyleProject("p1");
-        RunLoadCounter.prepare(p1);
         p1.getBuildersList().add(new FailureBuilder());
         for (int i = 0; i < 5; i++) {
             j.assertBuildStatus(Result.FAILURE, p1.scheduleBuild2(0).get());
@@ -365,10 +363,6 @@ public class AbstractBuildTrendFilterTest extends AbstractJenkinsTest {
         final FreeStyleProject p2 = j.createFreeStyleProject("p2");
         j.assertBuildStatusSuccess(p2.scheduleBuild2(0));
         final ViewJobFilter filter = new BuildTrendFilter("AtLeastOne", "Stable", 3, "Builds", "includeMatched");
-        assertEquals(Collections.singletonList(p2), RunLoadCounter.assertMaxLoads(p1, 3, new Callable<List<TopLevelItem>>() {
-            @Override public List<TopLevelItem> call() throws Exception {
-                return filter.filter(new ArrayList<TopLevelItem>(), Arrays.<TopLevelItem>asList(p1, p2), new AllView("_"));
-            }
-        }));
+        assertEquals(Collections.singletonList(p2), RunLoadCounter.assertMaxLoads(p1, 3, () -> filter.filter(new ArrayList<>(), Arrays.<TopLevelItem>asList(p1, p2), new AllView("_"))));
     }
 }

@@ -4,7 +4,8 @@ import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.FreeStyleProject;
 import hudson.model.ListView;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,17 @@ import static hudson.views.test.JobMocker.freeStyleProject;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.jobType;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class JobTypeFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class JobTypeFilterTest extends AbstractJenkinsTest {
 
 	@Test
-	public void testMatch() {
+	void testMatch() {
 
 		assertTrue(jobType(new FreeStyleProject.DescriptorImpl()).matches(freeStyleProject().asItem()));
 		assertFalse(jobType("freestyleproject").matches(freeStyleProject().asItem()));
@@ -38,7 +42,7 @@ public class JobTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testGetJobType() {
+	void testGetJobType() {
 		assertThat(jobType(new FreeStyleProject.DescriptorImpl()).getJobType(), instanceOf(FreeStyleProject.DescriptorImpl.class));
 
 		if (MATRIX_PROJECT.isAvailable()) {
@@ -53,7 +57,7 @@ public class JobTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"job-type-view-1",
 			new JobTypeFilter(new FreeStyleProject.DescriptorImpl().getId(), excludeMatched.name())
@@ -69,7 +73,7 @@ public class JobTypeFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, JobTypeFilter... filters) throws Exception {
-		List<JobTypeFilter> expectedFilters = new ArrayList<JobTypeFilter>();
+		List<JobTypeFilter> expectedFilters = new ArrayList<>();
 		for (JobTypeFilter filter: filters) {
 			expectedFilters.add(new JobTypeFilter(filter.getJobType().clazz.getName(), filter.getIncludeExcludeTypeString()));
 		}
@@ -87,7 +91,7 @@ public class JobTypeFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<JobTypeFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<JobTypeFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

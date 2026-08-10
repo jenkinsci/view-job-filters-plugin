@@ -1,8 +1,9 @@
 package hudson.views;
 
 import hudson.model.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,16 +14,18 @@ import static hudson.views.AbstractBuildTrendFilter.BuildCountType.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.BuildMocker.build;
 import static hudson.views.test.ViewJobFilters.buildDuration;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class BuildDurationFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class BuildDurationFilterTest extends AbstractJenkinsTest {
 
-    @Test
-    @WithoutJenkins
-    public void testMatchRun() {
+	@Test
+	@WithoutJenkins
+	void testMatchRun() {
         assertTrue(buildDuration(10, "<").matchesRun(build().durationInMinutes(9).create()));
         assertTrue(buildDuration(10, "<").matchesRun(build().durationInSeconds(10 * 60 - 1).create()));
         assertTrue(buildDuration(10, "<").matchesRun(build().durationInMillis(10 * 60 * 1000 - 1).create()));
@@ -40,8 +43,8 @@ public class BuildDurationFilterTest extends AbstractJenkinsTest {
         assertFalse(buildDuration(10, ">").matchesRun(build().durationInMillis(10 * 60 * 1000 - 1).create()));
     }
 
-    @Test
-    public void testConfigRoundtrip() throws Exception {
+	@Test
+	void testConfigRoundtrip() throws Exception {
         testConfigRoundtrip(
            "build-duration-view-1",
             new BuildDurationFilter(10, true,
@@ -68,7 +71,7 @@ public class BuildDurationFilterTest extends AbstractJenkinsTest {
     }
 
     private void testConfigRoundtrip(String viewName, BuildDurationFilter... filters) throws Exception {
-        List<BuildDurationFilter> expectedFilters = new ArrayList<BuildDurationFilter>();
+        List<BuildDurationFilter> expectedFilters = new ArrayList<>();
         for (BuildDurationFilter filter: filters) {
             expectedFilters.add(new BuildDurationFilter(
                 new BigDecimal(filter.getBuildDurationMinutes()).floatValue(),
@@ -89,7 +92,7 @@ public class BuildDurationFilterTest extends AbstractJenkinsTest {
         assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
     }
 
-    private void assertFilterEquals(List<BuildDurationFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+    private static void assertFilterEquals(List<BuildDurationFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
         assertThat(actualFilters.size(), is(expectedFilters.size()));
         for (int i = 0; i < actualFilters.size(); i++) {
             ViewJobFilter actualFilter = actualFilters.get(i);

@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hudson.views.test.JobMocker;
+import org.junit.jupiter.api.BeforeEach;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
 import static hudson.views.AbstractBuildTrendFilter.AmountType.Builds;
@@ -32,15 +33,18 @@ import static hudson.views.test.UserMocker.user;
 import static hudson.views.test.ViewJobFilters.UserRelevanceOption.*;
 import static hudson.views.test.ViewJobFilters.userRelevance;
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class UserRelevanceFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class UserRelevanceFilterTest extends AbstractJenkinsTest {
 
-	@Before
-	public void before() {
+	@BeforeEach
+	void before() {
 		j.getInstance().setSecurityRealm(j.createDummySecurityRealm());
 	}
 
@@ -51,7 +55,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testUserIdMatchesEmail() throws Exception {
+	void testUserIdMatchesEmail() {
 		for (JobMocker.EmailType emailType: JobMocker.EmailType.values()) {
 			assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(freeStyleProject().email("fred.foobar@acme.inc", emailType).asItem()));
 			assertFalse(userRelevance(MATCH_USER_ID, MATCH_EMAIL).matches(freeStyleProject().email("fredfoobar@acme.inc", emailType).asItem()));
@@ -92,7 +96,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testUserFullNameMatchesEmail() {
+	void testUserFullNameMatchesEmail() {
 
 		for (JobMocker.EmailType emailType: JobMocker.EmailType.values()) {
 			assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_EMAIL).matches(freeStyleProject().email("fred.foobar@acme.inc", emailType).asItem()));
@@ -139,7 +143,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testMatchRunWhenNotMatchingEmail() {
+	void testMatchRunWhenNotMatchingEmail() {
 		setCurrentUser("fred.foobar", "fred foobar");
 
 		assertTrue(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matches(freeStyleProject().lastBuilds(build().causes(userCause("fred foobar")).create()).asItem()));
@@ -148,7 +152,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testUserIdMatchesBuilder() throws Exception {
+	void testUserIdMatchesBuilder() {
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(userCause("fred foobar")).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
 
@@ -161,7 +165,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(cliCause("fredfoobar", "fred foobar")).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(cliCause("FRED.FOOBAR", "FRED FOOBAR")).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().causes(cliCause("FREDFOOBAR", "FRED FOOBAR")).create()));
-		
+
 		setCurrentUser("fred.foobar", "fred foobar");
 
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_BUILDER).matchesRun(build().create()));
@@ -238,7 +242,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testUserFullNameMatchesBuilder() throws Exception {
+	void testUserFullNameMatchesBuilder() {
 		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("fred foobar")).create()));
 		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_BUILDER).matchesRun(build().causes(userCause("FRED FOOBAR")).create()));
 
@@ -327,7 +331,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testUserIdMatchesScmChanges() {
+	void testUserIdMatchesScmChanges() {
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "Fred Foobar"))).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "Fred Foobar"))).create()));
 		assertFalse(userRelevance(MATCH_USER_ID, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
@@ -365,7 +369,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testUserFullNameMatchesScmChanges() {
+	void testUserFullNameMatchesScmChanges() {
 		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fred.foobar", "fred foobar"))).create()));
 		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("fredfoobar", "fred foobar"))).create()));
 		assertFalse(userRelevance(MATCH_USER_FULL_NAME, MATCH_SCM_LOG).matchesRun(build().changes(entry(user("FRED.FOOBAR", "FRED FOOBAR"))).create()));
@@ -403,7 +407,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testGetUserValue() {
+	void testGetUserValue() {
 		UserRelevanceFilter filter = userRelevance(
 			IGNORE_WHITESPACE, IGNORE_CASE, IGNORE_NON_ALPHA_NUM
 		);
@@ -422,7 +426,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testMatchesEmail() {
+	void testMatchesEmail() {
 		List<String> emails = asList("user1@gmail.com, user.2@gmail.com  @us.er3", "_user_4@gmail.gov;user5a@gmail.com ; us-er6");
 	    UserRelevanceFilter filter = userRelevance(
 			MATCH_USER_ID, MATCH_USER_FULL_NAME,
@@ -440,7 +444,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testNormalize() {
+	void testNormalize() {
 		assertThat(userRelevance().normalize("u se-r"), is("u se-r"));
 
 		assertThat(userRelevance(IGNORE_CASE).normalize("u se-r"), is("U SE-R"));
@@ -456,7 +460,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 
 	@Issue("JENKINS-13781")
 	@Test
-	public void testNullDoesntMatchEmail() {
+	void testNullDoesntMatchEmail() {
 		// FIXED: would throw null-pointer
 	    UserRelevanceFilter filter = userRelevance(
     		MATCH_USER_ID, MATCH_USER_FULL_NAME,
@@ -467,7 +471,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new UserRelevanceFilter(true, false,
@@ -491,7 +495,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, UserRelevanceFilter... filters) throws Exception {
-		List<UserRelevanceFilter> expectedFilters = new ArrayList<UserRelevanceFilter>();
+		List<UserRelevanceFilter> expectedFilters = new ArrayList<>();
 		for (UserRelevanceFilter filter : filters) {
 			expectedFilters.add(new UserRelevanceFilter(filter.isMatchUserId(), filter.isMatchUserFullName(),
 					filter.isIgnoreCase(), filter.isIgnoreWhitespace(), filter.isIgnoreNonAlphaNumeric(),
@@ -512,7 +516,7 @@ public class UserRelevanceFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<UserRelevanceFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<UserRelevanceFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

@@ -5,8 +5,9 @@ import hudson.model.ListView;
 import hudson.model.Result;
 import hudson.model.TopLevelItem;
 import hudson.views.test.JobType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,16 +16,19 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.jobStatus;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class JobStatusFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class JobStatusFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testMatch() {
+	void testMatch() {
 		assertFalse(jobStatus(true, true, true, true, true).matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET, WORKFLOW_JOB)) {
@@ -54,7 +58,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 			assertTrue(jobStatus(false, false, false, false, true).matches(jobOfType(type).result(Result.SUCCESS).asItem()));
 			assertFalse(jobStatus(false, false, false, false, true).matches(jobOfType(type).disabled(true).asItem()));
 
-			assertTrue("works on " + type.getJobClass().getSimpleName(), jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(true).asItem()));
+			assertTrue(jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(true).asItem()), "works on " + type.getJobClass().getSimpleName());
 			assertFalse(jobStatus(false, false, false, true, false).matches(jobOfType(type).disabled(false).asItem()));
 
 			assertTrue(jobStatus(true, true, false, false, false).matches(jobOfType(type).result(Result.UNSTABLE).asItem()));
@@ -65,7 +69,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new JobStatusFilter(false, true, false, true, false,  excludeMatched.name())
@@ -79,7 +83,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, JobStatusFilter... filters) throws Exception {
-		List<JobStatusFilter> expectedFilters = new ArrayList<JobStatusFilter>();
+		List<JobStatusFilter> expectedFilters = new ArrayList<>();
 		for (JobStatusFilter filter: filters) {
 			expectedFilters.add(new JobStatusFilter(
 				filter.isUnstable(),
@@ -103,7 +107,7 @@ public class JobStatusFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<JobStatusFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<JobStatusFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

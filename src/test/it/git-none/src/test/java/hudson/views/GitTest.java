@@ -4,15 +4,14 @@ import java.util.List;
 
 import hudson.views.ScmFilterHelper;
 import hudson.views.ScmValuesProvider;
-import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class GitTest {
+class GitTest {
 
 	@Test
-	public void testNoGitMatchers() {
+	void testNoGitMatchers() {
 		List<ScmValuesProvider> matchers = ScmFilterHelper.matchers;
 		for (ScmValuesProvider provider: matchers) {
 			String test = provider.getClass().getName();

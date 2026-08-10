@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hudson.views.test.JobType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import static hudson.model.Item.*;
 import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
@@ -16,17 +17,19 @@ import static hudson.views.SecurityFilter.*;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.security;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SecurityFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class SecurityFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testWorkspace() {
+	void testWorkspace() {
 		ACL acl = mock(ACL.class);
 		TopLevelItem item = mock(TopLevelItem.class);
 		when(item.getACL()).thenReturn(acl);
@@ -35,42 +38,42 @@ public class SecurityFilterTest extends AbstractJenkinsTest {
 				ALL, false, false, true,
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeMatched.toString());
 		assertFalse(filter.matches(item));
-		
+
 		when(acl.hasPermission(WORKSPACE)).thenReturn(true);
 		assertTrue(filter.matches(item));
 	}
 
 	@Test
 	@WithoutJenkins
-	public void testViewJobsRestrictedInSomeWay() {
+	void testViewJobsRestrictedInSomeWay() {
 		ACL acl = mock(ACL.class);
 		TopLevelItem item = mock(TopLevelItem.class);
 		when(item.getACL()).thenReturn(acl);
 
-		List<TopLevelItem> all = new ArrayList<TopLevelItem>();
+		List<TopLevelItem> all = new ArrayList<>();
 		all.add(item);
 
-		List<TopLevelItem> added = new ArrayList<TopLevelItem>();
-		
+		List<TopLevelItem> added = new ArrayList<>();
+
 		View addingView = null; // don't need to mock out...
 
 		// this filter looks for jobs that do not have even one of either config or workspace
 		SecurityFilter filter = new SecurityFilter(
 				ONE, true, false, true,
 				AbstractIncludeExcludeJobFilter.IncludeExcludeType.includeUnmatched.toString());
-		
+
 		// first time will match, because we didn't assign any permissions at all
 		boolean matched = filter.matches(item);
 		assertFalse(matched);
 		List<TopLevelItem> filtered = filter.filter(added, all, addingView);
 		assertEquals(1, filtered.size());
-		
+
 		// adding build and read won't affect the results
 		when(acl.hasPermission(BUILD)).thenReturn(true);
 		when(acl.hasPermission(Item.READ)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
 		assertEquals(1, filtered.size());
-		
+
 		// if we add workspace, it will now stop matching
 		when(acl.hasPermission(WORKSPACE)).thenReturn(true);
 		filtered = filter.filter(added, all, addingView);
@@ -84,7 +87,7 @@ public class SecurityFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testMatch() {
+	void testMatch() {
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
 			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions().asItem()));
 			assertFalse(security(ONE, false, false, false).matches(jobOfType(type).permissions(CONFIGURE).asItem()));
@@ -137,7 +140,7 @@ public class SecurityFilterTest extends AbstractJenkinsTest {
 
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 				"view-1",
 				new SecurityFilter(ALL, false, true, false, excludeMatched.name())
@@ -158,7 +161,7 @@ public class SecurityFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, SecurityFilter... filters) throws Exception {
-		List<SecurityFilter> expectedFilters = new ArrayList<SecurityFilter>();
+		List<SecurityFilter> expectedFilters = new ArrayList<>();
 		for (SecurityFilter filter: filters) {
 			expectedFilters.add(new SecurityFilter(
 					filter.getPermissionCheckType(),
@@ -181,7 +184,7 @@ public class SecurityFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<SecurityFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<SecurityFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

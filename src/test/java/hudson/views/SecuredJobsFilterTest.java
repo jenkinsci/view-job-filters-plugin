@@ -3,8 +3,9 @@ package hudson.views;
 import hudson.model.*;
 import hudson.security.AuthorizationMatrixProperty;
 import hudson.views.test.JobType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +14,19 @@ import static hudson.views.AbstractIncludeExcludeJobFilter.IncludeExcludeType.*;
 import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static hudson.views.test.ViewJobFilters.secured;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.Mockito.mock;
 
-public class SecuredJobsFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class SecuredJobsFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testMatch() {
+	void testMatch() {
 		assertFalse(secured().matches(mock(TopLevelItem.class)));
 
 		for (JobType<? extends Job> type: availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
@@ -32,7 +36,7 @@ public class SecuredJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new SecuredJobsFilter(excludeMatched.name())
@@ -46,7 +50,7 @@ public class SecuredJobsFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, SecuredJobsFilter... filters) throws Exception {
-		List<SecuredJobsFilter> expectedFilters = new ArrayList<SecuredJobsFilter>();
+		List<SecuredJobsFilter> expectedFilters = new ArrayList<>();
 		for (SecuredJobsFilter filter: filters) {
 			expectedFilters.add(new SecuredJobsFilter(filter.getIncludeExcludeTypeString()));
 		}
@@ -64,7 +68,7 @@ public class SecuredJobsFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<SecuredJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<SecuredJobsFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class FixedClock extends Clock {
-    private long millis;
+    private final long millis;
 
     public FixedClock(String date) throws ParseException {
         this.millis = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(date).getTime();

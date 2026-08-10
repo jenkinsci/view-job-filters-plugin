@@ -2,29 +2,32 @@ package hudson.views;
 
 import hudson.model.ListView;
 import hudson.model.TopLevelItem;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.WithoutJenkins;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static hudson.views.AddRemoveFallbackFilter.FallbackTypes.*;
 import static hudson.views.test.JobMocker.freeStyleProject;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
+@WithJenkins
+class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	private List<TopLevelItem> all;
 
-	@Before
-	public void before() throws Exception {
-	    all = Lists.<TopLevelItem>newArrayList(
+	@BeforeEach
+	void before() {
+	    all = Lists.newArrayList(
 			freeStyleProject().name("job-0").asItem(),
 			freeStyleProject().name("job-1").asItem(),
 			freeStyleProject().name("job-2").asItem()
@@ -33,7 +36,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldAddAllJobsWhenNoJobsPresent() throws Exception {
+	void testShouldAddAllJobsWhenNoJobsPresent() {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(ADD_ALL_IF_NONE_INCLUDED.name());
 
 		List<TopLevelItem> added = newArrayList();
@@ -46,7 +49,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldNotModifyFilteredListWhenSomeJobPresent() throws Exception {
+	void testShouldNotModifyFilteredListWhenSomeJobPresent() {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(ADD_ALL_IF_NONE_INCLUDED.name());
 
 		List<TopLevelItem> added = newArrayList(all.get(0));
@@ -59,7 +62,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldRemoveAllJobsWhenAllJobsPresent() throws Exception {
+	void testShouldRemoveAllJobsWhenAllJobsPresent() {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(REMOVE_ALL_IF_ALL_INCLUDED.name());
 
 		List<TopLevelItem> added = newArrayList(all);
@@ -72,7 +75,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 
 	@Test
 	@WithoutJenkins
-	public void testShouldNotModifyFilteredListWhenAllJobsNotPresent() throws Exception {
+	void testShouldNotModifyFilteredListWhenAllJobsNotPresent() {
 		ViewJobFilter filter = new AddRemoveFallbackFilter(REMOVE_ALL_IF_ALL_INCLUDED.name());
 
 		List<TopLevelItem> added = newArrayList(all.get(0));
@@ -80,11 +83,11 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 		List<TopLevelItem> expected = newArrayList(added);
 		List<TopLevelItem> filtered = filter.filter(added, all, null);
 
-		assertEquals("Expected only job-1 to be in the filtered list", expected, filtered);
+		assertEquals(expected, filtered, "Expected only job-1 to be in the filtered list");
 	}
 
 	@Test
-	public void testConfigRoundtrip() throws Exception {
+	void testConfigRoundtrip() throws Exception {
 		testConfigRoundtrip(
 			"view-1",
 			new AddRemoveFallbackFilter(ADD_ALL_IF_NONE_INCLUDED.name())
@@ -103,7 +106,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 	}
 
 	private void testConfigRoundtrip(String viewName, AddRemoveFallbackFilter... filters) throws Exception {
-		List<AddRemoveFallbackFilter> expectedFilters = new ArrayList<AddRemoveFallbackFilter>();
+		List<AddRemoveFallbackFilter> expectedFilters = new ArrayList<>();
 		for (AddRemoveFallbackFilter filter: filters) {
 			expectedFilters.add(new AddRemoveFallbackFilter(filter.getFallbackTypeString()));
 		}
@@ -121,7 +124,7 @@ public class AddRemoveFallbackFilterTest extends AbstractJenkinsTest {
 		assertFilterEquals(expectedFilters, viewAfterReload.getJobFilters());
 	}
 
-	private void assertFilterEquals(List<AddRemoveFallbackFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
+	private static void assertFilterEquals(List<AddRemoveFallbackFilter> expectedFilters, List<ViewJobFilter> actualFilters) {
 		assertThat(actualFilters.size(), is(expectedFilters.size()));
 		for (int i = 0; i < actualFilters.size(); i++) {
 			ViewJobFilter actualFilter = actualFilters.get(i);

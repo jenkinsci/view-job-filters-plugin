@@ -10,7 +10,6 @@ import hudson.plugins.git.GitSCM;
 import hudson.scm.*;
 import hudson.security.ACL;
 import hudson.security.Permission;
-import hudson.tasks.Builder;
 import hudson.tasks.Mailer;
 import hudson.tasks.Maven;
 import hudson.triggers.Trigger;
@@ -23,7 +22,6 @@ import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.mockito.MockSettings;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.util.*;
@@ -34,25 +32,18 @@ import static org.mockito.Mockito.*;
 
 public class JobMocker<T extends Job> {
 
-    public enum MavenBuildStep {
-        PRE, POST
-    }
-
-    T job;
+    final T job;
 
     public JobMocker(Class<T> jobClass, Class... interfaces) {
         MockSettings settings = withSettings();
         if (interfaces.length > 0) {
             settings = settings.extraInterfaces(interfaces);
         }
-        this.job = Mockito.mock(jobClass, settings.defaultAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
-                if (DescribableList.class.isAssignableFrom(invocationOnMock.getMethod().getReturnType())) {
-                    return new DescribableList(mock(Saveable.class), new ArrayList());
-                }
-                return null;
+        this.job = Mockito.mock(jobClass, settings.defaultAnswer(invocationOnMock -> {
+            if (DescribableList.class.isAssignableFrom(invocationOnMock.getMethod().getReturnType())) {
+                return new DescribableList(mock(Saveable.class), new ArrayList());
             }
+            return null;
         }));
     }
 
@@ -86,12 +77,7 @@ public class JobMocker<T extends Job> {
     }
 
     public JobMocker<T> parent(final ItemGroup parent) {
-        when(job.getParent()).thenAnswer(new Answer<ItemGroup>() {
-            @Override
-            public ItemGroup answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return parent;
-            }
-        });
+        when(job.getParent()).thenAnswer((Answer<ItemGroup>) invocationOnMock -> parent);
         return this;
     }
 
@@ -154,7 +140,7 @@ public class JobMocker<T extends Job> {
                 false, "excludedRegions",
                 false, null);
 
-        CVSSCM scm = new CVSSCM(cvsRepositories, false, false, true,  true, false, false, true);
+        CVSSCM scm = new CVSSCM(cvsRepositories, false, false, true,  true, false, false, true, false);
         return scm(scm);
     }
 
@@ -172,7 +158,7 @@ public class JobMocker<T extends Job> {
     }
 
     public JobMocker<T> gitBranches(String... branches) {
-        List<BranchSpec> branchSpecs = new ArrayList<BranchSpec>();
+        List<BranchSpec> branchSpecs = new ArrayList<>();
         for (String branch: branches) {
             BranchSpec branchSpec = mock(BranchSpec.class);
             when(branchSpec.getName()).thenReturn(branch);
@@ -186,13 +172,13 @@ public class JobMocker<T extends Job> {
     }
 
     public JobMocker<T> gitRepos(String... repos) {
-        List<RemoteConfig> remotes = new ArrayList<RemoteConfig>();
+        List<RemoteConfig> remotes = new ArrayList<>();
         for (String repo: repos) {
             URIish uri = mock(URIish.class);
             when(uri.toPrivateString()).thenReturn(repo);
 
             RemoteConfig remote = mock(RemoteConfig.class);
-            when(remote.getURIs()).thenReturn(Arrays.asList(uri));
+            when(remote.getURIs()).thenReturn(List.of(uri));
             remotes.add(remote);
         }
 
@@ -207,7 +193,7 @@ public class JobMocker<T extends Job> {
             when(((AbstractProject) job).getScm()).thenReturn(scm);
         }
         if (job instanceof SCMTriggerItem) {
-            when(((SCMTriggerItem)job).getSCMs()).thenReturn((Collection)asList(scm));
+            when(((SCMTriggerItem)job).getSCMs()).thenReturn((Collection) Collections.singletonList(scm));
         }
         if (instanceOf(job, SCMED_ITEM)) {
             when(((SCMedItem)job).getScm()).thenReturn(scm);
@@ -233,14 +219,13 @@ public class JobMocker<T extends Job> {
         if (job instanceof AbstractProject) {
             Mailer mailer = new Mailer(email, false, false);
 
-            DescribableList publishers = new DescribableList(mock(Saveable.class), asList(mailer));
+            DescribableList publishers = new DescribableList(mock(Saveable.class), List.of(mailer));
             when(((AbstractProject)job).getPublishersList()).thenReturn(publishers);
         }
         if (instanceOf(job, MAVEN_MODULE_SET)) {
-            MavenMailer mavenMailer = new MavenMailer();
-            mavenMailer.recipients = email;
+            MavenMailer mavenMailer = new MavenMailer(email, false, false, false);
 
-            DescribableList reporters = new DescribableList(mock(Saveable.class), asList(mavenMailer));
+            DescribableList reporters = new DescribableList(mock(Saveable.class), List.of(mavenMailer));
             when(((MavenModuleSet)job).getReporters()).thenReturn(reporters);
         }
         return this;
@@ -250,7 +235,7 @@ public class JobMocker<T extends Job> {
         ExtendedEmailPublisher emailPublisher = new ExtendedEmailPublisher();
         emailPublisher.recipientList = email;
 
-        DescribableList publishers = new DescribableList(mock(Saveable.class), asList(emailPublisher));
+        DescribableList publishers = new DescribableList(mock(Saveable.class), List.of(emailPublisher));
 
         if (job instanceof AbstractProject) {
             when(((AbstractProject)job).getPublishersList()).thenReturn(publishers);
@@ -266,7 +251,7 @@ public class JobMocker<T extends Job> {
         Trigger trigger = mock(Trigger.class);
         when(trigger.getSpec()).thenReturn(spec);
 
-        Map<TriggerDescriptor, Trigger<?>> triggers = new HashMap<TriggerDescriptor, Trigger<?>>();
+        Map<TriggerDescriptor, Trigger<?>> triggers = new HashMap<>();
         triggers.put(mock(TriggerDescriptor.class), trigger);
 
         if (job instanceof AbstractProject) { // TODO replace this and next by ParameterizedJobMixIn.ParameterizedJob
@@ -281,10 +266,10 @@ public class JobMocker<T extends Job> {
     public JobMocker<T> mavenBuilder(String targets, final String name, String properties, String opts) {
         Maven maven = mockMaven(targets, name, properties, opts);
         if (job instanceof Project) {
-            when(((Project)job).getBuilders()).thenReturn(asList(maven));
+            when(((Project)job).getBuilders()).thenReturn(List.of(maven));
         }
         if (instanceOf(job, MATRIX_PROJECT)) {
-            when(((MatrixProject)job).getBuilders()).thenReturn(asList((Builder)maven));
+            when(((MatrixProject)job).getBuilders()).thenReturn(List.of(maven));
         }
         if (instanceOf(job, MAVEN_MODULE_SET)) {
             MavenModuleSet set = (MavenModuleSet)job;
