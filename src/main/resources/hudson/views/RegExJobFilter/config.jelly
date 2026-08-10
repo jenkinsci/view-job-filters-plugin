@@ -12,6 +12,7 @@
           <f:option value="NAME" selected="${instance.valueTypeString == 'NAME'}">${%Job name}</f:option>
           <f:option value="FOLDER_NAME" selected="${instance.valueTypeString == 'FOLDER_NAME'}">${%Job folder name}</f:option>
           <f:option value="DESCRIPTION" selected="${instance.valueTypeString == 'DESCRIPTION'}">${%Job description}</f:option>
+          <f:option value="LAST_BUILD_DESCRIPTION" selected="${instance.valueTypeString == 'LAST_BUILD_DESCRIPTION'}">${%Last build description}</f:option>
           <f:option value="SCM" selected="${instance.valueTypeString == 'SCM'}">${%Job SCM configuration}</f:option>
           <f:option value="EMAIL" selected="${instance.valueTypeString == 'EMAIL'}">${%Email recipients}</f:option>
           <f:option value="MAVEN" selected="${instance.valueTypeString == 'MAVEN'}">${%Maven configuration}</f:option>

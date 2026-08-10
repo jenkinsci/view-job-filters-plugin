@@ -48,6 +48,13 @@ public class ViewJobFilters {
                 RegExJobFilter.ValueType.DESCRIPTION.name());
     }
 
+    public static RegExJobFilter lastBuildDescRegex(String regex) {
+        return new RegExJobFilter(
+                regex,
+                includeMatched.name(),
+                RegExJobFilter.ValueType.LAST_BUILD_DESCRIPTION.name());
+    }
+
     public static RegExJobFilter emailRegex(String regex) {
         return new RegExJobFilter(
                 regex,

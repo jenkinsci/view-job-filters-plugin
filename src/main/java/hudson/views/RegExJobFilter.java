@@ -52,6 +52,17 @@ public class RegExJobFilter extends AbstractIncludeExcludeJobFilter {
 				}
 			}
 		},
+		LAST_BUILD_DESCRIPTION {
+			@Override
+			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {
+				if (item instanceof Job) {
+					Run lastBuild = ((Job<?, ?>) item).getLastBuild();
+					if (lastBuild != null) {
+						addSplitValues(values, lastBuild.getDescription());
+					}
+				}
+			}
+		},
 		SCM {
 			@Override
 			void doGetMatchValues(TopLevelItem item, Options options, List<String> values) {

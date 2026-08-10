@@ -26,6 +26,7 @@ import static hudson.views.test.JobMocker.jobOfType;
 import static hudson.views.test.JobType.*;
 import static org.junit.Assert.*;
 import static hudson.views.test.ViewJobFilters.*;
+import static hudson.views.RegExJobFilter.ValueType.LAST_BUILD_DESCRIPTION;
 
 public class RegExJobFilterTest extends AbstractJenkinsTest {
 
@@ -173,6 +174,37 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("thisis\nmydesc=testn2\nforyou").asItem()));
 			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1&#xd;\ndesc=test&#xd;\n2").asItem()));
 			assertTrue(descRegex(".*desc=test.*").matches(jobOfType(type).desc("1 desc=test 2").asItem()));
+		}
+	}
+
+	@Test
+	@WithoutJenkins
+	public void testLastBuildDescription() {
+		assertFalse(lastBuildDescRegex(".*").matches(jobOfType(TOP_LEVEL_ITEM).asItem()));
+
+		for (JobType<? extends Job> type : availableJobTypes(FREE_STYLE_PROJECT, MATRIX_PROJECT, MAVEN_MODULE_SET)) {
+			assertFalse(lastBuildDescRegex(".*").matches(jobOfType(type).asItem()));
+
+			assertFalse(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc(null).asItem()));
+			assertTrue(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc("").asItem()));
+			assertTrue(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Foo").asItem()));
+			assertFalse(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
+			assertTrue(lastBuildDescRegex("Foo.*").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
+			assertFalse(lastBuildDescRegex("bar").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
+			assertTrue(lastBuildDescRegex(".*bar").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
+			assertTrue(lastBuildDescRegex(".ooba.").matches(jobOfType(type).lastBuildDesc("Foobar").asItem()));
+
+			assertTrue(lastBuildDescRegex(".*").matches(jobOfType(type).lastBuildDesc("\n").asItem()));
+			assertTrue(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Quux\nFoo").asItem()));
+			assertFalse(lastBuildDescRegex("Foo").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
+			assertTrue(lastBuildDescRegex("Foo.*").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
+			assertFalse(lastBuildDescRegex("bar").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
+			assertTrue(lastBuildDescRegex(".*bar").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
+			assertTrue(lastBuildDescRegex(".ooba.").matches(jobOfType(type).lastBuildDesc("Quux\nFoobar").asItem()));
+
+			assertTrue(lastBuildDescRegex("Build #.*").matches(jobOfType(type).lastBuildDesc("Build #123 - SUCCESS").asItem()));
+			assertTrue(lastBuildDescRegex(".*deployed.*").matches(jobOfType(type).lastBuildDesc("Version 1.0.0 deployed to production").asItem()));
+			assertTrue(lastBuildDescRegex("v[0-9]+\\.[0-9]+\\.[0-9]+").matches(jobOfType(type).lastBuildDesc("v1.2.3").asItem()));
 		}
 	}
 
@@ -365,6 +397,12 @@ public class RegExJobFilterTest extends AbstractJenkinsTest {
 					true, false, false, true),
 				new RegExJobFilter("FolderNameRegEx", excludeUnmatched.name(), FOLDER_NAME.name(),
 					true, false, true, true)
+		);
+
+		testConfigRoundtrip(
+				"regex-view-5",
+				new RegExJobFilter("LastBuildDescRegEx", includeMatched.name(), LAST_BUILD_DESCRIPTION.name(),
+					true, false, false, false)
 		);
 	}
 

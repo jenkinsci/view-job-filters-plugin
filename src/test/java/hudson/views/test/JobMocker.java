@@ -107,6 +107,13 @@ public class JobMocker<T extends Job> {
         return this;
     }
 
+    public JobMocker<T> lastBuildDesc(String description) {
+        Build lastBuild = mock(Build.class);
+        when(lastBuild.getDescription()).thenReturn(description);
+        when(job.getLastBuild()).thenReturn(lastBuild);
+        return this;
+    }
+
     public JobMocker<T> disabled(boolean disabled) {
         if (job instanceof ParameterizedJobMixIn.ParameterizedJob) {
             when(((ParameterizedJobMixIn.ParameterizedJob) job).isDisabled()).thenReturn(disabled);
